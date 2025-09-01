@@ -1,6 +1,6 @@
-//main.js
+// main.js
 
-// Remove any query params from the URL (defensive, in case of accidental GET submission)
+// Remove any query params from the URL
 if (window.location.search) {
   window.history.replaceState({}, document.title, window.location.pathname);
 }
@@ -26,9 +26,8 @@ function renderQuestion() {
   label.textContent = step.question;
   quizContainer.appendChild(label);
 
-  // Render radio group or dropdown
+  // Radio group or dropdown
   if (step.id !== "qualification") {
-    // Radio group
     const optionsList = document.createElement("div");
     optionsList.className = "options-list";
     step.options.forEach((opt) => {
@@ -45,7 +44,6 @@ function renderQuestion() {
     });
     quizContainer.appendChild(optionsList);
   } else {
-    // Dropdown
     const select = document.createElement("select");
     select.name = "userAnswer";
     select.required = true;
@@ -70,7 +68,7 @@ quizForm.addEventListener("submit", function(e) {
   } else {
     answer = quizForm.querySelector('select[name="userAnswer"]')?.value;
   }
-  if (!answer) return; // Prevent progression if not answered
+  if (!answer) return;
 
   answers[step.id] = answer;
 
@@ -83,27 +81,21 @@ quizForm.addEventListener("submit", function(e) {
     renderQuestion();
   } else {
     // End of survey
-    showCustomTemplate();
+    showFinalPage();
   }
 });
 
-function showCustomTemplate() {
+// Show the final page with the correct template
+function showFinalPage() {
   quizContainer.innerHTML = "";
   continueBtn.style.display = "none";
   downloadPdfBtn.style.display = "inline-block";
 
-  // Determine which qualification was selected
   const selectedQualification = answers["qualification"];
-  let qualificationEntry;
-
-  // If no qualification selected, it’s a transfer path
-  if (!selectedQualification) {
-    qualificationEntry = qualificationsData.find(q => q.type === "transfer");
-  } else {
-    qualificationEntry = qualificationsData.find(q => q.name === selectedQualification);
-  }
+  const qualificationEntry = qualificationsData.find(q => q.name === selectedQualification);
 
   let customHtml = "";
+
   if (qualificationEntry) {
     if (qualificationEntry.type === "international") {
       customHtml = templates.internationalQualificationTemplate({
@@ -120,7 +112,6 @@ function showCustomTemplate() {
         resources: qualificationEntry.resources
       });
     } else {
-      // local
       customHtml = templates.localQualificationTemplate({
         qualificationName: qualificationEntry.name,
         timeline: qualificationEntry.timeline,
@@ -130,11 +121,17 @@ function showCustomTemplate() {
         mtlUrl: qualificationEntry.mtlUrl
       });
     }
+  } else if (answers["transfer"]) {
+    // In case user only qualified for Transfer block
+    customHtml = templates.transferTemplate({
+      periods: transferQualification.periods,
+      timeline: transferQualification.timeline,
+      resources: transferQualification.resources
+    });
   }
 
-  // Render the custom page
   quizContainer.innerHTML = customHtml;
-  pdfContent.innerHTML = customHtml; // For PDF generation
+  pdfContent.innerHTML = customHtml; // For PDF download
 }
 
 // PDF Download
