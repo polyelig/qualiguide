@@ -1,4 +1,4 @@
-// main.js
+//main.js
 
 // Remove any query params from the URL (defensive, in case of accidental GET submission)
 if (window.location.search) {
@@ -83,20 +83,26 @@ quizForm.addEventListener("submit", function(e) {
     renderQuestion();
   } else {
     // End of survey
-    showSummary();
+    showCustomTemplate();
   }
 });
 
-function showSummary() {
+function showCustomTemplate() {
   quizContainer.innerHTML = "";
   continueBtn.style.display = "none";
   downloadPdfBtn.style.display = "inline-block";
 
-  // Find selected qualification's data
+  // Determine which qualification was selected
   const selectedQualification = answers["qualification"];
-  const qualificationEntry = qualificationsData.find(q => q.name === selectedQualification);
+  let qualificationEntry;
 
-  // Use the correct template based on type
+  // If no qualification selected, it’s a transfer path
+  if (!selectedQualification) {
+    qualificationEntry = qualificationsData.find(q => q.type === "transfer");
+  } else {
+    qualificationEntry = qualificationsData.find(q => q.name === selectedQualification);
+  }
+
   let customHtml = "";
   if (qualificationEntry) {
     if (qualificationEntry.type === "international") {
@@ -124,17 +130,6 @@ function showSummary() {
         mtlUrl: qualificationEntry.mtlUrl
       });
     }
-  } else {
-    // fallback summary
-    let summaryHtml = "<h3>Thank you for completing the quiz!</h3><div id='summary'></div>";
-    summaryHtml += "<ul>";
-    for (const step of surveyFlow) {
-      if (answers[step.id]) {
-        summaryHtml += `<li><strong>${step.question}</strong><br>${answers[step.id]}</li>`;
-      }
-    }
-    summaryHtml += "</ul>";
-    customHtml = summaryHtml;
   }
 
   // Render the custom page
