@@ -1,3 +1,26 @@
+// Shared HTML message for international qualifications (with placeholder for qualification name)
+const internationalCommonHtml = `
+<!-- Local Applicants -->
+<hr class="section-divider" />
+<h2 style="font-size: 18px; font-weight: normal; margin: 0 0 10px;">🔎 <u><strong>Singapore Citizen / Singapore Permanent Resident / FIN Holders</strong></u></h2>
+<p style="font-size: 15px; margin-bottom: 24px;">
+  Please log in to the <a href="https://myaces.nus.edu.sg/applicantPortal/app/login" target="_blank">Applicant Portal</a> with your <a href="https://portal.singpass.gov.sg/home/ui/support" target="_blank">Singpass</a> and apply under the <strong>Singapore Citizens / Singapore Permanent Residents with International Qualifications</strong> category to proceed with your application using the <strong>{{QUALIFICATION_NAME}}</strong>.<br />
+  <br />
+  📌 Please check if you fulfil the <a href="https://www.nus.edu.sg/oam/admissions/singapore-citizens-sprs-with-international-qualifications" rel="noopener noreferrer" target="_blank">Mother Tongue Language (MTL) requirements</a>.
+</p>
+<!-- Foreign Applicants -->
+<hr class="section-divider" />
+<h2 style="font-size: 18px; font-weight: normal; margin: 0 0 10px;">🌏 <u><strong>Foreigners (without <a href="https://ask.gov.sg/ica/questions/clqety23p003l3k36w2t96n86" target="_blank">FIN</a>)</strong></u></h2>
+<p style="font-size: 15px; margin-bottom: 10px;">
+  Please log in to the <a href="https://myaces.nus.edu.sg/applicantPortal/app/login" target="_blank">Applicant Portal</a> with your email account and apply under the <strong>International Student with International Qualification</strong> category to proceed with your application using the <strong>{{QUALIFICATION_NAME}}</strong>.
+</p>
+`;
+
+// Helper function to inject qualification name into the shared HTML
+function getInternationalMsg(qualificationName) {
+  return internationalCommonHtml.replace(/{{QUALIFICATION_NAME}}/g, qualificationName);
+}
+
 // Common message for all local qualifications (can be overridden per qualification)
 const localCommon = {
   localMsg: "Please log in to the <a href='https://myaces.nus.edu.sg/applicantPortal/app/login' target='_blank'>Applicant Portal</a> with your <a href='https://www.singpass.gov.sg/main/individuals/' target='_blank'>Singpass</a>."
@@ -109,9 +132,7 @@ const internationalCommon = {
   type: "international",
   icon: "🌏",
   timeline: { start: "2025-12-03", end: "2026-02-23" },
-  displayPeriod: "3 December 2025 to 23 February 2026",
-  localMsg: "",
-  foreignMsg: ""
+  displayPeriod: "3 December 2025 to 23 February 2026"
 };
 
 // List of international qualifications with unique fields
@@ -309,8 +330,23 @@ const internationalQualifications = [
     id: "vietnam-national-high-school",
     name: "Vietnam National High School Graduation Examination",
     admissionUrl: "https://nus.edu.sg/oam/admissions/international-qualifications/international-qualifications/vietnam-national-high-school-graduation-examination",
-    localMsg: "Please log in to the Applicant Portal with your Singpass and apply under the Singapore Citizens / PRs category.",
-    foreignMsg: "Please log in to the Applicant Portal with your email account and apply under the International Student category.",
+    // Provide fully custom messages instead of the shared one
+    customMessage: `
+<!-- Local Applicants -->
+<hr class="section-divider" />
+<h2 style="font-size: 18px; font-weight: normal; margin: 0 0 10px;">🔎 <u><strong>Singapore Citizen / Singapore Permanent Resident / FIN Holders</strong></u></h2>
+<p style="font-size: 15px; margin-bottom: 24px;">
+  Please log in to the <a href="https://myaces.nus.edu.sg/applicantPortal/app/login" target="_blank">Applicant Portal</a> with your <a href="https://portal.singpass.gov.sg/home/ui/support" target="_blank">Singpass</a> and apply under the <strong>Singapore Citizens / Singapore Permanent Residents with International Qualifications</strong> category to proceed with your application using the Vietnam National High School Graduation Examination Qualification.<br />
+  <br />
+  📌 Please check if you fulfil the <a href="https://www.nus.edu.sg/oam/admissions/singapore-citizens-sprs-with-international-qualifications" rel="noopener noreferrer" target="_blank">Mother Tongue Language (MTL) requirements</a>.
+</p>
+<!-- Foreign Applicants -->
+<hr class="section-divider" />
+<h2 style="font-size: 18px; font-weight: normal; margin: 0 0 10px;">🌏 <u><strong>Foreigners (without <a href="https://ask.gov.sg/ica/questions/clqety23p003l3k36w2t96n86" target="_blank">FIN</a>)</strong></u></h2>
+<p style="font-size: 15px; margin-bottom: 10px;">
+  Please log in to the <a href="https://myaces.nus.edu.sg/applicantPortal/app/login" target="_blank">Applicant Portal</a> with your email account and apply under the <strong>International Student with International Qualification</strong> category to proceed with your application using the Vietnam National High School Graduation Examination Qualification.
+</p>
+`,
     standardisedTestRequired: false,
     englishRequirementRequired: true
   },
@@ -323,10 +359,12 @@ const internationalQualifications = [
   }
 ];
 
-// Merge internationalCommon into each international qualification
+// Merge internationalCommon into each international qualification,
+// add a shared "internationalMsg" (overridden by a qualification's customMessage if present)
 const internationalQualificationsData = internationalQualifications.map(q => ({
   ...internationalCommon,
-  ...q
+  ...q,
+  internationalMsg: q.customMessage || getInternationalMsg(q.name)
 }));
 
 // Final qualifications array in required order
@@ -335,4 +373,3 @@ export const qualificationsData = [
   ...localQualificationsData,
   ...internationalQualificationsData
 ];
-
