@@ -1,6 +1,6 @@
-// main.js
+//main.js
 
-// Remove any query params from the URL
+// Remove any query params from the URL (defensive)
 if (window.location.search) {
   window.history.replaceState({}, document.title, window.location.pathname);
 }
@@ -26,7 +26,7 @@ function renderQuestion() {
   label.textContent = step.question;
   quizContainer.appendChild(label);
 
-  // Radio group or dropdown
+  // Render radio group or dropdown
   if (step.id !== "qualification") {
     const optionsList = document.createElement("div");
     optionsList.className = "options-list";
@@ -58,7 +58,7 @@ function renderQuestion() {
   }
 }
 
-// Handle survey progression and display the correct end-of-survey page
+// Handle survey progression
 quizForm.addEventListener("submit", function(e) {
   e.preventDefault();
   const step = surveyFlow[currentStep];
@@ -72,7 +72,6 @@ quizForm.addEventListener("submit", function(e) {
 
   answers[step.id] = answer;
 
-  // Find next step
   const nextId = typeof step.next === "function" ? step.next(answer) : step.next;
   const nextIndex = surveyFlow.findIndex(q => q.id === nextId);
 
@@ -80,13 +79,11 @@ quizForm.addEventListener("submit", function(e) {
     currentStep = nextIndex;
     renderQuestion();
   } else {
-    // End of survey
-    showFinalPage();
+    showSummary();
   }
 });
 
-// Show the final page with the correct template
-function showFinalPage() {
+function showSummary() {
   quizContainer.innerHTML = "";
   continueBtn.style.display = "none";
   downloadPdfBtn.style.display = "inline-block";
@@ -112,6 +109,7 @@ function showFinalPage() {
         resources: qualificationEntry.resources
       });
     } else {
+      // local
       customHtml = templates.localQualificationTemplate({
         qualificationName: qualificationEntry.name,
         timeline: qualificationEntry.timeline,
@@ -121,17 +119,17 @@ function showFinalPage() {
         mtlUrl: qualificationEntry.mtlUrl
       });
     }
-  } else if (answers["transfer"]) {
-    // In case user only qualified for Transfer block
-    customHtml = templates.transferTemplate({
-      periods: transferQualification.periods,
-      timeline: transferQualification.timeline,
-      resources: transferQualification.resources
-    });
+  } else {
+    // Error page
+    customHtml = `
+      <div class="info-card">
+        <p>Sorry for the error! Please check the <a href="https://nus.edu.sg/oam/admissions" target="_blank">NUS Admissions website</a> for more information.</p>
+      </div>
+    `;
   }
 
   quizContainer.innerHTML = customHtml;
-  pdfContent.innerHTML = customHtml; // For PDF download
+  pdfContent.innerHTML = customHtml;
 }
 
 // PDF Download
