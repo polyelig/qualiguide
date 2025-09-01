@@ -1,3 +1,5 @@
+//surveyFlow.js
+
 function slugify(str) {
   return str
     .toString()
@@ -10,6 +12,7 @@ function slugify(str) {
 }
 
 const surveyFlow = [
+  // ---------- Transfer Check ----------
   {
     id: "transfer",
     question: "Are you currently studying in a tertiary institution / have enrolled in / graduated from a tertiary institution?",
@@ -21,9 +24,11 @@ const surveyFlow = [
     next: (answer) => {
       if(answer === "Local universities (NUS, NTU, SMU, SIT, SUTD, SUSS, UAS)") return "endTransfer";
       if(answer === "Overseas tertiary institutions") return "nationality";
-      if(answer === "I am not a current or former undergraduate") return "nationality";
+      if(answer === "I am not a current or former undergraduate") return "nationalityNotCurrent";
     }
   },
+
+  // ---------- Nationality for Overseas Students ----------
   {
     id: "nationality",
     question: "What is your nationality?",
@@ -33,6 +38,19 @@ const surveyFlow = [
       if(answer === "Foreigner") return "qualification";
     }
   },
+
+  // ---------- Nationality for Not Current / Undergraduate ----------
+  {
+    id: "nationalityNotCurrent",
+    question: "What is your nationality?",
+    options: ["Singapore Citizen/ Singapore Permanent Resident", "Foreigner"],
+    next: (answer) => {
+      if(answer === "Singapore Citizen/ Singapore Permanent Resident") return "qualification";
+      if(answer === "Foreigner") return "qualification";
+    }
+  },
+
+  // ---------- Qualification Dropdown ----------
   {
     id: "qualification",
     question: "What qualification will you be using to apply to the National University of Singapore (NUS)?",
@@ -70,9 +88,7 @@ const surveyFlow = [
       "Unified Examination Certificate (UEC)",
       "Vietnam National High School Graduation Examination",
       "Other High School Qualifications"
-      // Add more qualifications here
     ],
-    // Map each qualification to a unique end state
-    next: (answer) => "end_" + slugify(answer)
+    next: (answer) => "end_" + slugify(answer) // Dynamic end for each qualification
   }
 ];
