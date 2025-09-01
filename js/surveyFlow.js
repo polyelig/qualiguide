@@ -1,4 +1,4 @@
-//surveyFlow.js
+// surveyFlow.js
 
 function slugify(str) {
   return str
@@ -76,3 +76,6 @@ const surveyFlow = [
     next: (answer) => "end_" + slugify(answer)
   }
 ];
+
+// Attach globally
+window.surveyFlow = surveyFlow;
