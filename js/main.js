@@ -13,17 +13,6 @@ const continueBtn = document.getElementById("continueBtn");
 const downloadPdfBtn = document.getElementById("downloadPdfBtn");
 const pdfContent = document.getElementById("pdfContent");
 
-// Helper: Show/hide the correct notice box based on timeline and today's date
-function showRelevantNoticeBoxes(start, end, openId, closedId) {
-  const now = new Date();
-  const startDate = new Date(start);
-  const endDate = new Date(end);
-  const openBox = document.getElementById(openId);
-  const closedBox = document.getElementById(closedId);
-  if (openBox) openBox.style.display = (now >= startDate && now <= endDate) ? "block" : "none";
-  if (closedBox) closedBox.style.display = (now > endDate) ? "block" : "none";
-}
-
 // Renders the current survey step/question
 function renderQuestion() {
   const step = surveyFlow[currentStep];
@@ -107,7 +96,7 @@ function showSummary() {
   const selectedQualification = answers["qualification"];
   const qualificationEntry = qualificationsData.find(q => q.name === selectedQualification);
 
-  // If found, use the correct template based on type
+  // Use the correct template based on type
   let customHtml = "";
   if (qualificationEntry) {
     if (qualificationEntry.type === "international") {
@@ -151,17 +140,6 @@ function showSummary() {
   // Render the custom page
   quizContainer.innerHTML = customHtml;
   pdfContent.innerHTML = customHtml; // For PDF generation
-
-  // Show/hide notice boxes for period (if present)
-  if (qualificationEntry && qualificationEntry.timeline) {
-    // You may want to pass different IDs per qualification/template for notice boxes
-    showRelevantNoticeBoxes(
-      qualificationEntry.timeline.start,
-      qualificationEntry.timeline.end,
-      "noticeOpenInternational", // id for open box
-      "noticeClosedInternational" // id for closed box
-    );
-  }
 }
 
 // PDF Download
