@@ -1,8 +1,8 @@
-// template.js
-// General templates for transfer, local, and international qualifications.
-// All visual styles are handled by styles.css. Resource lists are injected as HTML.
+//template.js
 
-export function formatTimeline(timeline) {
+// --- Helper Functions ---
+
+function formatTimeline(timeline) {
   if (!timeline || !timeline.start || !timeline.end) return "";
   const options = { year: 'numeric', month: 'long', day: 'numeric' };
   const start = new Date(timeline.start).toLocaleDateString(undefined, options);
@@ -11,7 +11,7 @@ export function formatTimeline(timeline) {
 }
 
 // Renders a generic resource list (array of {label, url, note?})
-export function renderResourceList(resources) {
+function renderResourceList(resources) {
   if (!resources || !resources.length) return "";
   return `
     <ul class="resource-list">
@@ -26,7 +26,7 @@ export function renderResourceList(resources) {
 }
 
 // Local/Transfer login section (with optional MTL line)
-export function loginSection({ qualificationName, mtlUrl }) {
+function loginSection({ qualificationName, mtlUrl }) {
   return `
     <hr class="section-divider" />
     <h2 class="info-heading"><span class="heading-icon">🖥️</span> <u><strong>Singapore Citizen / Singapore Permanent Resident / FIN Holders</strong></u></h2>
@@ -35,7 +35,9 @@ export function loginSection({ qualificationName, mtlUrl }) {
       with your <a href="https://portal.singpass.gov.sg/home/ui/support" target="_blank" rel="noopener noreferrer">Singpass</a>
       to proceed with your application using the ${qualificationName}.
     </p>
-    ${mtlUrl ? `<p>📌 Please check if you fulfil the <a href="${mtlUrl}" target="_blank" rel="noopener noreferrer">Mother Tongue Language (MTL) requirements</a>.</p>` : ""}
+    ${mtlUrl ? 
+      `<p>📌 Please check if you fulfil the <a href="${mtlUrl}" target="_blank" rel="noopener noreferrer">Mother Tongue Language (MTL) requirements</a>.</p>` 
+      : ""}
     <hr class="section-divider" />
     <h2 class="info-heading"><span class="heading-icon">🌏</span> <u><strong>Foreigners (without <a href="https://ask.gov.sg/ica/questions/clqety23p003l3w2t96n86" target="_blank" rel="noopener noreferrer">FIN</a>)</strong></u></h2>
     <p>
@@ -45,7 +47,7 @@ export function loginSection({ qualificationName, mtlUrl }) {
   `;
 }
 
-export function internationalLoginSection({ qualificationName }) {
+function internationalLoginSection({ qualificationName }) {
   return `
     <hr class="section-divider" />
     <h2 class="info-heading"><span class="heading-icon">🔎</span> <u><strong>Singapore Citizen / Singapore Permanent Resident / FIN Holders</strong></u></h2>
@@ -64,37 +66,45 @@ export function internationalLoginSection({ qualificationName }) {
   `;
 }
 
-// Application period "open" card
-export function openPeriodCard({ qualificationName, timeline, openPeriodText }) {
+// Application period cards
+function openPeriodCard({ qualificationName, timeline, openPeriodText }) {
   return `
     <div class="period-card notice-open">
       <h2>📅 AY${timeline && timeline.start ? new Date(timeline.start).getFullYear() + 1 : "____/____"} Application Period for</h2>
-      <p>the ${qualificationName} is<br /><strong>${openPeriodText || formatTimeline(timeline)}</strong></p>
+      <p>
+        the ${qualificationName} is<br />
+        <strong>${openPeriodText || formatTimeline(timeline)}</strong>
+      </p>
     </div>
   `;
 }
 
-// Application period "closed" card
-export function closedPeriodCard({ qualificationName, closedPeriodText, timeline }) {
+function closedPeriodCard({ qualificationName, closedPeriodText, timeline }) {
   return `
     <div class="period-card period-card closed notice-closed">
       <h2>📅 AY${timeline && timeline.start ? new Date(timeline.start).getFullYear() + 1 : "____/____"} Application Period for</h2>
-      <p>the ${qualificationName} has <strong>${closedPeriodText || "closed"}</strong>.</p>
+      <p>
+        the ${qualificationName} has <strong>${closedPeriodText || "closed"}</strong>.
+      </p>
     </div>
   `;
 }
 
-// ---------- TRANSFER QUALIFICATION TEMPLATE ----------
-export function transferTemplate({ periods, resources }) {
+// Transfer Template
+function transferTemplate({ timeline, periods, resources }) {
   return `
     <div class="info-card">
       <p>Hello! Thank you for your interest in applying to the National University of Singapore (NUS).</p>
       ${periods && periods.length
-        ? periods.map(p => `
-          <div class="period-card notice-open">
-            <h2>${p.label}</h2>
-            <p>${p.rangeText}</p>
-          </div>`).join("")
+        ? periods
+            .map(
+              (p) => `
+      <div class="period-card notice-open">
+        <h2>${p.label}</h2>
+        <p>${p.rangeText}</p>
+      </div>`
+            )
+            .join("")
         : ""}
       <hr class="section-divider" />
       <h2 class="info-heading"><span class="heading-icon">🖥️</span> <u><strong>Prospective Transfer Applicants</strong></u></h2>
@@ -110,8 +120,8 @@ export function transferTemplate({ periods, resources }) {
   `;
 }
 
-// ---------- LOCAL QUALIFICATION TEMPLATE ----------
-export function localQualificationTemplate({ qualificationName, timeline, openPeriodText, closedPeriodText, resources, mtlUrl }) {
+// Local Template
+function localQualificationTemplate({ qualificationName, timeline, openPeriodText, closedPeriodText, resources, mtlUrl }) {
   return `
     <div class="info-card">
       <p>Hello!</p>
@@ -119,7 +129,6 @@ export function localQualificationTemplate({ qualificationName, timeline, openPe
       ${openPeriodCard({ qualificationName, timeline, openPeriodText })}
       ${closedPeriodCard({ qualificationName, closedPeriodText, timeline })}
       ${loginSection({ qualificationName, mtlUrl })}
-      <div class="page-break">&nbsp;</div>
       <hr class="section-divider" />
       <h2 class="info-heading"><span class="heading-icon">🎓</span> <strong>Application Resources for the ${qualificationName}</strong></h2>
       ${renderResourceList(resources)}
@@ -127,8 +136,8 @@ export function localQualificationTemplate({ qualificationName, timeline, openPe
   `;
 }
 
-// ---------- INTERNATIONAL QUALIFICATION TEMPLATE ----------
-export function internationalQualificationTemplate({ name, timeline, openPeriodText, closedPeriodText, resources }) {
+// International Template
+function internationalQualificationTemplate({ name, timeline, openPeriodText, closedPeriodText, resources }) {
   return `
     <div class="info-card">
       <p>Hello!</p>
@@ -136,7 +145,6 @@ export function internationalQualificationTemplate({ name, timeline, openPeriodT
       ${openPeriodCard({ qualificationName: name, timeline, openPeriodText })}
       ${closedPeriodCard({ qualificationName: name, closedPeriodText, timeline })}
       ${internationalLoginSection({ qualificationName: name })}
-      <div class="page-break">&nbsp;</div>
       <hr class="section-divider" />
       <h2 class="info-heading"><span class="heading-icon">🎓</span> <strong>Application Resources for the ${name}</strong></h2>
       ${renderResourceList(resources)}
@@ -144,11 +152,11 @@ export function internationalQualificationTemplate({ name, timeline, openPeriodT
   `;
 }
 
-export const templates = {
+// Attach all templates to window
+window.templates = {
   transferTemplate,
   localQualificationTemplate,
   internationalQualificationTemplate,
   renderResourceList,
   formatTimeline
 };
-
