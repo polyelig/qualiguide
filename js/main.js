@@ -1,5 +1,10 @@
 // main.js
 
+// Remove any query params from the URL (defensive, in case of accidental GET submission)
+if (window.location.search) {
+  window.history.replaceState({}, document.title, window.location.pathname);
+}
+
 let currentStep = 0;
 let answers = {};
 const quizContainer = document.getElementById("quizContainer");
@@ -37,7 +42,7 @@ function renderQuestion() {
     // Radio group
     const optionsList = document.createElement("div");
     optionsList.className = "options-list";
-    step.options.forEach((opt, i) => {
+    step.options.forEach((opt) => {
       const optionLabel = document.createElement("label");
       optionLabel.className = "option";
       const radio = document.createElement("input");
@@ -66,7 +71,33 @@ function renderQuestion() {
   }
 }
 
-// Direct users to the correct custom end-of-survey page
+// Handle survey progression and display the correct end-of-survey page
+quizForm.addEventListener("submit", function(e) {
+  e.preventDefault();
+  const step = surveyFlow[currentStep];
+  let answer;
+  if (step.id !== "qualification") {
+    answer = quizForm.querySelector('input[name="userAnswer"]:checked')?.value;
+  } else {
+    answer = quizForm.querySelector('select[name="userAnswer"]')?.value;
+  }
+  if (!answer) return; // Prevent progression if not answered
+
+  answers[step.id] = answer;
+
+  // Find next step
+  const nextId = typeof step.next === "function" ? step.next(answer) : step.next;
+  const nextIndex = surveyFlow.findIndex(q => q.id === nextId);
+
+  if (nextIndex !== -1) {
+    currentStep = nextIndex;
+    renderQuestion();
+  } else {
+    // End of survey
+    showSummary();
+  }
+});
+
 function showSummary() {
   quizContainer.innerHTML = "";
   continueBtn.style.display = "none";
@@ -79,7 +110,6 @@ function showSummary() {
   // If found, use the correct template based on type
   let customHtml = "";
   if (qualificationEntry) {
-    // For local, international, or transfer, use the right template
     if (qualificationEntry.type === "international") {
       customHtml = templates.internationalQualificationTemplate({
         name: qualificationEntry.name,
@@ -124,6 +154,7 @@ function showSummary() {
 
   // Show/hide notice boxes for period (if present)
   if (qualificationEntry && qualificationEntry.timeline) {
+    // You may want to pass different IDs per qualification/template for notice boxes
     showRelevantNoticeBoxes(
       qualificationEntry.timeline.start,
       qualificationEntry.timeline.end,
