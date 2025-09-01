@@ -51,6 +51,7 @@ button:disabled {
   cursor: not-allowed;
 }
 
+/* Notice/Info Boxes */
 .notice-box {
   max-width: 100%;
   margin: 16px 0;
@@ -62,6 +63,66 @@ button:disabled {
 
 .notice-open { background-color: #ffffff; }
 .notice-closed { background-color: #fff3f3; }
+
+/* General Info Card (used for qualification info blocks) */
+.info-card {
+  font-family: inherit;
+  text-align: left;
+  padding: 20px;
+  background-color: #f9f9f9;
+  color: #333;
+  max-width: 800px;
+  width: 100%;
+  box-sizing: border-box;
+  line-height: 1.6;
+  border-radius: 12px;
+  margin-bottom: 32px;
+}
+@media (max-width: 900px) {
+  .info-card { max-width: 98vw; }
+}
+@media (max-width: 600px) {
+  .info-card { padding: 10px; border-radius: 8px; }
+}
+
+/* Application Period Cards */
+.period-card {
+  margin: 16px 0;
+  padding: 16px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  background-color: #fff;
+}
+.period-card.closed {
+  background-color: #fff3f3;
+}
+
+/* Headings in Info Cards */
+.info-card h2,
+.period-card h2,
+.notice-box h2 {
+  margin: 0 0 10px 0;
+  font-size: 18px;
+  font-weight: normal;
+}
+
+.resource-list {
+  padding-left: 20px;
+  font-size: 15px;
+  margin-bottom: 0;
+  text-align: left;
+}
+.resource-list li {
+  margin-bottom: 6px;
+}
+
+/* Inline icon styling for headings (optional) */
+.heading-icon {
+  margin-right: 4px;
+  vertical-align: middle;
+  font-size: 1.1em;
+}
 
 .options-list {
   display: flex;
@@ -150,7 +211,9 @@ select[name="userAnswer"]:focus {
     font-size: 16px;
     padding: 12px 0;
   }
-  .notice-box {
+  .notice-box,
+  .info-card,
+  .period-card {
     padding: 12px;
     border-radius: 8px;
   }
