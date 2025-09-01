@@ -1,5 +1,4 @@
 // qualifications.js
-
 // --- Local Qualifications ---
 const localQualifications = [
   {
@@ -97,18 +96,7 @@ const internationalQualifications = [
       { label: "Admission Requirements", url: "https://nus.edu.sg/oam/admissions/international-qualifications/international-qualifications/american-high-school-diploma" }
     ]
   },
-  // ... add the rest of your international qualifications here using the same pattern ...
-  {
-    id: "vietnam-national-high-school",
-    name: "Vietnam National High School Graduation Examination",
-    type: "international",
-    timeline: internationalTimeline,
-    openPeriodText: internationalOpenText,
-    closedPeriodText: internationalClosedText,
-    resources: [
-      { label: "Admission Requirements", url: "https://nus.edu.sg/oam/admissions/international-qualifications/international-qualifications/vietnam-national-high-school-graduation-examination" }
-    ]
-  },
+  // … keep the rest in current order …
   {
     id: "other-high-school-qualifications",
     name: "Other High School Qualifications",
@@ -129,5 +117,5 @@ const qualificationsData = [
   ...internationalQualifications
 ];
 
-// Attach to window for global use if not using modules
+// Attach to window
 window.qualificationsData = qualificationsData;
