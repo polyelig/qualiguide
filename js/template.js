@@ -35,9 +35,7 @@ export function loginSection({ qualificationName, mtlUrl }) {
       with your <a href="https://portal.singpass.gov.sg/home/ui/support" target="_blank" rel="noopener noreferrer">Singpass</a>
       to proceed with your application using the ${qualificationName}.
     </p>
-    ${mtlUrl ? 
-      `<p>📌 Please check if you fulfil the <a href="${mtlUrl}" target="_blank" rel="noopener noreferrer">Mother Tongue Language (MTL) requirements</a>.</p>` 
-      : ""}
+    ${mtlUrl ? `<p>📌 Please check if you fulfil the <a href="${mtlUrl}" target="_blank" rel="noopener noreferrer">Mother Tongue Language (MTL) requirements</a>.</p>` : ""}
     <hr class="section-divider" />
     <h2 class="info-heading"><span class="heading-icon">🌏</span> <u><strong>Foreigners (without <a href="https://ask.gov.sg/ica/questions/clqety23p003l3w2t96n86" target="_blank" rel="noopener noreferrer">FIN</a>)</strong></u></h2>
     <p>
@@ -71,10 +69,7 @@ export function openPeriodCard({ qualificationName, timeline, openPeriodText }) 
   return `
     <div class="period-card notice-open">
       <h2>📅 AY${timeline && timeline.start ? new Date(timeline.start).getFullYear() + 1 : "____/____"} Application Period for</h2>
-      <p>
-        the ${qualificationName} is<br />
-        <strong>${openPeriodText || formatTimeline(timeline)}</strong>
-      </p>
+      <p>the ${qualificationName} is<br /><strong>${openPeriodText || formatTimeline(timeline)}</strong></p>
     </div>
   `;
 }
@@ -84,36 +79,23 @@ export function closedPeriodCard({ qualificationName, closedPeriodText, timeline
   return `
     <div class="period-card period-card closed notice-closed">
       <h2>📅 AY${timeline && timeline.start ? new Date(timeline.start).getFullYear() + 1 : "____/____"} Application Period for</h2>
-      <p>
-        the ${qualificationName} has <strong>${closedPeriodText || "closed"}</strong>.
-      </p>
+      <p>the ${qualificationName} has <strong>${closedPeriodText || "closed"}</strong>.</p>
     </div>
   `;
 }
 
 // ---------- TRANSFER QUALIFICATION TEMPLATE ----------
-
-export function transferTemplate({ timeline, periods, loginInfo, resources }) {
-  // periods: array of {label, rangeText}
+export function transferTemplate({ periods, resources }) {
   return `
     <div class="info-card">
       <p>Hello! Thank you for your interest in applying to the National University of Singapore (NUS).</p>
       ${periods && periods.length
-        ? periods
-            .map(
-              (p) => `
-      <div class="period-card notice-open">
-        <h2>${p.label}</h2>
-        <p>${p.rangeText}</p>
-      </div>
-      `
-            )
-            .join("")
+        ? periods.map(p => `
+          <div class="period-card notice-open">
+            <h2>${p.label}</h2>
+            <p>${p.rangeText}</p>
+          </div>`).join("")
         : ""}
-      <div class="period-card period-card closed notice-closed">
-        <h2>📅 Application Period</h2>
-        <p>Transfer Applicants has <strong>closed</strong>.</p>
-      </div>
       <hr class="section-divider" />
       <h2 class="info-heading"><span class="heading-icon">🖥️</span> <u><strong>Prospective Transfer Applicants</strong></u></h2>
       <p>
@@ -129,15 +111,7 @@ export function transferTemplate({ timeline, periods, loginInfo, resources }) {
 }
 
 // ---------- LOCAL QUALIFICATION TEMPLATE ----------
-
-export function localQualificationTemplate({
-  qualificationName,
-  timeline,
-  openPeriodText,
-  closedPeriodText,
-  resources,
-  mtlUrl,
-}) {
+export function localQualificationTemplate({ qualificationName, timeline, openPeriodText, closedPeriodText, resources, mtlUrl }) {
   return `
     <div class="info-card">
       <p>Hello!</p>
@@ -154,14 +128,7 @@ export function localQualificationTemplate({
 }
 
 // ---------- INTERNATIONAL QUALIFICATION TEMPLATE ----------
-
-export function internationalQualificationTemplate({
-  name,
-  timeline,
-  openPeriodText,
-  closedPeriodText,
-  resources
-}) {
+export function internationalQualificationTemplate({ name, timeline, openPeriodText, closedPeriodText, resources }) {
   return `
     <div class="info-card">
       <p>Hello!</p>
@@ -177,11 +144,11 @@ export function internationalQualificationTemplate({
   `;
 }
 
-// Export all for easy import
 export const templates = {
   transferTemplate,
   localQualificationTemplate,
   internationalQualificationTemplate,
   renderResourceList,
-  formatTimeline,
+  formatTimeline
 };
+
