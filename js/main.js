@@ -8,6 +8,18 @@ const continueBtn = document.getElementById("continueBtn");
 const downloadPdfBtn = document.getElementById("downloadPdfBtn");
 const pdfContent = document.getElementById("pdfContent");
 
+// Helper: Show/hide the correct notice box based on timeline and today's date
+function showRelevantNoticeBoxes(start, end, openId, closedId) {
+  const now = new Date();
+  const startDate = new Date(start);
+  const endDate = new Date(end);
+  const openBox = document.getElementById(openId);
+  const closedBox = document.getElementById(closedId);
+  if (openBox) openBox.style.display = (now >= startDate && now <= endDate) ? "block" : "none";
+  if (closedBox) closedBox.style.display = (now > endDate) ? "block" : "none";
+}
+
+// Renders the current survey step/question
 function renderQuestion() {
   const step = surveyFlow[currentStep];
   quizContainer.innerHTML = "";
@@ -54,45 +66,71 @@ function renderQuestion() {
   }
 }
 
-quizForm.addEventListener("submit", function(e) {
-  e.preventDefault();
-  const step = surveyFlow[currentStep];
-  let answer;
-  if (step.id !== "qualification") {
-    answer = quizForm.querySelector('input[name="userAnswer"]:checked')?.value;
-  } else {
-    answer = quizForm.querySelector('select[name="userAnswer"]')?.value;
-  }
-  if (!answer) return; // Prevent progression if not answered
-
-  answers[step.id] = answer;
-
-  // Find next step
-  const nextId = typeof step.next === "function" ? step.next(answer) : step.next;
-  const nextIndex = surveyFlow.findIndex(q => q.id === nextId);
-
-  if (nextIndex !== -1) {
-    currentStep = nextIndex;
-    renderQuestion();
-  } else {
-    // End of survey
-    showSummary();
-  }
-});
-
+// Direct users to the correct custom end-of-survey page
 function showSummary() {
-  quizContainer.innerHTML = "<h3>Thank you for completing the quiz!</h3><div id='summary'></div>";
+  quizContainer.innerHTML = "";
   continueBtn.style.display = "none";
   downloadPdfBtn.style.display = "inline-block";
-  let summaryHtml = "<ul>";
-  for (const step of surveyFlow) {
-    if (answers[step.id]) {
-      summaryHtml += `<li><strong>${step.question}</strong><br>${answers[step.id]}</li>`;
+
+  // Find selected qualification's data
+  const selectedQualification = answers["qualification"];
+  const qualificationEntry = qualificationsData.find(q => q.name === selectedQualification);
+
+  // If found, use the correct template based on type
+  let customHtml = "";
+  if (qualificationEntry) {
+    // For local, international, or transfer, use the right template
+    if (qualificationEntry.type === "international") {
+      customHtml = templates.internationalQualificationTemplate({
+        name: qualificationEntry.name,
+        timeline: qualificationEntry.timeline,
+        openPeriodText: qualificationEntry.openPeriodText,
+        closedPeriodText: qualificationEntry.closedPeriodText,
+        resources: qualificationEntry.resources
+      });
+    } else if (qualificationEntry.type === "transfer") {
+      customHtml = templates.transferTemplate({
+        periods: qualificationEntry.periods,
+        timeline: qualificationEntry.timeline,
+        resources: qualificationEntry.resources
+      });
+    } else {
+      // local
+      customHtml = templates.localQualificationTemplate({
+        qualificationName: qualificationEntry.name,
+        timeline: qualificationEntry.timeline,
+        openPeriodText: qualificationEntry.openPeriodText,
+        closedPeriodText: qualificationEntry.closedPeriodText,
+        resources: qualificationEntry.resources,
+        mtlUrl: qualificationEntry.mtlUrl
+      });
     }
+  } else {
+    // fallback summary
+    let summaryHtml = "<h3>Thank you for completing the quiz!</h3><div id='summary'></div>";
+    summaryHtml += "<ul>";
+    for (const step of surveyFlow) {
+      if (answers[step.id]) {
+        summaryHtml += `<li><strong>${step.question}</strong><br>${answers[step.id]}</li>`;
+      }
+    }
+    summaryHtml += "</ul>";
+    customHtml = summaryHtml;
   }
-  summaryHtml += "</ul>";
-  document.getElementById("summary").innerHTML = summaryHtml;
-  pdfContent.innerHTML = summaryHtml; // For PDF generation
+
+  // Render the custom page
+  quizContainer.innerHTML = customHtml;
+  pdfContent.innerHTML = customHtml; // For PDF generation
+
+  // Show/hide notice boxes for period (if present)
+  if (qualificationEntry && qualificationEntry.timeline) {
+    showRelevantNoticeBoxes(
+      qualificationEntry.timeline.start,
+      qualificationEntry.timeline.end,
+      "noticeOpenInternational", // id for open box
+      "noticeClosedInternational" // id for closed box
+    );
+  }
 }
 
 // PDF Download
