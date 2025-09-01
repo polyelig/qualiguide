@@ -1,6 +1,5 @@
 //surveyFlow.js
 
-// --- Helper ---
 function slugify(str) {
   return str
     .toString()
@@ -12,7 +11,6 @@ function slugify(str) {
     .replace(/-+$/, '');            // Trim - from end
 }
 
-// --- Survey Flow ---
 const surveyFlow = [
   {
     id: "transfer",
@@ -23,31 +21,28 @@ const surveyFlow = [
       "I am not a current or former undergraduate"
     ],
     next: (answer) => {
-      if (answer === "Local universities (NUS, NTU, SMU, SIT, SUTD, SUSS, UAS)") return "end_transfer";
-      if (answer === "Overseas tertiary institutions") return "nationality";
-      if (answer === "I am not a current or former undergraduate") return "nationality";
+      if(answer === "Local universities (NUS, NTU, SMU, SIT, SUTD, SUSS, UAS)") return "endTransfer";
+      if(answer === "Overseas tertiary institutions") return "nationality";
+      if(answer === "I am not a current or former undergraduate") return "nationality";
     }
   },
   {
     id: "nationality",
     question: "What is your nationality?",
     options: ["Singapore Citizen/ Singapore Permanent Resident", "Foreigner"],
-    next: (answer, prevAnswer) => {
-      // prevAnswer can be used if needed for logic
-      if (answer === "Singapore Citizen/ Singapore Permanent Resident") return "end_transfer";
-      if (answer === "Foreigner") return "qualification";
+    next: (answer) => {
+      if(answer === "Singapore Citizen/ Singapore Permanent Resident") return "endTransfer";
+      if(answer === "Foreigner") return "qualification";
     }
   },
   {
     id: "qualification",
     question: "What qualification will you be using to apply to the National University of Singapore (NUS)?",
     options: [
-      // Local
       "Singapore-Cambridge GCE A-Level",
       "Polytechnic Diploma from Singapore",
       "NUS High School Diploma",
       "International Baccalaureate (IB) Diploma",
-      // International
       "A-Level (AQA, Cambridge, Edexcel, London, OCR, Oxford International AQA, WJEC)",
       "American High School Diploma",
       "Australian High School",
@@ -81,8 +76,3 @@ const surveyFlow = [
     next: (answer) => "end_" + slugify(answer)
   }
 ];
-
-// --- Export ---
-window.surveyFlow = surveyFlow;
-
-
