@@ -1,6 +1,6 @@
 //main.js
 
-// Remove any query params from the URL (defensive)
+// Remove query params from URL
 if (window.location.search) {
   window.history.replaceState({}, document.title, window.location.pathname);
 }
@@ -13,24 +13,22 @@ const continueBtn = document.getElementById("continueBtn");
 const downloadPdfBtn = document.getElementById("downloadPdfBtn");
 const pdfContent = document.getElementById("pdfContent");
 
-// Renders the current survey step/question
+// Render current question
 function renderQuestion() {
-  const step = surveyFlow[currentStep];
+  const step = window.surveyFlow[currentStep];
   quizContainer.innerHTML = "";
 
   if (!step) return;
 
-  // Question label
   const label = document.createElement("label");
   label.className = "question-label";
   label.textContent = step.question;
   quizContainer.appendChild(label);
 
-  // Render radio group or dropdown
   if (step.id !== "qualification") {
     const optionsList = document.createElement("div");
     optionsList.className = "options-list";
-    step.options.forEach((opt) => {
+    step.options.forEach(opt => {
       const optionLabel = document.createElement("label");
       optionLabel.className = "option";
       const radio = document.createElement("input");
@@ -58,10 +56,10 @@ function renderQuestion() {
   }
 }
 
-// Handle survey progression
+// Handle form submission
 quizForm.addEventListener("submit", function(e) {
   e.preventDefault();
-  const step = surveyFlow[currentStep];
+  const step = window.surveyFlow[currentStep];
   let answer;
   if (step.id !== "qualification") {
     answer = quizForm.querySelector('input[name="userAnswer"]:checked')?.value;
@@ -73,57 +71,60 @@ quizForm.addEventListener("submit", function(e) {
   answers[step.id] = answer;
 
   const nextId = typeof step.next === "function" ? step.next(answer) : step.next;
-  const nextIndex = surveyFlow.findIndex(q => q.id === nextId);
+  const nextIndex = window.surveyFlow.findIndex(q => q.id === nextId);
 
   if (nextIndex !== -1) {
     currentStep = nextIndex;
     renderQuestion();
   } else {
-    showSummary();
+    showFinalPage();
   }
 });
 
-function showSummary() {
+function showFinalPage() {
   quizContainer.innerHTML = "";
   continueBtn.style.display = "none";
   downloadPdfBtn.style.display = "inline-block";
 
   const selectedQualification = answers["qualification"];
-  const qualificationEntry = qualificationsData.find(q => q.name === selectedQualification);
+  const qualificationEntry = window.qualificationsData.find(q => q.name === selectedQualification);
 
   let customHtml = "";
 
-  if (qualificationEntry) {
-    if (qualificationEntry.type === "international") {
-      customHtml = templates.internationalQualificationTemplate({
-        name: qualificationEntry.name,
-        timeline: qualificationEntry.timeline,
-        openPeriodText: qualificationEntry.openPeriodText,
-        closedPeriodText: qualificationEntry.closedPeriodText,
-        resources: qualificationEntry.resources
-      });
-    } else if (qualificationEntry.type === "transfer") {
-      customHtml = templates.transferTemplate({
-        periods: qualificationEntry.periods,
-        timeline: qualificationEntry.timeline,
-        resources: qualificationEntry.resources
-      });
+  try {
+    if (qualificationEntry) {
+      if (qualificationEntry.type === "international") {
+        customHtml = window.templates.internationalQualificationTemplate({
+          name: qualificationEntry.name,
+          timeline: qualificationEntry.timeline,
+          openPeriodText: qualificationEntry.openPeriodText,
+          closedPeriodText: qualificationEntry.closedPeriodText,
+          resources: qualificationEntry.resources
+        });
+      } else if (qualificationEntry.type === "transfer") {
+        customHtml = window.templates.transferTemplate({
+          periods: qualificationEntry.periods,
+          timeline: qualificationEntry.timeline,
+          resources: qualificationEntry.resources
+        });
+      } else {
+        customHtml = window.templates.localQualificationTemplate({
+          qualificationName: qualificationEntry.name,
+          timeline: qualificationEntry.timeline,
+          openPeriodText: qualificationEntry.openPeriodText,
+          closedPeriodText: qualificationEntry.closedPeriodText,
+          resources: qualificationEntry.resources,
+          mtlUrl: qualificationEntry.mtlUrl
+        });
+      }
     } else {
-      // local
-      customHtml = templates.localQualificationTemplate({
-        qualificationName: qualificationEntry.name,
-        timeline: qualificationEntry.timeline,
-        openPeriodText: qualificationEntry.openPeriodText,
-        closedPeriodText: qualificationEntry.closedPeriodText,
-        resources: qualificationEntry.resources,
-        mtlUrl: qualificationEntry.mtlUrl
-      });
+      throw new Error("Qualification not found");
     }
-  } else {
-    // Error page
+  } catch (err) {
     customHtml = `
       <div class="info-card">
-        <p>Sorry for the error! Please check the <a href="https://nus.edu.sg/oam/admissions" target="_blank">NUS Admissions website</a> for more information.</p>
+        <h3>Sorry for the error!</h3>
+        <p>Please check <a href="https://nus.edu.sg/oam/admissions" target="_blank">NUS Admissions Website</a> for more information.</p>
       </div>
     `;
   }
@@ -132,7 +133,7 @@ function showSummary() {
   pdfContent.innerHTML = customHtml;
 }
 
-// PDF Download
+// PDF download
 downloadPdfBtn.addEventListener("click", function() {
   html2pdf().set({
     margin: 0.5,
