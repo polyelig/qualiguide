@@ -224,91 +224,91 @@ const internationalQualifications = [
   {
     id: "indonesian-ujian-nasional-raport",
     name: "Indonesian Ujian Nasional (UN) / Raport",
-    admissionUrl: "https://nus.edu.sg/oam/admissions/international-qualifications/international-qualifications/indian-standard-12-(state-and-other-boards)",
+    admissionUrl: "https://nus.edu.sg/oam/admissions/international-qualifications/international-qualifications/indonesian-ujian-nasional-(un)-raport",
     standardisedTestRequired: false,
     englishRequirementRequired: true
   },
   {
     id: "italian-diploma-di-esame-di-stato",
     name: "Italian Diploma di Esame di Stato",
-    admissionUrl: "https://www.nus.edu.sg/oam/admissions/international-qualifications/italian-diploma-di-esame-di-stato",
+    admissionUrl: "https://nus.edu.sg/oam/admissions/international-qualifications/international-qualifications/italian-diploma-di-esame-di-stato",
     standardisedTestRequired: true,
     englishRequirementRequired: true
   },
   {
     id: "mauritius-high-school-certificate",
     name: "Mauritius High School Certificate",
-    admissionUrl: "https://www.nus.edu.sg/oam/admissions/international-qualifications/mauritius-high-school-certificate",
+    admissionUrl: "https://nus.edu.sg/oam/admissions/international-qualifications/international-qualifications/mauritius-high-school-certificate",
     standardisedTestRequired: false,
     englishRequirementRequired: false
   },
   {
     id: "new-zealand-ncea-level-3",
     name: "New Zealand National Certificate of Education Achievement (NCEA) Level 3",
-    admissionUrl: "https://www.nus.edu.sg/oam/admissions/international-qualifications/ncea",
+    admissionUrl: "https://nus.edu.sg/oam/admissions/international-qualifications/international-qualifications/new-zealand-national-certificate-of-education-achievement-(ncea)",
     standardisedTestRequired: false,
     englishRequirementRequired: false
   },
   {
     id: "oman-thanawiya-amma",
     name: "Oman Thanawiya Amma (Secondary School Leaving Certificate)",
-    admissionUrl: "https://www.nus.edu.sg/oam/admissions/international-qualifications/oman-thanawiya-amma",
+    admissionUrl: "https://nus.edu.sg/oam/admissions/international-qualifications/international-qualifications/oman-thanawiya-amma",
     standardisedTestRequired: false,
     englishRequirementRequired: true
   },
   {
     id: "sijil-tinggi-persekolahan-malaysia-stpm",
     name: "Sijil Tinggi Persekolahan Malaysia (STPM)",
-    admissionUrl: "https://www.nus.edu.sg/oam/admissions/international-qualifications/stpm",
+    admissionUrl: "https://nus.edu.sg/oam/admissions/international-qualifications/international-qualifications/sijil-tinggi-persekolahan-malaysia-(stpm)",
     standardisedTestRequired: false,
     englishRequirementRequired: true
   },
   {
     id: "sri-lanka-a-level",
     name: "Sri Lanka A-Level",
-    admissionUrl: "https://www.nus.edu.sg/oam/admissions/international-qualifications/sri-lanka-a-level",
+    admissionUrl: "https://nus.edu.sg/oam/admissions/international-qualifications/international-qualifications/sri-lanka-a-level",
     standardisedTestRequired: false,
     englishRequirementRequired: true
   },
   {
     id: "swiss-matura",
     name: "Swiss Matura/ Swiss Federal Maturity Certificate",
-    admissionUrl: "https://www.nus.edu.sg/oam/admissions/international-qualifications/swiss-matura",
+    admissionUrl: "https://nus.edu.sg/oam/admissions/international-qualifications/international-qualifications/swiss-matura-swiss-federal-maturity-certificate",
     standardisedTestRequired: true,
     englishRequirementRequired: true
   },
   {
     id: "taiwan-senior-high-school",
     name: "Taiwan Senior High School",
-    admissionUrl: "https://www.nus.edu.sg/oam/admissions/international-qualifications/taiwan-senior-high-school",
+    admissionUrl: "https://nus.edu.sg/oam/admissions/international-qualifications/international-qualifications/taiwan-senior-high-school",
     standardisedTestRequired: true,
     englishRequirementRequired: false
   },
   {
     id: "thailand-mathayom-6",
     name: "Thailand Certificate of Secondary Education (Mathayom 6)",
-    admissionUrl: "https://www.nus.edu.sg/oam/admissions/international-qualifications/thailand-cert-secondary-education",
+    admissionUrl: "https://nus.edu.sg/oam/admissions/international-qualifications/international-qualifications/thailand-certificate-of-secondary-education-(mathayom-6)",
     standardisedTestRequired: false,
     englishRequirementRequired: true
   },
   {
     id: "turkish-high-school",
     name: "Turkish High School",
-    admissionUrl: "https://www.nus.edu.sg/oam/admissions/international-qualifications/turkish-high-school",
+    admissionUrl: "https://nus.edu.sg/oam/admissions/international-qualifications/international-qualifications/turkish-high-school",
     standardisedTestRequired: true,
     englishRequirementRequired: true
   },
   {
     id: "uec",
     name: "Unified Examination Certificate (UEC)",
-    admissionUrl: "https://www.nus.edu.sg/oam/admissions/international-qualifications/uec",
+    admissionUrl: "https://nus.edu.sg/oam/admissions/international-qualifications/international-qualifications/unified-examination-certificate-(uec)",
     standardisedTestRequired: false,
     englishRequirementRequired: true
   },
   {
     id: "vietnam-national-high-school",
     name: "Vietnam National High School Graduation Examination",
-    admissionUrl: "https://www.nus.edu.sg/oam/admissions/international-qualifications/vietnam-national-high-school-graduation-examination",
+    admissionUrl: "https://nus.edu.sg/oam/admissions/international-qualifications/international-qualifications/vietnam-national-high-school-graduation-examination",
     localMsg: "Please log in to the Applicant Portal with your Singpass and apply under the Singapore Citizens / PRs category.",
     foreignMsg: "Please log in to the Applicant Portal with your email account and apply under the International Student category.",
     standardisedTestRequired: false,
@@ -317,7 +317,7 @@ const internationalQualifications = [
   {
     id: "other-high-school-qualifications",
     name: "Other High School Qualifications",
-    admissionUrl: "https://nus.edu.sg/oam/admissions/international-qualifications/other-high-school-qualifications",
+    admissionUrl: "https://nus.edu.sg/oam/admissions/international-qualifications/international-qualifications/other-high-school-qualifications",
     standardisedTestRequired: true,
     englishRequirementRequired: false
   }
@@ -335,3 +335,4 @@ export const qualificationsData = [
   ...localQualificationsData,
   ...internationalQualificationsData
 ];
+
