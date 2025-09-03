@@ -7,7 +7,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const quizForm = document.getElementById("quizForm");
   const continueBtn = document.getElementById("continueBtn");
   const downloadPdfBtn = document.getElementById("downloadPdfBtn");
-  const pdfContent = document.getElementById("pdfContent");
 
   // Track current question index and answers
   let currentStep = 0;
@@ -21,16 +20,15 @@ document.addEventListener("DOMContentLoaded", () => {
     const step = flowMap[stepId];
     if (!step) return;
 
-    // Clear container
     quizContainer.innerHTML = "";
 
-    // Render question
+    // Question
     const questionLabel = document.createElement("div");
     questionLabel.className = "question-label";
     questionLabel.textContent = step.question;
     quizContainer.appendChild(questionLabel);
 
-    // Render options
+    // Options
     const optionsDiv = document.createElement("div");
     optionsDiv.className = "options-list";
 
@@ -50,7 +48,6 @@ document.addEventListener("DOMContentLoaded", () => {
       optionDiv.appendChild(label);
       optionsDiv.appendChild(optionDiv);
 
-      // Allow clicking anywhere
       optionDiv.addEventListener("click", () => {
         input.checked = true;
       });
@@ -58,29 +55,25 @@ document.addEventListener("DOMContentLoaded", () => {
 
     quizContainer.appendChild(optionsDiv);
 
-    // Show/hide continue button
     continueBtn.style.display = "block";
     downloadPdfBtn.style.display = "none";
   }
 
-  function renderEndPage(qualificationName) {
-    // Find qualification object
+  function renderEndPage(qualificationId) {
     const allQuals = [
       ...(window.localQualifications || []),
       ...(window.internationalQualifications || []),
       ...(window.transferQualification ? [window.transferQualification] : [])
     ];
-    const qualification = allQuals.find(q => q.name === qualificationName);
+    const qualification = allQuals.find(q => q.id === qualificationId);
 
     if (!qualification) {
       quizContainer.innerHTML = "<p>Qualification not found.</p>";
       return;
     }
 
-    // Clear container
     quizContainer.innerHTML = "";
 
-    // Determine template
     let html = "";
     switch (qualification.type) {
       case "international":
@@ -97,8 +90,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     quizContainer.innerHTML = html;
-
-    // Show PDF button
     downloadPdfBtn.style.display = "inline-block";
   }
 
@@ -108,30 +99,15 @@ document.addEventListener("DOMContentLoaded", () => {
     const selected = quizForm.userAnswer?.value;
     if (!selected) return alert("Please select an option.");
 
-    // Track answer
     const stepId = window.surveyFlow[currentStep].id;
     answers[stepId] = selected;
 
-    // Determine next step
     const nextStepId = window.surveyFlow[currentStep].next(selected);
 
-    // If nextStepId starts with 'end_', render final page
     if (nextStepId.startsWith("end_")) {
-      const qualSlug = nextStepId.replace("end_", "");
-      // Match by slug
-      const allQuals = [
-        ...(window.localQualifications || []),
-        ...(window.internationalQualifications || []),
-        ...(window.transferQualification ? [window.transferQualification] : [])
-      ];
-      const qualObj = allQuals.find(q => slugify(q.name) === qualSlug);
-      if (qualObj) {
-        renderEndPage(qualObj.name);
-      } else {
-        quizContainer.innerHTML = "<p>Qualification not found.</p>";
-      }
+      const qualId = nextStepId.replace("end_", "");
+      renderEndPage(qualId);
     } else {
-      // Move to next step
       const nextIndex = window.surveyFlow.findIndex(q => q.id === nextStepId);
       if (nextIndex >= 0) currentStep = nextIndex;
       renderStep(window.surveyFlow[currentStep].id);
