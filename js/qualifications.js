@@ -1,4 +1,7 @@
+// -------------------------------
 // qualifications.js
+// -------------------------------
+
 // --- Local Qualifications ---
 const localQualifications = [
   {
@@ -75,7 +78,7 @@ const internationalClosedText = "has closed.";
 
 const internationalQualifications = [
   {
-    id: "a-level-cambridge-edexcel-ocr",
+    id: "a-level-aqa-cambridge-edexcel-london-ocr-oxford-international-aqa-wjec",
     name: "A-Level (AQA, Cambridge, Edexcel, London, OCR, Oxford International AQA, WJEC)",
     type: "international",
     timeline: internationalTimeline,
@@ -96,7 +99,292 @@ const internationalQualifications = [
       { label: "Admission Requirements", url: "https://nus.edu.sg/oam/admissions/international-qualifications/international-qualifications/american-high-school-diploma" }
     ]
   },
-  // … keep the rest in current order …
+  {
+    id: "australian-high-school",
+    name: "Australian High School",
+    type: "international",
+    timeline: internationalTimeline,
+    openPeriodText: internationalOpenText,
+    closedPeriodText: internationalClosedText,
+    resources: [
+      { label: "Admission Requirements", url: "https://nus.edu.sg/oam/admissions/international-qualifications/international-qualifications/australian-high-school" }
+    ]
+  },
+  {
+    id: "brunei-a-level",
+    name: "Brunei A-Level",
+    type: "international",
+    timeline: internationalTimeline,
+    openPeriodText: internationalOpenText,
+    closedPeriodText: internationalClosedText,
+    resources: [
+      { label: "Admission Requirements", url: "https://nus.edu.sg/oam/admissions/international-qualifications/international-qualifications/brunei-a-level" }
+    ]
+  },
+  {
+    id: "canadian-high-school-diploma",
+    name: "Canadian High School Diploma",
+    type: "international",
+    timeline: internationalTimeline,
+    openPeriodText: internationalOpenText,
+    closedPeriodText: internationalClosedText,
+    resources: [
+      { label: "Admission Requirements", url: "https://nus.edu.sg/oam/admissions/international-qualifications/international-qualifications/canadian-high-school-diploma" }
+    ]
+  },
+  {
+    id: "cape",
+    name: "Caribbean Advanced Proficiency Examination (CAPE)",
+    type: "international",
+    timeline: internationalTimeline,
+    openPeriodText: internationalOpenText,
+    closedPeriodText: internationalClosedText,
+    resources: [
+      { label: "Admission Requirements", url: "https://nus.edu.sg/oam/admissions/international-qualifications/international-qualifications/cape" }
+    ]
+  },
+  {
+    id: "danish-studentereksamen",
+    name: "Danish Studentereksamen (Upper Secondary Leaving Examination)",
+    type: "international",
+    timeline: internationalTimeline,
+    openPeriodText: internationalOpenText,
+    closedPeriodText: internationalClosedText,
+    resources: [
+      { label: "Admission Requirements", url: "https://nus.edu.sg/oam/admissions/international-qualifications/international-qualifications/danish-studentereksamen" }
+    ]
+  },
+  {
+    id: "european-baccalaureate",
+    name: "European Baccalaureate Diploma",
+    type: "international",
+    timeline: internationalTimeline,
+    openPeriodText: internationalOpenText,
+    closedPeriodText: internationalClosedText,
+    resources: [
+      { label: "Admission Requirements", url: "https://nus.edu.sg/oam/admissions/international-qualifications/international-qualifications/european-baccalaureate-diploma" }
+    ]
+  },
+  {
+    id: "french-baccalaureate",
+    name: "French Baccalaureate Diploma",
+    type: "international",
+    timeline: internationalTimeline,
+    openPeriodText: internationalOpenText,
+    closedPeriodText: internationalClosedText,
+    resources: [
+      { label: "Admission Requirements", url: "https://nus.edu.sg/oam/admissions/international-qualifications/international-qualifications/french-baccalaureate-diploma" }
+    ]
+  },
+  {
+    id: "gao-kao",
+    name: "Gao Kao / PRC National College Entrance Exam",
+    type: "international",
+    timeline: internationalTimeline,
+    openPeriodText: internationalOpenText,
+    closedPeriodText: internationalClosedText,
+    resources: [
+      { label: "Admission Requirements", url: "https://nus.edu.sg/oam/admissions/international-qualifications/international-qualifications/gao-kao" }
+    ]
+  },
+  {
+    id: "german-abitur",
+    name: "German Abitur",
+    type: "international",
+    timeline: internationalTimeline,
+    openPeriodText: internationalOpenText,
+    closedPeriodText: internationalClosedText,
+    resources: [
+      { label: "Admission Requirements", url: "https://nus.edu.sg/oam/admissions/international-qualifications/international-qualifications/german-abitur" }
+    ]
+  },
+  {
+    id: "hkdse-hong-kong-a-level",
+    name: "Hong Kong Diploma of Secondary Education (HKDSE)/ Hong Kong A-Level",
+    type: "international",
+    timeline: internationalTimeline,
+    openPeriodText: internationalOpenText,
+    closedPeriodText: internationalClosedText,
+    resources: [
+      { label: "Admission Requirements", url: "https://nus.edu.sg/oam/admissions/international-qualifications/international-qualifications/hkdse" }
+    ]
+  },
+  {
+    id: "independent-examinations-board",
+    name: "Independent Examinations Board",
+    type: "international",
+    timeline: internationalTimeline,
+    openPeriodText: internationalOpenText,
+    closedPeriodText: internationalClosedText,
+    resources: [
+      { label: "Admission Requirements", url: "https://nus.edu.sg/oam/admissions/international-qualifications/international-qualifications/independent-examinations-board" }
+    ]
+  },
+  {
+    id: "indian-standard-12-central-isc",
+    name: "Indian Standard 12 (Central & ISC Boards)",
+    type: "international",
+    timeline: internationalTimeline,
+    openPeriodText: internationalOpenText,
+    closedPeriodText: internationalClosedText,
+    resources: [
+      { label: "Admission Requirements", url: "https://nus.edu.sg/oam/admissions/international-qualifications/international-qualifications/indian-standard-12-central-isc" }
+    ]
+  },
+  {
+    id: "indian-standard-12-state-other-boards",
+    name: "Indian Standard 12 (State and other Boards)",
+    type: "international",
+    timeline: internationalTimeline,
+    openPeriodText: internationalOpenText,
+    closedPeriodText: internationalClosedText,
+    resources: [
+      { label: "Admission Requirements", url: "https://nus.edu.sg/oam/admissions/international-qualifications/international-qualifications/indian-standard-12-state" }
+    ]
+  },
+  {
+    id: "indonesian-ujian-nasional",
+    name: "Indonesian Ujian Nasional (UN) / Raport",
+    type: "international",
+    timeline: internationalTimeline,
+    openPeriodText: internationalOpenText,
+    closedPeriodText: internationalClosedText,
+    resources: [
+      { label: "Admission Requirements", url: "https://nus.edu.sg/oam/admissions/international-qualifications/international-qualifications/indonesian-ujian-nasional" }
+    ]
+  },
+  {
+    id: "italian-diploma-di-esame-di-stato",
+    name: "Italian Diploma di Esame di Stato",
+    type: "international",
+    timeline: internationalTimeline,
+    openPeriodText: internationalOpenText,
+    closedPeriodText: internationalClosedText,
+    resources: [
+      { label: "Admission Requirements", url: "https://nus.edu.sg/oam/admissions/international-qualifications/international-qualifications/italian-diploma-di-esame-di-stato" }
+    ]
+  },
+  {
+    id: "mauritius-high-school-certificate",
+    name: "Mauritius High School Certificate",
+    type: "international",
+    timeline: internationalTimeline,
+    openPeriodText: internationalOpenText,
+    closedPeriodText: internationalClosedText,
+    resources: [
+      { label: "Admission Requirements", url: "https://nus.edu.sg/oam/admissions/international-qualifications/international-qualifications/mauritius-high-school-certificate" }
+    ]
+  },
+  {
+    id: "ncea-level-3",
+    name: "New Zealand National Certificate of Education Achievement (NCEA) Level 3",
+    type: "international",
+    timeline: internationalTimeline,
+    openPeriodText: internationalOpenText,
+    closedPeriodText: internationalClosedText,
+    resources: [
+      { label: "Admission Requirements", url: "https://nus.edu.sg/oam/admissions/international-qualifications/international-qualifications/ncea-level-3" }
+    ]
+  },
+  {
+    id: "oman-thanawiya-amma",
+    name: "Oman Thanawiya Amma (Secondary School Leaving Certificate)",
+    type: "international",
+    timeline: internationalTimeline,
+    openPeriodText: internationalOpenText,
+    closedPeriodText: internationalClosedText,
+    resources: [
+      { label: "Admission Requirements", url: "https://nus.edu.sg/oam/admissions/international-qualifications/international-qualifications/oman-thanawiya-amma" }
+    ]
+  },
+  {
+    id: "stpm",
+    name: "Sijil Tinggi Persekolahan Malaysia (STPM)",
+    type: "international",
+    timeline: internationalTimeline,
+    openPeriodText: internationalOpenText,
+    closedPeriodText: internationalClosedText,
+    resources: [
+      { label: "Admission Requirements", url: "https://nus.edu.sg/oam/admissions/international-qualifications/international-qualifications/stpm" }
+    ]
+  },
+  {
+    id: "sri-lanka-a-level",
+    name: "Sri Lanka A-Level",
+    type: "international",
+    timeline: internationalTimeline,
+    openPeriodText: internationalOpenText,
+    closedPeriodText: internationalClosedText,
+    resources: [
+      { label: "Admission Requirements", url: "https://nus.edu.sg/oam/admissions/international-qualifications/international-qualifications/sri-lanka-a-level" }
+    ]
+  },
+  {
+    id: "swiss-matura",
+    name: "Swiss Matura/ Swiss Federal Maturity Certificate",
+    type: "international",
+    timeline: internationalTimeline,
+    openPeriodText: internationalOpenText,
+    closedPeriodText: internationalClosedText,
+    resources: [
+      { label: "Admission Requirements", url: "https://nus.edu.sg/oam/admissions/international-qualifications/international-qualifications/swiss-matura-swiss-federal-maturity-certificate" }
+    ]
+  },
+  {
+    id: "taiwan-senior-high-school",
+    name: "Taiwan Senior High School",
+    type: "international",
+    timeline: internationalTimeline,
+    openPeriodText: internationalOpenText,
+    closedPeriodText: internationalClosedText,
+    resources: [
+      { label: "Admission Requirements", url: "https://nus.edu.sg/oam/admissions/international-qualifications/international-qualifications/taiwan-senior-high-school" }
+    ]
+  },
+  {
+    id: "thailand-mathayom-6",
+    name: "Thailand Certificate of Secondary Education (Mathayom 6)",
+    type: "international",
+    timeline: internationalTimeline,
+    openPeriodText: internationalOpenText,
+    closedPeriodText: internationalClosedText,
+    resources: [
+      { label: "Admission Requirements", url: "https://nus.edu.sg/oam/admissions/international-qualifications/international-qualifications/thailand-mathayom-6" }
+    ]
+  },
+  {
+    id: "turkish-high-school",
+    name: "Turkish High School",
+    type: "international",
+    timeline: internationalTimeline,
+    openPeriodText: internationalOpenText,
+    closedPeriodText: internationalClosedText,
+    resources: [
+      { label: "Admission Requirements", url: "https://nus.edu.sg/oam/admissions/international-qualifications/international-qualifications/turkish-high-school" }
+    ]
+  },
+  {
+    id: "uec",
+    name: "Unified Examination Certificate (UEC)",
+    type: "international",
+    timeline: internationalTimeline,
+    openPeriodText: internationalOpenText,
+    closedPeriodText: internationalClosedText,
+    resources: [
+      { label: "Admission Requirements", url: "https://nus.edu.sg/oam/admissions/international-qualifications/international-qualifications/uec" }
+    ]
+  },
+  {
+    id: "vietnam-national-high-school",
+    name: "Vietnam National High School Graduation Examination",
+    type: "international",
+    timeline: internationalTimeline,
+    openPeriodText: internationalOpenText,
+    closedPeriodText: internationalClosedText,
+    resources: [
+      { label: "Admission Requirements", url: "https://nus.edu.sg/oam/admissions/international-qualifications/international-qualifications/vietnam-national-high-school" }
+    ]
+  },
   {
     id: "other-high-school-qualifications",
     name: "Other High School Qualifications",
