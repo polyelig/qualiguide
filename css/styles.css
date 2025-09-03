@@ -51,20 +51,30 @@ button:disabled {
   cursor: not-allowed;
 }
 
-/* Notice/Info Boxes */
-.notice-box {
+/* Notice Cards */
+.notice-card {
   max-width: 100%;
   margin: 16px 0;
   padding: 16px;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
   text-align: center;
+  font-size: 16px;
+}
+.notice-open {
+  background-color: #f6fff9;
+  border-left: 6px solid #2e7d32;
+}
+.notice-closed {
+  background-color: #fff3f3;
+  border-left: 6px solid #c62828;
+}
+.notice-upcoming {
+  background-color: #f9f9ff;
+  border-left: 6px solid #00437a;
 }
 
-.notice-open { background-color: #ffffff; }
-.notice-closed { background-color: #fff3f3; }
-
-/* General Info Card (used for qualification info blocks) */
+/* General Info Card (used for qualification info blocks & resources) */
 .info-card {
   font-family: inherit;
   text-align: left;
@@ -101,12 +111,13 @@ button:disabled {
 /* Headings in Info Cards */
 .info-card h2,
 .period-card h2,
-.notice-box h2 {
+.notice-card h2 {
   margin: 0 0 10px 0;
   font-size: 18px;
   font-weight: normal;
 }
 
+/* Resource List */
 .resource-list {
   padding-left: 20px;
   font-size: 15px;
@@ -211,7 +222,7 @@ select[name="userAnswer"]:focus {
     font-size: 16px;
     padding: 12px 0;
   }
-  .notice-box,
+  .notice-card,
   .info-card,
   .period-card {
     padding: 12px;
