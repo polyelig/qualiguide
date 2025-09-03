@@ -3,7 +3,7 @@
 // -------------------------------
 
 // COMMON RESOURCES for all qualifications
-window.commonResources = [
+var commonResources = [
   {
     label: "Important Dates",
     url: "https://nus.edu.sg/oam/admissions/important-dates",
@@ -26,7 +26,7 @@ window.commonResources = [
 ];
 
 // CONDITIONAL RESOURCES for international qualifications
-window.conditionalResources = {
+var conditionalResources = {
   standardisedTest: {
     label: "Standardised Test",
     url: "https://nus.edu.sg/oam/docs/default-source/default-document-library/standardised_test.pdf"
@@ -38,7 +38,7 @@ window.conditionalResources = {
 };
 
 // UNIQUE RESOURCES per qualification
-window.uniqueResources = {
+var uniqueResources = {
   // -------------------------------
   // TRANSFER
   // -------------------------------
@@ -267,3 +267,8 @@ window.uniqueResources = {
     }
   ]
 };
+
+// Make global
+window.commonResources = commonResources;
+window.conditionalResources = conditionalResources;
+window.uniqueResources = uniqueResources;
