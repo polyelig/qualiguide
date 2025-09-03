@@ -1,4 +1,6 @@
+// -------------------------------
 // main.js
+// -------------------------------
 
 // Remove query params from URL
 if (window.location.search) {
@@ -19,9 +21,9 @@ function logDebug(...args) {
   if (DEBUG) console.log(...args);
 }
 
-// Utility: find qualification by name
-function getQualificationByName(name) {
-  return window.qualificationsData.find(q => q.name === name);
+// Utility: find qualification by id
+function getQualificationById(id) {
+  return window.qualificationsData.find(q => q.id === id);
 }
 
 // Render current question
@@ -59,12 +61,24 @@ function renderQuestion() {
     select.innerHTML = `<option value="" disabled selected>Select your qualification...</option>`;
     step.options.forEach(opt => {
       const option = document.createElement("option");
-      option.value = opt;
+      option.value = window.surveyFlow[currentStep].id === "qualification" ? slugify(opt) : opt;
       option.textContent = opt;
       select.appendChild(option);
     });
     quizContainer.appendChild(select);
   }
+}
+
+// Slugify function reused from surveyFlow.js
+function slugify(str) {
+  return str
+    .toString()
+    .toLowerCase()
+    .replace(/\s+/g, '-')           // Replace spaces with -
+    .replace(/[()\/,.]+/g, '')      // Remove special characters
+    .replace(/-+/g, '-')            // Collapse dashes
+    .replace(/^-+/, '')             // Trim - from start
+    .replace(/-+$/, '');            // Trim - from end
 }
 
 // Handle form submission
@@ -80,7 +94,8 @@ quizForm.addEventListener("submit", function (e) {
   }
   if (!answer) return;
 
-  answers[step.id] = answer;
+  // Store the answer by id
+  answers[step.id] = step.id === "qualification" ? answer : answer;
 
   const nextId = typeof step.next === "function" ? step.next(answer) : step.next;
   const nextIndex = window.surveyFlow.findIndex(q => q.id === nextId);
@@ -99,8 +114,8 @@ function showFinalPage() {
   continueBtn.style.display = "none";
   downloadPdfBtn.style.display = "inline-block";
 
-  const selectedQualification = answers["qualification"];
-  const qualificationEntry = getQualificationByName(selectedQualification);
+  const selectedQualificationId = answers["qualification"];
+  const qualificationEntry = getQualificationById(selectedQualificationId);
 
   let customHtml = "";
 
