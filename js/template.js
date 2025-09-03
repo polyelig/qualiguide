@@ -1,109 +1,100 @@
+// -------------------------------
 // template.js
+// -------------------------------
 
-// Utility: format date into "D MMM YYYY (Day)" e.g. "3 Feb 2026 (Tue)"
-function formatDate(dateStr) {
-  const options = { day: "numeric", month: "short", year: "numeric", weekday: "short" };
-  return new Date(dateStr).toLocaleDateString("en-SG", options);
+import { commonResources, conditionalResources, uniqueResources } from './resources.js';
+import { qualifications } from './qualifications.js';
+
+// Get today's date
+const today = new Date();
+
+// Utility to format a resource item
+function createResourceItem(resource) {
+  const li = document.createElement("li");
+  li.style.marginBottom = "6px";
+
+  const a = document.createElement("a");
+  a.href = resource.url;
+  a.target = "_blank";
+  a.textContent = resource.label;
+
+  li.appendChild(a);
+
+  if (resource.description) {
+    li.append(` ${resource.description}`);
+  }
+
+  return li;
 }
 
-// Utility: get correct notice card depending on current date
-function getNoticeCard(start, end, displayPeriod) {
-  const today = new Date();
-  const startDate = new Date(start);
-  const endDate = new Date(end);
+// Render resources for a given qualification
+function renderResources(qualificationId, containerId) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = "";
+
+  // Common resources
+  commonResources.forEach(resource => {
+    container.appendChild(createResourceItem(resource));
+  });
+
+  // Conditional resources (from qualifications.js)
+  const qual = qualifications.find(q => q.id === qualificationId);
+  if (!qual) return;
+
+  if (qual.standardisedTest === "Yes") {
+    container.appendChild(createResourceItem(conditionalResources.standardisedTest));
+  }
+  if (qual.englishRequirement === "Yes") {
+    container.appendChild(createResourceItem(conditionalResources.englishRequirement));
+  }
+
+  // Unique resources
+  const unique = uniqueResources[qualificationId] || [];
+  unique.forEach(resource => {
+    container.appendChild(createResourceItem(resource));
+  });
+}
+
+// Render notice card based on timeline
+function renderNoticeCard(qualificationId, noticeContainerId) {
+  const container = document.getElementById(noticeContainerId);
+  container.innerHTML = "";
+
+  const qual = qualifications.find(q => q.id === qualificationId);
+  if (!qual || !qual.timeline) return;
+
+  const startDate = new Date(qual.timeline.start);
+  const endDate = new Date(qual.timeline.end);
+
+  let message = "";
+  let cardClass = "";
 
   if (today < startDate) {
-    return `
-      <div class="notice-card upcoming">
-        <p>Applications have not opened yet.</p>
-        <p>The application period will be from <strong>${displayPeriod}</strong>.</p>
-      </div>
-    `;
+    message = `Application has not started yet. Opens on ${qual.displayPeriod}`;
+    cardClass = "notice-upcoming";
+  } else if (today >= startDate && today <= endDate) {
+    message = `Application period is open: ${qual.displayPeriod}`;
+    cardClass = "notice-open";
+  } else {
+    message = "Application period is closed";
+    cardClass = "notice-closed";
   }
 
-  if (today >= startDate && today <= endDate) {
-    return `
-      <div class="notice-card open">
-        <p>Applications are currently open!</p>
-        <p>Application Period: <strong>${displayPeriod}</strong></p>
-      </div>
-    `;
-  }
+  const noticeCard = document.createElement("div");
+  noticeCard.className = `notice-card ${cardClass}`;
+  noticeCard.textContent = message;
 
-  return `
-    <div class="notice-card closed">
-      <p>The application period is over.</p>
-    </div>
-  `;
+  container.appendChild(noticeCard);
 }
 
-// Local qualifications template
-function localQualificationTemplate(qualification) {
-  return `
-    <div class="qualification-card">
-      <h2>${qualification.name}</h2>
-      ${getNoticeCard(
-        qualification.timeline.start,
-        qualification.timeline.end,
-        qualification.displayPeriod
-      )}
-    </div>
-  `;
+// Render a qualification section
+export function renderQualificationSection(qualificationId, containerId, noticeContainerId) {
+  renderNoticeCard(qualificationId, noticeContainerId);
+  renderResources(qualificationId, containerId);
 }
 
-// International qualifications template
-function internationalQualificationTemplate(qualification) {
-  return `
-    <div class="qualification-card">
-      <h2>${qualification.name}</h2>
-      ${getNoticeCard(
-        qualification.timeline.start,
-        qualification.timeline.end,
-        qualification.displayPeriod
-      )}
-    </div>
-  `;
-}
+// Example usage (replace IDs with your actual HTML container IDs)
+// renderQualificationSection("swiss-matura", "resources-container", "notice-container");
+// renderQualificationSection("stpm", "resources-container", "notice-container");
+// renderQualificationSection("transfer-sem1", "resources-container", "notice-container");
 
-// Transfer qualifications template (handles multiple semesters)
-function transferQualificationTemplate(qualification) {
-  const today = new Date();
-  let notice = "";
-
-  for (const sem of qualification.timeline.semesters) {
-    const startDate = new Date(sem.start);
-    const endDate = new Date(sem.end);
-
-    if (today >= startDate && today <= endDate) {
-      notice = getNoticeCard(sem.start, sem.end, sem.displayPeriod);
-      break;
-    }
-  }
-
-  if (!notice) {
-    // No current open period, check if future or already closed
-    const firstSem = qualification.timeline.semesters[0];
-    const lastSem = qualification.timeline.semesters[qualification.timeline.semesters.length - 1];
-
-    if (today < new Date(firstSem.start)) {
-      notice = `
-        <div class="notice-card upcoming">
-          <p>Applications for transfer have not opened yet.</p>
-        </div>
-      `;
-    } else if (today > new Date(lastSem.end)) {
-      notice = `
-        <div class="notice-card closed">
-          <p>The application period for transfer is over.</p>
-        </div>
-      `;
-    }
-  }
-
-  return `
-    <div class="qualification-card">
-      <h2>${qualification.name}</h2>
-      ${notice}
-    </div>
-  `;
-}
