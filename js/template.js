@@ -2,14 +2,10 @@
 // template.js
 // -------------------------------
 
-// Today's date (for notice card)
+// Get today's date (for notice card)
 const today = new Date();
 
-// -------------------------------
-// Utility functions
-// -------------------------------
-
-// Format a resource <li>
+// Utility: format a resource <li>
 function createResourceItem(resource) {
   const li = document.createElement("li");
   li.style.marginBottom = "6px";
@@ -28,7 +24,7 @@ function createResourceItem(resource) {
   return li;
 }
 
-// Render resources: common + conditional + unique
+// Render resources (merged list: common + conditional + unique)
 function renderResources(qualification) {
   const list = document.createElement("ul");
   list.className = "resource-list";
@@ -40,12 +36,14 @@ function renderResources(qualification) {
     });
   }
 
-  // Conditional resources (for international qualifications)
-  if (qualification.standardisedTest === "Yes" && window.conditionalResources?.standardisedTest) {
-    list.appendChild(createResourceItem(window.conditionalResources.standardisedTest));
-  }
-  if (qualification.englishRequirement === "Yes" && window.conditionalResources?.englishRequirement) {
-    list.appendChild(createResourceItem(window.conditionalResources.englishRequirement));
+  // Conditional resources for international qualifications
+  if (qualification.type === "international") {
+    if (qualification.standardisedTest === "Yes" && window.conditionalResources?.standardisedTest) {
+      list.appendChild(createResourceItem(window.conditionalResources.standardisedTest));
+    }
+    if (qualification.englishRequirement === "Yes" && window.conditionalResources?.englishRequirement) {
+      list.appendChild(createResourceItem(window.conditionalResources.englishRequirement));
+    }
   }
 
   // Unique resources
@@ -57,31 +55,53 @@ function renderResources(qualification) {
   return list;
 }
 
-// Render notice card (open, closed, upcoming)
+// Generate display period text from timeline or periods
+function getDisplayPeriod(qualification) {
+  if (qualification.displayPeriod) return qualification.displayPeriod;
+
+  if (qualification.timeline) {
+    return `${qualification.timeline.start} to ${qualification.timeline.end}`;
+  }
+
+  if (qualification.periods && qualification.periods.length > 0) {
+    return qualification.periods.map(p => `${p.label}: ${p.rangeText}`).join("<br>");
+  }
+
+  return "";
+}
+
+// Notice card (open, closed, upcoming)
 function renderNoticeCard(qualification) {
   let message = "";
   let cardClass = "";
 
-  if (qualification.timeline) {
-    const startDate = new Date(qualification.timeline.start);
-    const endDate = new Date(qualification.timeline.end);
+  // For transfer qualifications, show periods
+  if (qualification.periods && qualification.periods.length > 0) {
+    message = qualification.periods.map(p => `${p.label} — ${p.rangeText}`).join("<br>");
+    cardClass = "notice-upcoming";
+    return `
+      <div class="notice-box ${cardClass}">
+        <h2>Application Notice</h2>
+        <p>${message}</p>
+      </div>
+    `;
+  }
 
-    if (today < startDate) {
-      message = `Application has not started yet. Opens on ${qualification.displayPeriod}`;
-      cardClass = "notice-upcoming";
-    } else if (today >= startDate && today <= endDate) {
-      message = `Application period is open: ${qualification.displayPeriod}`;
-      cardClass = "notice-open";
-    } else {
-      message = "Application period is closed";
-      cardClass = "notice-closed";
-    }
-  } else if (qualification.periods) {
-    // Transfer qualification: show all periods
-    message = qualification.periods
-      .map(p => `${p.label}: ${p.rangeText}`)
-      .join("<br>");
+  if (!qualification.timeline) return "";
+
+  const startDate = new Date(qualification.timeline.start);
+  const endDate = new Date(qualification.timeline.end);
+  const displayPeriod = getDisplayPeriod(qualification);
+
+  if (today < startDate) {
+    message = `Application has not started yet. Opens on ${displayPeriod}`;
+    cardClass = "notice-upcoming";
+  } else if (today >= startDate && today <= endDate) {
+    message = `Application period is open: ${displayPeriod}`;
     cardClass = "notice-open";
+  } else {
+    message = `Application period has closed: ${displayPeriod}`;
+    cardClass = "notice-closed";
   }
 
   return `
@@ -92,7 +112,7 @@ function renderNoticeCard(qualification) {
   `;
 }
 
-// Render login instructions consistently
+// Login instructions
 function renderLoginInstructions(qualification) {
   switch (qualification.type) {
     case "transfer":
@@ -102,7 +122,7 @@ function renderLoginInstructions(qualification) {
           <p>As you have indicated that you are currently studying / have enrolled in / have graduated from a tertiary institution, please log in to the Applicant Portal with your Singpass to proceed with your application as a Transfer candidate.</p>
         </div>
       `;
-
+      
     case "local":
       if (qualification.id === "polytechnic-diploma-singapore") {
         return `
@@ -142,24 +162,46 @@ function renderLoginInstructions(qualification) {
 }
 
 // -------------------------------
-// Generic template for all qualifications
+// Templates
 // -------------------------------
-function genericQualificationTemplate(qualification) {
+window.templates = {};
+
+window.templates.internationalQualificationTemplate = function(qualification) {
   return `
     ${renderNoticeCard(qualification)}
     <div class="info-card">
       <h2>${qualification.name}</h2>
-      ${qualification.timeline ? `<p><strong>Application Timeline:</strong> ${qualification.displayPeriod}</p>` : ""}
+      ${qualification.timeline || qualification.periods ? `<p><strong>Application Timeline:</strong> ${getDisplayPeriod(qualification)}</p>` : ""}
       ${renderLoginInstructions(qualification)}
       <h3>Resources</h3>
       ${renderResources(qualification).outerHTML}
     </div>
   `;
-}
+};
 
-// Assign templates
-window.templates = {
-  internationalQualificationTemplate: genericQualificationTemplate,
-  localQualificationTemplate: genericQualificationTemplate,
-  transferTemplate: genericQualificationTemplate
+window.templates.localQualificationTemplate = function(qualification) {
+  return `
+    ${renderNoticeCard(qualification)}
+    <div class="info-card">
+      <h2>${qualification.name}</h2>
+      ${qualification.timeline ? `<p><strong>Application Timeline:</strong> ${getDisplayPeriod(qualification)}</p>` : ""}
+      ${qualification.mtlUrl ? `<p><a href="${qualification.mtlUrl}" target="_blank">Mother Tongue Language Requirements</a></p>` : ""}
+      ${renderLoginInstructions(qualification)}
+      <h3>Resources</h3>
+      ${renderResources(qualification).outerHTML}
+    </div>
+  `;
+};
+
+window.templates.transferTemplate = function(qualification) {
+  return `
+    ${renderNoticeCard(qualification)}
+    <div class="info-card">
+      <h2>${qualification.name}</h2>
+      ${qualification.periods ? `<p><strong>Application Timeline:</strong><br>${getDisplayPeriod(qualification)}</p>` : ""}
+      ${renderLoginInstructions(qualification)}
+      <h3>Resources</h3>
+      ${renderResources(qualification).outerHTML}
+    </div>
+  `;
 };
