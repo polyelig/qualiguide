@@ -75,31 +75,92 @@ quizForm.addEventListener("submit",function(e){
   else showFinalPage(answer);
 });
 
-// Show final page
-function showFinalPage(selected){
-  quizContainer.innerHTML="";
-  continueBtn.style.display="none";
-  downloadPdfBtn.style.display="inline-block";
+function showFinalPage(selected) {
+  quizContainer.innerHTML = "";
+  continueBtn.style.display = "none";
+  downloadPdfBtn.style.display = "inline-block";
 
-  var qualName = selected || answers["qualification"];
-  if(qualName==="Local universities (NUS, NTU, SMU, SIT, SUTD, SUSS, UAS)" || qualName==="Singapore Citizen/ Singapore Permanent Resident") qualName="Transfer";
-  var qualEntry = getQualificationByName(qualName);
+  const qualName = selected || answers["qualification"];
+  const qualEntry = getQualificationByName(qualName);
 
-  var customHtml="";
-  try{
-    if(!qualEntry) throw new Error("Qualification not found");
+  // -------------------------------
+  // TIMELINE LOGIC
+  // -------------------------------
+  let timelineHTML = "";
 
-    if(qualEntry.type==="international") customHtml = window.templates.internationalQualificationTemplate(qualEntry);
-    else if(qualEntry.type==="transfer") customHtml = window.templates.transferTemplate(qualEntry);
-    else customHtml = window.templates.localQualificationTemplate(qualEntry);
-  } catch(err){
-    console.error(err);
-    customHtml = '<div class="info-card"><h3>Sorry for the error!</h3><p>Please check <a href="https://nus.edu.sg/oam/admissions" target="_blank">NUS Admissions Website</a> for more info.</p></div>';
+  if (qualEntry.type === "transfer" && qualEntry.periods) {
+    // Transfer: multiple periods
+    timelineHTML = qualEntry.periods.map(p => `
+      <div class="period-card open">
+        ${p.label}: ${p.rangeText}
+      </div>
+    `).join("");
+  } else if (qualEntry.timeline) {
+    // Local or international: single timeline
+    const start = qualEntry.timeline.start;
+    const end = qualEntry.timeline.end;
+    if (start && end) {
+      timelineHTML = `
+        <div class="period-card open">
+          Application Timeline: ${start} to ${end}
+        </div>
+      `;
+    } else {
+      timelineHTML = `
+        <div class="period-card closed">
+          Application has not started yet.
+        </div>
+      `;
+    }
+  } else {
+    timelineHTML = `
+      <div class="period-card closed">
+        Application has not started yet.
+      </div>
+    `;
   }
 
-  quizContainer.innerHTML=customHtml;
-  pdfContent.innerHTML=customHtml;
+  // -------------------------------
+  // RESOURCES LOGIC
+  // -------------------------------
+  let resourcesList = qualEntry.resources ? [...qualEntry.resources] : [];
+
+  if (qualEntry.type === "international") {
+    if (qualEntry.standardisedTest === "Yes") {
+      resourcesList.push(window.conditionalResources.standardisedTest);
+    }
+    if (qualEntry.englishRequirement === "Yes") {
+      resourcesList.push(window.conditionalResources.englishRequirement);
+    }
+  }
+
+  const resourcesHTML = resourcesList.length > 0 ? `
+    <div class="info-card">
+      <h2>Resources & Guides</h2>
+      <ul class="resource-list">
+        ${resourcesList.map(r => `<li><a href="${r.url}" target="_blank">${r.label}</a>${r.description ? " " + r.description : ""}</li>`).join("")}
+      </ul>
+    </div>
+  ` : "";
+
+  // -------------------------------
+  // FINAL PAGE HTML
+  // -------------------------------
+  const finalHTML = `
+    <div class="info-card">
+      <h2>Qualification</h2>
+      <p>${qualEntry.fullName || qualEntry.name}</p>
+    </div>
+    <hr class="section-divider">
+    ${timelineHTML}
+    <hr class="section-divider">
+    ${resourcesHTML}
+  `;
+
+  quizContainer.innerHTML = finalHTML;
+  pdfContent.innerHTML = finalHTML;
 }
+
 
 // PDF download
 downloadPdfBtn.addEventListener("click", function(){
@@ -108,3 +169,4 @@ downloadPdfBtn.addEventListener("click", function(){
 
 // Initial render
 renderQuestion();
+
