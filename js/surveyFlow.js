@@ -1,3 +1,7 @@
+// -------------------------------
+// surveyFlow.js
+// -------------------------------
+
 function slugify(str) {
   return str
     .toString()
@@ -9,7 +13,7 @@ function slugify(str) {
     .replace(/-+$/, '');            // Trim - from end
 }
 
-var surveyFlow = [
+const surveyFlow = [
   {
     id: "transfer",
     question: "Are you currently studying in a tertiary institution / have enrolled in / graduated from a tertiary institution?",
@@ -18,7 +22,7 @@ var surveyFlow = [
       "Overseas tertiary institutions",
       "I am not a current or former undergraduate"
     ],
-    next: function(answer) {
+    next: (answer) => {
       if(answer === "Local universities (NUS, NTU, SMU, SIT, SUTD, SUSS, UAS)") return "endTransfer";
       if(answer === "Overseas tertiary institutions") return "nationality";
       if(answer === "I am not a current or former undergraduate") return "nationality";
@@ -28,7 +32,7 @@ var surveyFlow = [
     id: "nationality",
     question: "What is your nationality?",
     options: ["Singapore Citizen/ Singapore Permanent Resident", "Foreigner"],
-    next: function(answer) {
+    next: (answer) => {
       if(answer === "Singapore Citizen/ Singapore Permanent Resident") return "endTransfer";
       if(answer === "Foreigner") return "qualification";
     }
@@ -71,7 +75,7 @@ var surveyFlow = [
       "Vietnam National High School Graduation Examination",
       "Other High School Qualifications"
     ],
-    next: function(answer) { return "end_" + slugify(answer); }
+    next: (answer) => "end_" + slugify(answer)
   }
 ];
 
