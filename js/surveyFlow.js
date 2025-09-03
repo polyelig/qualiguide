@@ -1,20 +1,15 @@
-// -------------------------------
-// surveyFlow.js
-// -------------------------------
-
-// Utility to convert text into a slug (used for generating ids)
 function slugify(str) {
   return str
     .toString()
     .toLowerCase()
     .replace(/\s+/g, '-')           // Replace spaces with -
     .replace(/[()\/,.]+/g, '')      // Remove special characters
-    .replace(/-+/g, '-')            // Collapse multiple dashes
+    .replace(/-+/g, '-')            // Collapse dashes
     .replace(/^-+/, '')             // Trim - from start
     .replace(/-+$/, '');            // Trim - from end
 }
 
-const surveyFlow = [
+var surveyFlow = [
   {
     id: "transfer",
     question: "Are you currently studying in a tertiary institution / have enrolled in / graduated from a tertiary institution?",
@@ -23,19 +18,19 @@ const surveyFlow = [
       "Overseas tertiary institutions",
       "I am not a current or former undergraduate"
     ],
-    next: (answer) => {
-      if (answer === "Local universities (NUS, NTU, SMU, SIT, SUTD, SUSS, UAS)") return "end-transfer";
-      if (answer === "Overseas tertiary institutions") return "nationality";
-      if (answer === "I am not a current or former undergraduate") return "nationality";
+    next: function(answer) {
+      if(answer === "Local universities (NUS, NTU, SMU, SIT, SUTD, SUSS, UAS)") return "endTransfer";
+      if(answer === "Overseas tertiary institutions") return "nationality";
+      if(answer === "I am not a current or former undergraduate") return "nationality";
     }
   },
   {
     id: "nationality",
     question: "What is your nationality?",
     options: ["Singapore Citizen/ Singapore Permanent Resident", "Foreigner"],
-    next: (answer) => {
-      if (answer === "Singapore Citizen/ Singapore Permanent Resident") return "end-transfer";
-      if (answer === "Foreigner") return "qualification";
+    next: function(answer) {
+      if(answer === "Singapore Citizen/ Singapore Permanent Resident") return "endTransfer";
+      if(answer === "Foreigner") return "qualification";
     }
   },
   {
@@ -76,12 +71,8 @@ const surveyFlow = [
       "Vietnam National High School Graduation Examination",
       "Other High School Qualifications"
     ],
-    next: (answer) => {
-      // Use slugify to generate id for the selected qualification
-      return "end-" + slugify(answer);
-    }
+    next: function(answer) { return "end_" + slugify(answer); }
   }
 ];
 
-// Expose globally
 window.surveyFlow = surveyFlow;
