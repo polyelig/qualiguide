@@ -1,53 +1,74 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>NUS Application Quiz</title>
   <link rel="stylesheet" href="css/styles.css">
   <style>
-    /* Minimal styling for demonstration */
-    body { font-family: Arial, sans-serif; padding: 20px; }
-    .question-label { font-weight: bold; margin-bottom: 10px; display: block; }
-    .options-list label { display: block; margin-bottom: 6px; }
-    .info-card { border: 1px solid #ccc; padding: 15px; margin-bottom: 20px; border-radius: 5px; }
-    .notice-box { padding: 15px; border-radius: 5px; margin-bottom: 10px; }
-    .notice-upcoming { background-color: #fffae6; border: 1px solid #ffd700; }
-    .notice-open { background-color: #e6ffed; border: 1px solid #00cc44; }
-    .notice-closed { background-color: #ffe6e6; border: 1px solid #ff3333; }
-    .resource-list { padding-left: 20px; }
+    body, html {
+      height: 100%;
+      margin: 0;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: #f5f5f5;
+    }
+    #quizWrapper {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    #quizContainer {
+      width: 100%;
+      max-width: 600px;
+      background: #fff;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .options-list label {
+      display: block;
+      margin: 8px 0;
+    }
+    .question-label {
+      font-weight: bold;
+      margin-bottom: 15px;
+      display: block;
+    }
+    .info-card, .notice-box {
+      margin-top: 15px;
+      padding: 15px;
+      border-radius: 8px;
+      background: #eef;
+    }
+    #continueBtn, #downloadPdfBtn {
+      margin-top: 20px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    #downloadPdfBtn { display: none; background: #4CAF50; color: white; }
+    #continueBtn { background: #2196F3; color: white; }
   </style>
 </head>
 <body>
+  <div id="quizWrapper">
+    <form id="quizForm">
+      <div id="quizContainer"></div>
+      <button type="submit" id="continueBtn">Continue</button>
+      <button type="button" id="downloadPdfBtn">Download PDF</button>
+    </form>
+    <div id="pdfContent" style="display:none;"></div>
+  </div>
 
-  <h1>NUS Application Quiz</h1>
-
-  <form id="quizForm">
-    <div id="quizContainer"></div>
-    <button type="submit" id="continueBtn">Continue</button>
-  </form>
-
-  <button id="downloadPdfBtn" style="display:none;">Download PDF</button>
-  <div id="pdfContent" style="display:none;"></div>
-
-  <!-- ------------------ JS Scripts ------------------ -->
-  <!-- 1. Qualifications data -->
-  <script src="js/qualifications.js"></script>
-
-  <!-- 2. Survey flow -->
-  <script src="js/surveyFlow.js"></script>
-
-  <!-- 3. Resources data -->
   <script src="js/resources.js"></script>
-
-  <!-- 4. Templates -->
+  <script src="js/qualifications.js"></script>
   <script src="js/template.js"></script>
-
-  <!-- 5. Main logic -->
+  <script src="js/surveyFlow.js"></script>
   <script src="js/main.js"></script>
-
-  <!-- 6. html2pdf library for PDF download -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-
+  <script src="https://rawcdn.githack.com/eKoopmans/html2pdf/master/dist/html2pdf.bundle.js"></script>
 </body>
 </html>
