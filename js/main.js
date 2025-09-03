@@ -1,8 +1,3 @@
-// -------------------------------
-// main.js
-// -------------------------------
-
-// Remove query params from URL
 if(window.location.search) window.history.replaceState({}, document.title, window.location.pathname);
 
 var currentStep = 0;
@@ -113,4 +108,3 @@ downloadPdfBtn.addEventListener("click", function(){
 
 // Initial render
 renderQuestion();
-
