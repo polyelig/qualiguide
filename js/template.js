@@ -2,10 +2,14 @@
 // template.js
 // -------------------------------
 
-// Get today's date (for notice card)
+// Today's date (for notice card)
 const today = new Date();
 
-// Utility: format a resource <li>
+// -------------------------------
+// Utility functions
+// -------------------------------
+
+// Format a resource <li>
 function createResourceItem(resource) {
   const li = document.createElement("li");
   li.style.marginBottom = "6px";
@@ -24,7 +28,7 @@ function createResourceItem(resource) {
   return li;
 }
 
-// Render resources (merged list: common + conditional + unique)
+// Render resources: common + conditional + unique
 function renderResources(qualification) {
   const list = document.createElement("ul");
   list.className = "resource-list";
@@ -36,7 +40,7 @@ function renderResources(qualification) {
     });
   }
 
-  // Conditional resources
+  // Conditional resources (for international qualifications)
   if (qualification.standardisedTest === "Yes" && window.conditionalResources?.standardisedTest) {
     list.appendChild(createResourceItem(window.conditionalResources.standardisedTest));
   }
@@ -53,25 +57,31 @@ function renderResources(qualification) {
   return list;
 }
 
-// Notice card (open, closed, upcoming)
+// Render notice card (open, closed, upcoming)
 function renderNoticeCard(qualification) {
-  if (!qualification.timeline) return "";
-
-  const startDate = new Date(qualification.timeline.start);
-  const endDate = new Date(qualification.timeline.end);
-
   let message = "";
   let cardClass = "";
 
-  if (today < startDate) {
-    message = `Application has not started yet. Opens on ${qualification.displayPeriod}`;
-    cardClass = "notice-upcoming";
-  } else if (today >= startDate && today <= endDate) {
-    message = `Application period is open: ${qualification.displayPeriod}`;
+  if (qualification.timeline) {
+    const startDate = new Date(qualification.timeline.start);
+    const endDate = new Date(qualification.timeline.end);
+
+    if (today < startDate) {
+      message = `Application has not started yet. Opens on ${qualification.displayPeriod}`;
+      cardClass = "notice-upcoming";
+    } else if (today >= startDate && today <= endDate) {
+      message = `Application period is open: ${qualification.displayPeriod}`;
+      cardClass = "notice-open";
+    } else {
+      message = "Application period is closed";
+      cardClass = "notice-closed";
+    }
+  } else if (qualification.periods) {
+    // Transfer qualification: show all periods
+    message = qualification.periods
+      .map(p => `${p.label}: ${p.rangeText}`)
+      .join("<br>");
     cardClass = "notice-open";
-  } else {
-    message = "Application period is closed";
-    cardClass = "notice-closed";
   }
 
   return `
@@ -82,6 +92,7 @@ function renderNoticeCard(qualification) {
   `;
 }
 
+// Render login instructions consistently
 function renderLoginInstructions(qualification) {
   switch (qualification.type) {
     case "transfer":
@@ -91,7 +102,7 @@ function renderLoginInstructions(qualification) {
           <p>As you have indicated that you are currently studying / have enrolled in / have graduated from a tertiary institution, please log in to the Applicant Portal with your Singpass to proceed with your application as a Transfer candidate.</p>
         </div>
       `;
-      
+
     case "local":
       if (qualification.id === "polytechnic-diploma-singapore") {
         return `
@@ -104,7 +115,6 @@ function renderLoginInstructions(qualification) {
           </div>
         `;
       } else {
-        // For Singapore-Cambridge A-Level, NUS High, IB
         return `
           <div class="login-instructions">
             <h3>🖥️ Prospective Applicants</h3>
@@ -115,26 +125,16 @@ function renderLoginInstructions(qualification) {
       }
 
     case "international":
-      // Example for Vietnam National High School (two sets)
-      if (qualification.type === "international") {
-        return `
-          <div class="login-instructions">
-            <h3>🔎 Singapore Citizen / Singapore Permanent Resident / FIN Holders</h3>
-            <p>Please log in to the Applicant Portal with your Singpass and apply under the Singapore Citizens / Singapore Permanent Residents with International Qualifications category to proceed with your application using the ${qualification.name}.</p>
-            <p>📌 Please check if you fulfil the Mother Tongue Language (MTL) requirements.</p>
-            <hr>
-            <h3>🌏 Foreigners (without FIN)</h3>
-            <p>Please log in to the Applicant Portal with your email account and apply under the International Student with International Qualification category to proceed with your application using the ${qualification.name}.</p>
-          </div>
-        `;
-      } else {
-        return `
-          <div class="login-instructions">
-            <h3>🖥️ Prospective Applicants</h3>
-            <p>Please log in to the Applicant Portal with your Singpass to proceed with your application using the ${qualification.name}.</p>
-          </div>
-        `;
-      }
+      return `
+        <div class="login-instructions">
+          <h3>🔎 Singapore Citizen / Singapore Permanent Resident / FIN Holders</h3>
+          <p>Please log in to the Applicant Portal with your Singpass and apply under the Singapore Citizens / Singapore Permanent Residents with International Qualifications category to proceed with your application using the ${qualification.name}.</p>
+          <p>📌 Please check if you fulfil the Mother Tongue Language (MTL) requirements.</p>
+          <hr>
+          <h3>🌏 Foreigners (without FIN)</h3>
+          <p>Please log in to the Applicant Portal with your email account and apply under the International Student with International Qualification category to proceed with your application using the ${qualification.name}.</p>
+        </div>
+      `;
 
     default:
       return "";
@@ -142,11 +142,9 @@ function renderLoginInstructions(qualification) {
 }
 
 // -------------------------------
-// Templates for each qualification type
+// Generic template for all qualifications
 // -------------------------------
-window.templates = {};
-
-window.templates.internationalQualificationTemplate = function(qualification) {
+function genericQualificationTemplate(qualification) {
   return `
     ${renderNoticeCard(qualification)}
     <div class="info-card">
@@ -157,31 +155,11 @@ window.templates.internationalQualificationTemplate = function(qualification) {
       ${renderResources(qualification).outerHTML}
     </div>
   `;
-};
+}
 
-window.templates.localQualificationTemplate = function(qualification) {
-  return `
-    ${renderNoticeCard(qualification)}
-    <div class="info-card">
-      <h2>${qualification.name}</h2>
-      ${qualification.timeline ? `<p><strong>Application Timeline:</strong> ${qualification.displayPeriod}</p>` : ""}
-      ${qualification.mtlUrl ? `<p><a href="${qualification.mtlUrl}" target="_blank">Mother Tongue Language Requirements</a></p>` : ""}
-      ${renderLoginInstructions(qualification)}
-      <h3>Resources</h3>
-      ${renderResources(qualification).outerHTML}
-    </div>
-  `;
-};
-
-window.templates.transferTemplate = function(qualification) {
-  return `
-    ${renderNoticeCard(qualification)}
-    <div class="info-card">
-      <h2>${qualification.name}</h2>
-      ${qualification.timeline ? `<p><strong>Application Timeline:</strong> ${qualification.displayPeriod}</p>` : ""}
-      ${renderLoginInstructions(qualification)}
-      <h3>Resources</h3>
-      ${renderResources(qualification).outerHTML}
-    </div>
-  `;
+// Assign templates
+window.templates = {
+  internationalQualificationTemplate: genericQualificationTemplate,
+  localQualificationTemplate: genericQualificationTemplate,
+  transferTemplate: genericQualificationTemplate
 };
