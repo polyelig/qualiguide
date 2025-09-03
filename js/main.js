@@ -4,102 +4,152 @@
 
 document.addEventListener("DOMContentLoaded", () => {
   const quizContainer = document.getElementById("quizContainer");
+  const quizForm = document.getElementById("quizForm");
   const continueBtn = document.getElementById("continueBtn");
   const downloadPdfBtn = document.getElementById("downloadPdfBtn");
   const pdfContent = document.getElementById("pdfContent");
 
-  // -------------------------------
-  // Helper: Determine Template
-  // -------------------------------
-  function getTemplate(qualification) {
+  // Track current question index and answers
+  let currentStep = 0;
+  const answers = {};
+
+  // Flatten survey flow for easy lookup by ID
+  const flowMap = {};
+  window.surveyFlow.forEach(q => flowMap[q.id] = q);
+
+  function renderStep(stepId) {
+    const step = flowMap[stepId];
+    if (!step) return;
+
+    // Clear container
+    quizContainer.innerHTML = "";
+
+    // Render question
+    const questionLabel = document.createElement("div");
+    questionLabel.className = "question-label";
+    questionLabel.textContent = step.question;
+    quizContainer.appendChild(questionLabel);
+
+    // Render options
+    const optionsDiv = document.createElement("div");
+    optionsDiv.className = "options-list";
+
+    step.options.forEach(opt => {
+      const optionDiv = document.createElement("div");
+      optionDiv.className = "option";
+
+      const input = document.createElement("input");
+      input.type = "radio";
+      input.name = "userAnswer";
+      input.value = opt;
+
+      const label = document.createElement("label");
+      label.textContent = opt;
+
+      optionDiv.appendChild(input);
+      optionDiv.appendChild(label);
+      optionsDiv.appendChild(optionDiv);
+
+      // Allow clicking anywhere
+      optionDiv.addEventListener("click", () => {
+        input.checked = true;
+      });
+    });
+
+    quizContainer.appendChild(optionsDiv);
+
+    // Show/hide continue button
+    continueBtn.style.display = "block";
+    downloadPdfBtn.style.display = "none";
+  }
+
+  function renderEndPage(qualificationName) {
+    // Find qualification object
+    const allQuals = [
+      ...(window.localQualifications || []),
+      ...(window.internationalQualifications || []),
+      ...(window.transferQualification ? [window.transferQualification] : [])
+    ];
+    const qualification = allQuals.find(q => q.name === qualificationName);
+
+    if (!qualification) {
+      quizContainer.innerHTML = "<p>Qualification not found.</p>";
+      return;
+    }
+
+    // Clear container
+    quizContainer.innerHTML = "";
+
+    // Determine template
+    let html = "";
     switch (qualification.type) {
       case "international":
-        return templates.internationalQualificationTemplate;
+        html = window.templates.internationalQualificationTemplate(qualification);
+        break;
       case "local":
-        return templates.localQualificationTemplate;
+        html = window.templates.localQualificationTemplate(qualification);
+        break;
       case "transfer":
-        return templates.transferTemplate;
+        html = window.templates.transferTemplate(qualification);
+        break;
       default:
-        console.warn("Unknown qualification type:", qualification.type);
-        return () => "<p>Unknown Qualification Type</p>";
-    }
-  }
-
-  // -------------------------------
-  // Helper: Ensure displayPeriod is filled
-  // -------------------------------
-  function getDisplayPeriod(qualification) {
-    if (qualification.displayPeriod) return qualification.displayPeriod;
-
-    if (qualification.timeline?.start && qualification.timeline?.end) {
-      return `${qualification.timeline.start} to ${qualification.timeline.end}`;
+        html = `<div class="info-card"><p>${qualification.name}</p></div>`;
     }
 
-    if (qualification.periods?.length) {
-      return qualification.periods.map(p => `${p.label}: ${p.rangeText}`).join("; ");
-    }
+    quizContainer.innerHTML = html;
 
-    return "TBD";
+    // Show PDF button
+    downloadPdfBtn.style.display = "inline-block";
   }
 
-  // -------------------------------
-  // Render selected qualification
-  // -------------------------------
-  function renderQualification(qualification) {
-    // Ensure displayPeriod
-    qualification.displayPeriod = getDisplayPeriod(qualification);
-
-    const templateFunc = getTemplate(qualification);
-    quizContainer.innerHTML = templateFunc(qualification);
-
-    // Optional: attach event listeners if needed
-    downloadPdfBtn.style.display = "inline-block"; // show PDF button after rendering
-  }
-
-  // -------------------------------
-  // Handle Continue button
-  // -------------------------------
-  continueBtn.addEventListener("click", (e) => {
+  // Handle form submission
+  quizForm.addEventListener("submit", (e) => {
     e.preventDefault();
-    // Example: navigate to next quiz page
-    // Replace with your surveyFlow logic
-    if (window.nextPage) {
-      window.nextPage(); // your surveyFlow function
+    const selected = quizForm.userAnswer?.value;
+    if (!selected) return alert("Please select an option.");
+
+    // Track answer
+    const stepId = window.surveyFlow[currentStep].id;
+    answers[stepId] = selected;
+
+    // Determine next step
+    const nextStepId = window.surveyFlow[currentStep].next(selected);
+
+    // If nextStepId starts with 'end_', render final page
+    if (nextStepId.startsWith("end_")) {
+      const qualSlug = nextStepId.replace("end_", "");
+      // Match by slug
+      const allQuals = [
+        ...(window.localQualifications || []),
+        ...(window.internationalQualifications || []),
+        ...(window.transferQualification ? [window.transferQualification] : [])
+      ];
+      const qualObj = allQuals.find(q => slugify(q.name) === qualSlug);
+      if (qualObj) {
+        renderEndPage(qualObj.name);
+      } else {
+        quizContainer.innerHTML = "<p>Qualification not found.</p>";
+      }
     } else {
-      alert("Continue clicked. Implement navigation logic.");
+      // Move to next step
+      const nextIndex = window.surveyFlow.findIndex(q => q.id === nextStepId);
+      if (nextIndex >= 0) currentStep = nextIndex;
+      renderStep(window.surveyFlow[currentStep].id);
     }
   });
 
-  // -------------------------------
-  // Handle Download PDF
-  // -------------------------------
+  // PDF Download
   downloadPdfBtn.addEventListener("click", () => {
-    const element = quizContainer; // render quiz content as PDF
+    const element = quizContainer;
     const opt = {
-      margin:       0.5,
-      filename:     "application_info.pdf",
-      image:        { type: 'jpeg', quality: 0.98 },
-      html2canvas:  { scale: 2 },
-      jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+      margin: 0.5,
+      filename: "nus_application_quiz.pdf",
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: "in", format: "a4", orientation: "portrait" }
     };
     html2pdf().set(opt).from(element).save();
   });
 
-  // -------------------------------
-  // Example: get selected qualification
-  // Replace this with actual selection logic from surveyFlow
-  // -------------------------------
-  const selectedQualificationId = window.selectedQualificationId || "singapore-cambridge-gce-a-level"; // default
-  const allQualifications = [...(window.localQualifications || []), ...(window.internationalQualifications || []), window.transferQualification].flat();
-  const selectedQualification = allQualifications.find(q => q.id === selectedQualificationId);
-
-  if (!selectedQualification) {
-    quizContainer.innerHTML = "<p>No qualification selected.</p>";
-    continueBtn.disabled = true;
-    downloadPdfBtn.style.display = "none";
-    return;
-  }
-
-  // Render
-  renderQualification(selectedQualification);
+  // Render first step
+  renderStep(window.surveyFlow[currentStep].id);
 });
