@@ -84,8 +84,8 @@ const internationalQualifications = [
     timeline: internationalTimeline,
     openPeriodText: internationalOpenText,
     closedPeriodText: internationalClosedText,
-    standardisedTest: Yes,
-    englishRequirement: Yes,
+    standardisedTest: "Yes",
+    englishRequirement: "Yes",
     resources: [
       { label: "Admission Requirements", url: "https://nus.edu.sg/oam/admissions/international-qualifications/international-qualifications/international-'a'-level" }
     ]
@@ -409,4 +409,5 @@ const qualificationsData = [
 
 // Attach to window
 window.qualificationsData = qualificationsData;
+
 
