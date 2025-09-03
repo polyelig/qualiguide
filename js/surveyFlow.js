@@ -18,7 +18,7 @@ var surveyFlow = [
   { id:"nationality", question:"What is your nationality?",
     options:["Singapore Citizen/ Singapore Permanent Resident","Foreigner"],
     next:function(answer){
-      if(answer==="Singapore Citizen/ Singapore Permanent Resident") return "endTransfer";
+      if(answer==="Singapore Citizen/ Singapore Permanent Resident") return "qualification";
       if(answer==="Foreigner") return "qualification";
     }
   },
@@ -29,3 +29,4 @@ var surveyFlow = [
 ];
 
 window.surveyFlow = surveyFlow;
+
