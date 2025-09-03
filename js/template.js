@@ -2,13 +2,14 @@
 // template.js
 // -------------------------------
 
+// Import resources & qualifications
 import { commonResources, conditionalResources, uniqueResources } from './resources.js';
 import { qualifications } from './qualifications.js';
 
-// Get today's date
+// Get today's date (for notice card)
 const today = new Date();
 
-// Utility to format a resource item
+// Utility: format a resource <li>
 function createResourceItem(resource) {
   const li = document.createElement("li");
   li.style.marginBottom = "6px";
@@ -27,74 +28,107 @@ function createResourceItem(resource) {
   return li;
 }
 
-// Render resources for a given qualification
-function renderResources(qualificationId, containerId) {
-  const container = document.getElementById(containerId);
-  container.innerHTML = "";
+// Render resources (merged list: common + conditional + unique)
+function renderResources(qualification) {
+  const list = document.createElement("ul");
+  list.className = "resource-list";
 
   // Common resources
   commonResources.forEach(resource => {
-    container.appendChild(createResourceItem(resource));
+    list.appendChild(createResourceItem(resource));
   });
 
-  // Conditional resources (from qualifications.js)
-  const qual = qualifications.find(q => q.id === qualificationId);
-  if (!qual) return;
-
-  if (qual.standardisedTest === "Yes") {
-    container.appendChild(createResourceItem(conditionalResources.standardisedTest));
+  // Conditional resources
+  if (qualification.standardisedTest === "Yes") {
+    list.appendChild(createResourceItem(conditionalResources.standardisedTest));
   }
-  if (qual.englishRequirement === "Yes") {
-    container.appendChild(createResourceItem(conditionalResources.englishRequirement));
+  if (qualification.englishRequirement === "Yes") {
+    list.appendChild(createResourceItem(conditionalResources.englishRequirement));
   }
 
   // Unique resources
-  const unique = uniqueResources[qualificationId] || [];
+  const unique = uniqueResources[qualification.id] || [];
   unique.forEach(resource => {
-    container.appendChild(createResourceItem(resource));
+    list.appendChild(createResourceItem(resource));
   });
+
+  return list;
 }
 
-// Render notice card based on timeline
-function renderNoticeCard(qualificationId, noticeContainerId) {
-  const container = document.getElementById(noticeContainerId);
-  container.innerHTML = "";
+// Notice card (open, closed, or upcoming)
+function renderNoticeCard(qualification) {
+  if (!qualification.timeline) return "";
 
-  const qual = qualifications.find(q => q.id === qualificationId);
-  if (!qual || !qual.timeline) return;
-
-  const startDate = new Date(qual.timeline.start);
-  const endDate = new Date(qual.timeline.end);
+  const startDate = new Date(qualification.timeline.start);
+  const endDate = new Date(qualification.timeline.end);
 
   let message = "";
   let cardClass = "";
 
   if (today < startDate) {
-    message = `Application has not started yet. Opens on ${qual.displayPeriod}`;
+    message = `Application has not started yet. Opens on ${qualification.displayPeriod}`;
     cardClass = "notice-upcoming";
   } else if (today >= startDate && today <= endDate) {
-    message = `Application period is open: ${qual.displayPeriod}`;
+    message = `Application period is open: ${qualification.displayPeriod}`;
     cardClass = "notice-open";
   } else {
     message = "Application period is closed";
     cardClass = "notice-closed";
   }
 
-  const noticeCard = document.createElement("div");
-  noticeCard.className = `notice-card ${cardClass}`;
-  noticeCard.textContent = message;
-
-  container.appendChild(noticeCard);
+  return `
+    <div class="notice-box ${cardClass}">
+      <h2>Application Notice</h2>
+      <p>${message}</p>
+    </div>
+  `;
 }
 
-// Render a qualification section
-export function renderQualificationSection(qualificationId, containerId, noticeContainerId) {
-  renderNoticeCard(qualificationId, noticeContainerId);
-  renderResources(qualificationId, containerId);
+// -------------------------------
+// Templates for each qualification type
+// -------------------------------
+function internationalQualificationTemplate(qualification) {
+  return `
+    ${renderNoticeCard(qualification)}
+    <div class="info-card">
+      <h2>${qualification.name}</h2>
+      ${qualification.timeline ? `<p><strong>Application Timeline:</strong> ${qualification.displayPeriod}</p>` : ""}
+      <h3>Resources</h3>
+      ${renderResources(qualification).outerHTML}
+    </div>
+  `;
 }
 
-// Example usage (replace IDs with your actual HTML container IDs)
-// renderQualificationSection("swiss-matura", "resources-container", "notice-container");
-// renderQualificationSection("stpm", "resources-container", "notice-container");
-// renderQualificationSection("transfer-sem1", "resources-container", "notice-container");
+function localQualificationTemplate(qualification) {
+  return `
+    ${renderNoticeCard(qualification)}
+    <div class="info-card">
+      <h2>${qualification.name}</h2>
+      ${qualification.timeline ? `<p><strong>Application Timeline:</strong> ${qualification.displayPeriod}</p>` : ""}
+      ${qualification.mtlUrl ? `<p><a href="${qualification.mtlUrl}" target="_blank">Mother Tongue Language Requirements</a></p>` : ""}
+      <h3>Resources</h3>
+      ${renderResources(qualification).outerHTML}
+    </div>
+  `;
+}
 
+function transferTemplate(qualification) {
+  return `
+    ${renderNoticeCard(qualification)}
+    <div class="info-card">
+      <h2>${qualification.name}</h2>
+      ${qualification.timeline ? `<p><strong>Application Timeline:</strong> ${qualification.displayPeriod}</p>` : ""}
+      <h3>Resources</h3>
+      ${renderResources(qualification).outerHTML}
+    </div>
+  `;
+}
+
+// -------------------------------
+// Export templates
+// -------------------------------
+export const templates = {
+  internationalQualificationTemplate,
+  localQualificationTemplate,
+  transferTemplate
+};
