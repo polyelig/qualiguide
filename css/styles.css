@@ -51,7 +51,7 @@ main {
 }
 
 .options-list input[type="radio"], .options-list input[type="checkbox"] {
-  margin-right: 8px;
+  margin-right: 4px;
 }
 
 
@@ -262,4 +262,5 @@ select[name="userAnswer"]:focus {
     border-radius: 8px;
   }
 }
+
 
