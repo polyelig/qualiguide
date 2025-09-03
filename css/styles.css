@@ -1,8 +1,12 @@
+/* -------------------------------
+   Body & Header/Footer
+------------------------------- */
 body {
   font-family: Arial, sans-serif;
   background-color: #f9f9f9;
   color: #333;
   padding: 20px;
+  margin: 0;
 }
 
 .site-header, .site-footer {
@@ -28,8 +32,11 @@ main {
   min-height: calc(100vh - 160px); /* adjust to header + footer height */
 }
 
+/* -------------------------------
+   Container
+------------------------------- */
 .container {
-  max-width: 900px;
+  max-width: 960px; /* slightly wider */
   margin: 40px auto 0 auto;
   background-color: #fff;
   border-radius: 12px;
@@ -37,6 +44,9 @@ main {
   padding: 40px 48px;
 }
 
+/* -------------------------------
+   Question / Options
+------------------------------- */
 .question-box {
   margin-bottom: 20px;
   padding: 16px;
@@ -45,133 +55,10 @@ main {
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
-.options-list .option {
-  display: block;
-  margin-bottom: 8px; /* reduced from 16px or higher */
-}
-
-.options-list input[type="radio"], .options-list input[type="checkbox"] {
-  margin-right: 4px;
-}
-
-
-.section-divider {
-  margin: 24px auto;
-  border: none;
-  border-top: 1px solid #ccc;
-}
-
-.page-break {
-  page-break-before: always;
-  height: 0;
-  margin: 0;
-  padding: 0;
-}
-
-button {
-  background-color: #00437a;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  font-size: 14px;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-top: 10px;
-  transition: background 0.2s;
-}
-button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-/* Notice Cards */
-.notice-card {
-  max-width: 100%;
-  margin: 16px 0;
-  padding: 16px;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  text-align: center;
-  font-size: 16px;
-}
-.notice-open {
-  background-color: #f6fff9;
-  border-left: 6px solid #2e7d32;
-}
-.notice-closed {
-  background-color: #fff3f3;
-  border-left: 6px solid #c62828;
-}
-.notice-upcoming {
-  background-color: #f9f9ff;
-  border-left: 6px solid #00437a;
-}
-
-/* General Info Card (used for qualification info blocks & resources) */
-.info-card {
-  font-family: inherit;
-  text-align: left;
-  padding: 20px;
-  background-color: #f9f9f9;
-  color: #333;
-  max-width: 800px;
-  width: 100%;
-  box-sizing: border-box;
-  line-height: 1.6;
-  border-radius: 12px;
-  margin-bottom: 32px;
-}
-@media (max-width: 900px) {
-  .info-card { max-width: 98vw; }
-}
-@media (max-width: 600px) {
-  .info-card { padding: 10px; border-radius: 8px; }
-}
-
-/* Application Period Cards */
-.period-card {
-  margin: 16px 0;
-  padding: 16px;
-  border-radius: 12px;
-  text-align: center;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  background-color: #fff;
-}
-.period-card.closed {
-  background-color: #fff3f3;
-}
-
-/* Headings in Info Cards */
-.info-card h2,
-.period-card h2,
-.notice-card h2 {
-  margin: 0 0 10px 0;
-  font-size: 18px;
-  font-weight: normal;
-}
-
-/* Resource List */
-.resource-list {
-  padding-left: 20px;
-  font-size: 15px;
-  margin-bottom: 0;
-  text-align: left;
-}
-.resource-list li {
-  margin-bottom: 6px;
-}
-
-/* Inline icon styling for headings (optional) */
-.heading-icon {
-  margin-right: 4px;
-  vertical-align: middle;
-  font-size: 1.1em;
-}
-
 .options-list {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px; /* reduced gap for compact layout */
   margin: 24px 0;
 }
 
@@ -182,9 +69,9 @@ button:disabled {
   background: #fff;
   border: 2px solid #bcc3c8;
   border-radius: 8px;
-  padding: 18px 22px;
+  padding: 16px 20px;
   cursor: pointer;
-  transition: border-color 0.2s;
+  transition: border-color 0.2s, background 0.2s;
 }
 
 .option input[type="radio"] {
@@ -199,83 +86,135 @@ button:disabled {
   background: #f6faff;
 }
 
+/* -------------------------------
+   Select / Drop-down
+------------------------------- */
 select[name="userAnswer"] {
   width: 100%;
   font-size: 18px;
   padding: 14px 18px;
   border-radius: 8px;
-  border: 2px solid #bcc3c8;
+  border: 1px solid #ccc;
   margin: 24px 0;
   background: #fff;
-  transition: border-color 0.2s;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  appearance: none; /* remove default arrow styles */
+  transition: box-shadow 0.2s, border-color 0.2s;
 }
 
 select[name="userAnswer"]:focus {
-  border-color: #00437a;
-  background: #f6faff;
-}
-
-select {
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  padding: 8px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  background: #fff;
-  appearance: none;
-}
-select:focus {
   outline: none;
-  box-shadow: 0 0 5px rgba(33,150,243,0.5);
+  border-color: #00437a;
+  box-shadow: 0 0 6px rgba(33,150,243,0.5);
 }
 
-
+/* -------------------------------
+   Labels
+------------------------------- */
 .question-label {
   font-weight: bold;
   font-size: 22px;
+  display: block;
+  margin-bottom: 12px;
 }
 
 .sub-text {
   color: #555;
   font-size: 16px;
-  margin-top: 8px;
+  margin-top: 6px;
 }
 
-/* Responsive styles for mobile and tablets */
+/* -------------------------------
+   Dividers
+------------------------------- */
+.section-divider {
+  border: none;
+  border-top: 1px solid #ccc;
+  margin: 20px 0;
+}
+
+/* -------------------------------
+   Buttons
+------------------------------- */
+.form-actions {
+  display: flex;
+  justify-content: flex-end; /* move continue button to bottom right */
+  margin-top: 20px;
+}
+
+button {
+  background-color: #00437a;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  font-size: 14px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+#downloadPdfBtn {
+  background-color: #4CAF50;
+  color: white;
+  display: none;
+}
+
+/* -------------------------------
+   Info / Notice / Period Cards
+------------------------------- */
+.info-card, .notice-card, .period-card {
+  padding: 16px;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  margin-bottom: 24px;
+}
+
+.notice-open { border-left: 6px solid #2e7d32; background-color: #f6fff9; }
+.notice-closed { border-left: 6px solid #c62828; background-color: #fff3f3; }
+.notice-upcoming { border-left: 6px solid #00437a; background-color: #f9f9ff; }
+
+.period-card.closed { background-color: #fff3f3; }
+
+.info-card h2,
+.notice-card h2,
+.period-card h2 {
+  margin: 0 0 10px 0;
+  font-size: 18px;
+  font-weight: normal;
+}
+
+.resource-list {
+  padding-left: 20px;
+  font-size: 15px;
+  margin-bottom: 0;
+}
+
+.resource-list li {
+  margin-bottom: 6px;
+}
+
+.heading-icon {
+  margin-right: 4px;
+  vertical-align: middle;
+  font-size: 1.1em;
+}
+
+/* -------------------------------
+   Responsive
+------------------------------- */
 @media (max-width: 900px) {
-  .container {
-    max-width: 98vw;
-    padding: 24px 8vw;
-    border-radius: 8px;
-  }
+  .container { max-width: 98vw; padding: 24px 6vw; border-radius: 8px; }
 }
 
 @media (max-width: 600px) {
-  body {
-    padding: 8px;
-  }
-  .container {
-    max-width: 100vw;
-    padding: 16px 6px;
-    border-radius: 0;
-    box-shadow: none;
-    margin: 16px 0 0 0;
-  }
-  .question-box {
-    padding: 12px;
-    border-radius: 6px;
-  }
-  button {
-    width: 100%;
-    font-size: 16px;
-    padding: 12px 0;
-  }
-  .notice-card,
-  .info-card,
-  .period-card {
-    padding: 12px;
-    border-radius: 8px;
-  }
+  body { padding: 8px; }
+  .container { max-width: 100vw; padding: 16px 6px; border-radius: 0; box-shadow: none; margin: 16px 0 0 0; }
+  .question-box, .info-card, .notice-card, .period-card { padding: 12px; border-radius: 6px; }
+  button { width: 100%; font-size: 16px; padding: 12px 0; }
 }
-
-
-
