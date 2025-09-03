@@ -116,7 +116,7 @@ function renderLoginInstructions(qualification) {
 
     case "international":
       // Example for Vietnam National High School (two sets)
-      if (qualification.id === "vietnam-national-high-school") {
+      if (qualification.type === "international") {
         return `
           <div class="login-instructions">
             <h3>🔎 Singapore Citizen / Singapore Permanent Resident / FIN Holders</h3>
