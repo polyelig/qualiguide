@@ -11,6 +11,7 @@ const localQualifications = [
     timeline: { start: "2026-02-25", end: "2026-03-19" },
     openPeriodText: "25 February 2026 to 19 March 2026",
     closedPeriodText: "has closed.",
+    displayPeriod: "25 February 2026 to 19 March 2026",
     resources: [
       { label: "Admission Requirements", url: "https://nus.edu.sg/oam/admissions/singapore-cambridge-gce-a-level" },
       { label: "Mother Tongue Language (MTL) requirements", url: "https://www.nus.edu.sg/oam/admissions/singapore-citizens-sprs-with-international-qualifications" }
@@ -24,6 +25,7 @@ const localQualifications = [
     timeline: { start: "2025-12-17", end: "2026-02-04" },
     openPeriodText: "17 December 2025 to 4 February 2026",
     closedPeriodText: "has closed.",
+    displayPeriod: "17 December 2025 to 4 February 2026",
     resources: [
       { label: "Admission Requirements", url: "https://nus.edu.sg/oam/admissions/polytechnic-diploma-from-singapore" }
     ]
@@ -35,6 +37,7 @@ const localQualifications = [
     timeline: { start: "2025-12-17", end: "2026-02-02" },
     openPeriodText: "17 December 2025 to 2 January 2026",
     closedPeriodText: "has closed.",
+    displayPeriod: "17 December 2025 to 2 January 2026",
     resources: [
       { label: "Admission Requirements", url: "https://nus.edu.sg/oam/admissions/nus-high-school-diploma" }
     ]
@@ -46,6 +49,7 @@ const localQualifications = [
     timeline: { start: "2025-12-17", end: "2026-03-23" },
     openPeriodText: "17 December 2025 to 23 March 2026",
     closedPeriodText: "has closed.",
+    displayPeriod: "17 December 2025 to 23 March 2026",
     resources: [
       { label: "Admission Requirements", url: "https://nus.edu.sg/oam/admissions/international-baccalaureate-(ib)-diploma" }
     ]
@@ -61,6 +65,7 @@ const transferQualification = {
     { label: "📅 AY2024/2025 Semester 2", rangeText: "29 October 2024 to 12 November 2024" },
     { label: "📅 AY2025/2026 Semester 1", rangeText: "4 February 2025 to 18 February 2025" }
   ],
+  displayPeriod: "Multiple Periods",
   timeline: null,
   resources: [
     { label: "Important Dates", url: "https://nus.edu.sg/oam/admissions/important-dates" },
@@ -70,6 +75,7 @@ const transferQualification = {
     { label: "NUS Transfer Eligibility Chart", url: "https://nus.edu.sg/oam/docs/default-source/transfer-applicants/nus-oam-transfer-eligibility-chart.pdf" }
   ]
 };
+
 
 // --- International Qualifications ---
 const internationalTimeline = { start: "2025-12-03", end: "2026-02-23" };
@@ -84,6 +90,7 @@ const internationalQualifications = [
     timeline: internationalTimeline,
     openPeriodText: internationalOpenText,
     closedPeriodText: internationalClosedText,
+    displayPeriod: internationalOpenText, 
     standardisedTest: "Yes",
     englishRequirement: "No",
     resources: [
@@ -97,6 +104,7 @@ const internationalQualifications = [
     timeline: internationalTimeline,
     openPeriodText: internationalOpenText,
     closedPeriodText: internationalClosedText,
+    displayPeriod: internationalOpenText,
     standardisedTest: "Yes",
     englishRequirement: "No",
     resources: [
@@ -110,6 +118,7 @@ const internationalQualifications = [
     timeline: internationalTimeline,
     openPeriodText: internationalOpenText,
     closedPeriodText: internationalClosedText,
+    displayPeriod: internationalOpenText,
     standardisedTest: "No",
     englishRequirement: "Yes",
     resources: [
@@ -123,6 +132,7 @@ const internationalQualifications = [
     timeline: internationalTimeline,
     openPeriodText: internationalOpenText,
     closedPeriodText: internationalClosedText,
+    displayPeriod: internationalOpenText,
     standardisedTest: "Yes",
     englishRequirement: "No",
     resources: [
@@ -136,6 +146,7 @@ const internationalQualifications = [
     timeline: internationalTimeline,
     openPeriodText: internationalOpenText,
     closedPeriodText: internationalClosedText,
+    displayPeriod: internationalOpenText,
     standardisedTest: "Yes",
     englishRequirement: "Yes",
     resources: [
@@ -149,6 +160,7 @@ const internationalQualifications = [
     timeline: internationalTimeline,
     openPeriodText: internationalOpenText,
     closedPeriodText: internationalClosedText,
+    displayPeriod: internationalOpenText,
     standardisedTest: "Yes",
     englishRequirement: "No",
     resources: [
@@ -162,6 +174,7 @@ const internationalQualifications = [
     timeline: internationalTimeline,
     openPeriodText: internationalOpenText,
     closedPeriodText: internationalClosedText,
+    displayPeriod: internationalOpenText,
     standardisedTest: "Yes",
     englishRequirement: "Yes",
     resources: [
@@ -175,6 +188,7 @@ const internationalQualifications = [
     timeline: internationalTimeline,
     openPeriodText: internationalOpenText,
     closedPeriodText: internationalClosedText,
+    displayPeriod: internationalOpenText,
     standardisedTest: "Yes",
     englishRequirement: "Yes",
     resources: [
@@ -188,6 +202,7 @@ const internationalQualifications = [
     timeline: internationalTimeline,
     openPeriodText: internationalOpenText,
     closedPeriodText: internationalClosedText,
+    displayPeriod: internationalOpenText,
     standardisedTest: "Yes",
     englishRequirement: "Yes",
     resources: [
@@ -201,6 +216,7 @@ const internationalQualifications = [
     timeline: internationalTimeline,
     openPeriodText: internationalOpenText,
     closedPeriodText: internationalClosedText,
+    displayPeriod: internationalOpenText,
     standardisedTest: "No",
     englishRequirement: "Yes",
     resources: [
@@ -214,6 +230,7 @@ const internationalQualifications = [
     timeline: internationalTimeline,
     openPeriodText: internationalOpenText,
     closedPeriodText: internationalClosedText,
+    displayPeriod: internationalOpenText,
     standardisedTest: "Yes",
     englishRequirement: "Yes",
     resources: [
@@ -221,12 +238,13 @@ const internationalQualifications = [
     ]
   },
   {
-    id: "hkdse-hong-kong-a-level",
+    id: "hkdse",
     name: "Hong Kong Diploma of Secondary Education (HKDSE)/ Hong Kong A-Level",
     type: "international",
     timeline: internationalTimeline,
     openPeriodText: internationalOpenText,
     closedPeriodText: internationalClosedText,
+    displayPeriod: internationalOpenText,
     standardisedTest: "No",
     englishRequirement: "No",
     resources: [
@@ -240,6 +258,7 @@ const internationalQualifications = [
     timeline: internationalTimeline,
     openPeriodText: internationalOpenText,
     closedPeriodText: internationalClosedText,
+    displayPeriod: internationalOpenText,
     standardisedTest: "No",
     englishRequirement: "No",
     resources: [
@@ -253,6 +272,7 @@ const internationalQualifications = [
     timeline: internationalTimeline,
     openPeriodText: internationalOpenText,
     closedPeriodText: internationalClosedText,
+    displayPeriod: internationalOpenText,
     standardisedTest: "No",
     englishRequirement: "No",
     resources: [
@@ -260,12 +280,13 @@ const internationalQualifications = [
     ]
   },
   {
-    id: "indian-standard-12-state-other-boards",
+    id: "indian-standard-12-state",
     name: "Indian Standard 12 (State and other Boards)",
     type: "international",
     timeline: internationalTimeline,
     openPeriodText: internationalOpenText,
     closedPeriodText: internationalClosedText,
+    displayPeriod: internationalOpenText,
     standardisedTest: "Yes",
     englishRequirement: "No",
     resources: [
@@ -279,6 +300,7 @@ const internationalQualifications = [
     timeline: internationalTimeline,
     openPeriodText: internationalOpenText,
     closedPeriodText: internationalClosedText,
+    displayPeriod: internationalOpenText,
     standardisedTest: "No",
     englishRequirement: "Yes",
     resources: [
@@ -292,6 +314,7 @@ const internationalQualifications = [
     timeline: internationalTimeline,
     openPeriodText: internationalOpenText,
     closedPeriodText: internationalClosedText,
+    displayPeriod: internationalOpenText,
     standardisedTest: "Yes",
     englishRequirement: "Yes",
     resources: [
@@ -305,6 +328,7 @@ const internationalQualifications = [
     timeline: internationalTimeline,
     openPeriodText: internationalOpenText,
     closedPeriodText: internationalClosedText,
+    displayPeriod: internationalOpenText,
     standardisedTest: "No",
     englishRequirement: "No",
     resources: [
@@ -318,6 +342,7 @@ const internationalQualifications = [
     timeline: internationalTimeline,
     openPeriodText: internationalOpenText,
     closedPeriodText: internationalClosedText,
+    displayPeriod: internationalOpenText,
     standardisedTest: "No",
     englishRequirement: "No",
     resources: [
@@ -331,6 +356,7 @@ const internationalQualifications = [
     timeline: internationalTimeline,
     openPeriodText: internationalOpenText,
     closedPeriodText: internationalClosedText,
+    displayPeriod: internationalOpenText,
     standardisedTest: "No",
     englishRequirement: "Yes",
     resources: [
@@ -344,6 +370,7 @@ const internationalQualifications = [
     timeline: internationalTimeline,
     openPeriodText: internationalOpenText,
     closedPeriodText: internationalClosedText,
+    displayPeriod: internationalOpenText,
     standardisedTest: "No",
     englishRequirement: "Yes",
     resources: [
@@ -357,6 +384,7 @@ const internationalQualifications = [
     timeline: internationalTimeline,
     openPeriodText: internationalOpenText,
     closedPeriodText: internationalClosedText,
+    displayPeriod: internationalOpenText,
     standardisedTest: "No",
     englishRequirement: "Yes",
     resources: [
@@ -370,6 +398,7 @@ const internationalQualifications = [
     timeline: internationalTimeline,
     openPeriodText: internationalOpenText,
     closedPeriodText: internationalClosedText,
+    displayPeriod: internationalOpenText,
     standardisedTest: "Yes",
     englishRequirement: "Yes",
     resources: [
@@ -383,6 +412,7 @@ const internationalQualifications = [
     timeline: internationalTimeline,
     openPeriodText: internationalOpenText,
     closedPeriodText: internationalClosedText,
+    displayPeriod: internationalOpenText,
     standardisedTest: "Yes",
     englishRequirement: "No",
     resources: [
@@ -396,6 +426,7 @@ const internationalQualifications = [
     timeline: internationalTimeline,
     openPeriodText: internationalOpenText,
     closedPeriodText: internationalClosedText,
+    displayPeriod: internationalOpenText,
     standardisedTest: "No",
     englishRequirement: "Yes",
     resources: [
@@ -409,6 +440,7 @@ const internationalQualifications = [
     timeline: internationalTimeline,
     openPeriodText: internationalOpenText,
     closedPeriodText: internationalClosedText,
+    displayPeriod: internationalOpenText,
     standardisedTest: "Yes",
     englishRequirement: "Yes",
     resources: [
@@ -422,6 +454,7 @@ const internationalQualifications = [
     timeline: internationalTimeline,
     openPeriodText: internationalOpenText,
     closedPeriodText: internationalClosedText,
+    displayPeriod: internationalOpenText,
     standardisedTest: "No",
     englishRequirement: "Yes",
     resources: [
@@ -435,6 +468,8 @@ const internationalQualifications = [
     timeline: internationalTimeline,
     openPeriodText: internationalOpenText,
     closedPeriodText: internationalClosedText,
+    displayPeriod: internationalOpenText,
+    displayPeriod: internationalOpenText,
     standardisedTest: "No",
     englishRequirement: "Yes",
     resources: [
@@ -442,12 +477,14 @@ const internationalQualifications = [
     ]
   },
   {
-    id: "other-high-school-qualifications",
+    id: "other-high-school",
     name: "Other High School Qualifications",
     type: "international",
     timeline: internationalTimeline,
     openPeriodText: internationalOpenText,
     closedPeriodText: internationalClosedText,
+    displayPeriod: internationalOpenText,
+    displayPeriod: internationalOpenText,
     standardisedTest: "Yes",
     englishRequirement: "No",
     resources: [
@@ -465,6 +502,7 @@ const qualificationsData = [
 
 // Attach to window
 window.qualificationsData = qualificationsData;
+
 
 
 
