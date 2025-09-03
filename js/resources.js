@@ -39,6 +39,9 @@ export const conditionalResources = {
 
 // UNIQUE RESOURCES per qualification
 export const uniqueResources = {
+  // -------------------------------
+  // TRANSFER
+  // -------------------------------
   transfer: [
     {
       label: "NUS Transfer Eligibility Chart",
@@ -49,6 +52,10 @@ export const uniqueResources = {
       url: "https://nus.edu.sg/oam/admissions/application-guides-sample-forms"
     }
   ],
+
+  // -------------------------------
+  // LOCAL QUALIFICATIONS (SINGAPORE)
+  // -------------------------------
   "singapore-cambridge-gce-a-level": [
     {
       label: "Singapore-Cambridge GCE A-Level Admission Requirements",
@@ -81,7 +88,10 @@ export const uniqueResources = {
       url: "https://www.nus.edu.sg/oam/admissions/international-baccalaureate-(ib)-diploma"
     }
   ],
-  // International qualifications example
+
+  // -------------------------------
+  // INTERNATIONAL QUALIFICATIONS
+  // -------------------------------
   "a-level-all-boards": [
     {
       label: "A-Level Admission Requirements",
