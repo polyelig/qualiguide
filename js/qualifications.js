@@ -85,7 +85,7 @@ const internationalQualifications = [
     openPeriodText: internationalOpenText,
     closedPeriodText: internationalClosedText,
     standardisedTest: "Yes",
-    englishRequirement: "Yes",
+    englishRequirement: "No",
     resources: [
       { label: "Admission Requirements", url: "https://nus.edu.sg/oam/admissions/international-qualifications/international-qualifications/international-'a'-level" }
     ]
@@ -97,6 +97,8 @@ const internationalQualifications = [
     timeline: internationalTimeline,
     openPeriodText: internationalOpenText,
     closedPeriodText: internationalClosedText,
+    standardisedTest: "Yes",
+    englishRequirement: "No",
     resources: [
       { label: "Admission Requirements", url: "https://nus.edu.sg/oam/admissions/international-qualifications/international-qualifications/american-high-school-diploma" }
     ]
@@ -108,6 +110,8 @@ const internationalQualifications = [
     timeline: internationalTimeline,
     openPeriodText: internationalOpenText,
     closedPeriodText: internationalClosedText,
+    standardisedTest: "No",
+    englishRequirement: "Yes",
     resources: [
       { label: "Admission Requirements", url: "https://nus.edu.sg/oam/admissions/international-qualifications/international-qualifications/australian-high-school" }
     ]
@@ -119,6 +123,8 @@ const internationalQualifications = [
     timeline: internationalTimeline,
     openPeriodText: internationalOpenText,
     closedPeriodText: internationalClosedText,
+    standardisedTest: "Yes",
+    englishRequirement: "No",
     resources: [
       { label: "Admission Requirements", url: "https://nus.edu.sg/oam/admissions/international-qualifications/international-qualifications/brunei-a-level" }
     ]
@@ -130,6 +136,8 @@ const internationalQualifications = [
     timeline: internationalTimeline,
     openPeriodText: internationalOpenText,
     closedPeriodText: internationalClosedText,
+    standardisedTest: "Yes",
+    englishRequirement: "Yes",
     resources: [
       { label: "Admission Requirements", url: "https://nus.edu.sg/oam/admissions/international-qualifications/international-qualifications/canadian-high-school-diploma" }
     ]
@@ -141,6 +149,8 @@ const internationalQualifications = [
     timeline: internationalTimeline,
     openPeriodText: internationalOpenText,
     closedPeriodText: internationalClosedText,
+    standardisedTest: "Yes",
+    englishRequirement: "No",
     resources: [
       { label: "Admission Requirements", url: "https://nus.edu.sg/oam/admissions/international-qualifications/international-qualifications/cape" }
     ]
@@ -152,6 +162,8 @@ const internationalQualifications = [
     timeline: internationalTimeline,
     openPeriodText: internationalOpenText,
     closedPeriodText: internationalClosedText,
+    standardisedTest: "Yes",
+    englishRequirement: "Yes",
     resources: [
       { label: "Admission Requirements", url: "https://nus.edu.sg/oam/admissions/international-qualifications/international-qualifications/danish-studentereksamen" }
     ]
@@ -163,6 +175,8 @@ const internationalQualifications = [
     timeline: internationalTimeline,
     openPeriodText: internationalOpenText,
     closedPeriodText: internationalClosedText,
+    standardisedTest: "Yes",
+    englishRequirement: "Yes",
     resources: [
       { label: "Admission Requirements", url: "https://nus.edu.sg/oam/admissions/international-qualifications/international-qualifications/european-baccalaureate-diploma" }
     ]
@@ -174,6 +188,8 @@ const internationalQualifications = [
     timeline: internationalTimeline,
     openPeriodText: internationalOpenText,
     closedPeriodText: internationalClosedText,
+    standardisedTest: "Yes",
+    englishRequirement: "Yes",
     resources: [
       { label: "Admission Requirements", url: "https://nus.edu.sg/oam/admissions/international-qualifications/international-qualifications/french-baccalaureate-diploma" }
     ]
@@ -185,6 +201,8 @@ const internationalQualifications = [
     timeline: internationalTimeline,
     openPeriodText: internationalOpenText,
     closedPeriodText: internationalClosedText,
+    standardisedTest: "No",
+    englishRequirement: "Yes",
     resources: [
       { label: "Admission Requirements", url: "https://nus.edu.sg/oam/admissions/international-qualifications/international-qualifications/gao-kao" }
     ]
@@ -196,6 +214,8 @@ const internationalQualifications = [
     timeline: internationalTimeline,
     openPeriodText: internationalOpenText,
     closedPeriodText: internationalClosedText,
+    standardisedTest: "Yes",
+    englishRequirement: "Yes",
     resources: [
       { label: "Admission Requirements", url: "https://nus.edu.sg/oam/admissions/international-qualifications/international-qualifications/german-abitur" }
     ]
@@ -207,6 +227,8 @@ const internationalQualifications = [
     timeline: internationalTimeline,
     openPeriodText: internationalOpenText,
     closedPeriodText: internationalClosedText,
+    standardisedTest: "No",
+    englishRequirement: "No",
     resources: [
       { label: "Admission Requirements", url: "https://nus.edu.sg/oam/admissions/international-qualifications/international-qualifications/hkdse" }
     ]
@@ -218,6 +240,8 @@ const internationalQualifications = [
     timeline: internationalTimeline,
     openPeriodText: internationalOpenText,
     closedPeriodText: internationalClosedText,
+    standardisedTest: "No",
+    englishRequirement: "No",
     resources: [
       { label: "Admission Requirements", url: "https://nus.edu.sg/oam/admissions/international-qualifications/international-qualifications/independent-examinations-board" }
     ]
@@ -229,6 +253,8 @@ const internationalQualifications = [
     timeline: internationalTimeline,
     openPeriodText: internationalOpenText,
     closedPeriodText: internationalClosedText,
+    standardisedTest: "No",
+    englishRequirement: "No",
     resources: [
       { label: "Admission Requirements", url: "https://nus.edu.sg/oam/admissions/international-qualifications/international-qualifications/indian-standard-12-central-isc" }
     ]
@@ -240,6 +266,8 @@ const internationalQualifications = [
     timeline: internationalTimeline,
     openPeriodText: internationalOpenText,
     closedPeriodText: internationalClosedText,
+    standardisedTest: "Yes",
+    englishRequirement: "No",
     resources: [
       { label: "Admission Requirements", url: "https://nus.edu.sg/oam/admissions/international-qualifications/international-qualifications/indian-standard-12-state" }
     ]
@@ -251,6 +279,8 @@ const internationalQualifications = [
     timeline: internationalTimeline,
     openPeriodText: internationalOpenText,
     closedPeriodText: internationalClosedText,
+    standardisedTest: "No",
+    englishRequirement: "Yes",
     resources: [
       { label: "Admission Requirements", url: "https://nus.edu.sg/oam/admissions/international-qualifications/international-qualifications/indonesian-ujian-nasional" }
     ]
@@ -262,6 +292,8 @@ const internationalQualifications = [
     timeline: internationalTimeline,
     openPeriodText: internationalOpenText,
     closedPeriodText: internationalClosedText,
+    standardisedTest: "Yes",
+    englishRequirement: "Yes",
     resources: [
       { label: "Admission Requirements", url: "https://nus.edu.sg/oam/admissions/international-qualifications/international-qualifications/italian-diploma-di-esame-di-stato" }
     ]
@@ -273,6 +305,8 @@ const internationalQualifications = [
     timeline: internationalTimeline,
     openPeriodText: internationalOpenText,
     closedPeriodText: internationalClosedText,
+    standardisedTest: "No",
+    englishRequirement: "No",
     resources: [
       { label: "Admission Requirements", url: "https://nus.edu.sg/oam/admissions/international-qualifications/international-qualifications/mauritius-high-school-certificate" }
     ]
@@ -284,6 +318,8 @@ const internationalQualifications = [
     timeline: internationalTimeline,
     openPeriodText: internationalOpenText,
     closedPeriodText: internationalClosedText,
+    standardisedTest: "No",
+    englishRequirement: "No",
     resources: [
       { label: "Admission Requirements", url: "https://nus.edu.sg/oam/admissions/international-qualifications/international-qualifications/ncea-level-3" }
     ]
@@ -295,6 +331,8 @@ const internationalQualifications = [
     timeline: internationalTimeline,
     openPeriodText: internationalOpenText,
     closedPeriodText: internationalClosedText,
+    standardisedTest: "No",
+    englishRequirement: "Yes",
     resources: [
       { label: "Admission Requirements", url: "https://nus.edu.sg/oam/admissions/international-qualifications/international-qualifications/oman-thanawiya-amma" }
     ]
@@ -306,6 +344,8 @@ const internationalQualifications = [
     timeline: internationalTimeline,
     openPeriodText: internationalOpenText,
     closedPeriodText: internationalClosedText,
+    standardisedTest: "No",
+    englishRequirement: "Yes",
     resources: [
       { label: "Admission Requirements", url: "https://nus.edu.sg/oam/admissions/international-qualifications/international-qualifications/stpm" }
     ]
@@ -317,6 +357,8 @@ const internationalQualifications = [
     timeline: internationalTimeline,
     openPeriodText: internationalOpenText,
     closedPeriodText: internationalClosedText,
+    standardisedTest: "No",
+    englishRequirement: "Yes",
     resources: [
       { label: "Admission Requirements", url: "https://nus.edu.sg/oam/admissions/international-qualifications/international-qualifications/sri-lanka-a-level" }
     ]
@@ -328,6 +370,8 @@ const internationalQualifications = [
     timeline: internationalTimeline,
     openPeriodText: internationalOpenText,
     closedPeriodText: internationalClosedText,
+    standardisedTest: "Yes",
+    englishRequirement: "Yes",
     resources: [
       { label: "Admission Requirements", url: "https://nus.edu.sg/oam/admissions/international-qualifications/international-qualifications/swiss-matura-swiss-federal-maturity-certificate" }
     ]
@@ -339,6 +383,8 @@ const internationalQualifications = [
     timeline: internationalTimeline,
     openPeriodText: internationalOpenText,
     closedPeriodText: internationalClosedText,
+    standardisedTest: "Yes",
+    englishRequirement: "No",
     resources: [
       { label: "Admission Requirements", url: "https://nus.edu.sg/oam/admissions/international-qualifications/international-qualifications/taiwan-senior-high-school" }
     ]
@@ -350,6 +396,8 @@ const internationalQualifications = [
     timeline: internationalTimeline,
     openPeriodText: internationalOpenText,
     closedPeriodText: internationalClosedText,
+    standardisedTest: "No",
+    englishRequirement: "Yes",
     resources: [
       { label: "Admission Requirements", url: "https://nus.edu.sg/oam/admissions/international-qualifications/international-qualifications/thailand-mathayom-6" }
     ]
@@ -361,6 +409,8 @@ const internationalQualifications = [
     timeline: internationalTimeline,
     openPeriodText: internationalOpenText,
     closedPeriodText: internationalClosedText,
+    standardisedTest: "Yes",
+    englishRequirement: "Yes",
     resources: [
       { label: "Admission Requirements", url: "https://nus.edu.sg/oam/admissions/international-qualifications/international-qualifications/turkish-high-school" }
     ]
@@ -372,6 +422,8 @@ const internationalQualifications = [
     timeline: internationalTimeline,
     openPeriodText: internationalOpenText,
     closedPeriodText: internationalClosedText,
+    standardisedTest: "No",
+    englishRequirement: "Yes",
     resources: [
       { label: "Admission Requirements", url: "https://nus.edu.sg/oam/admissions/international-qualifications/international-qualifications/uec" }
     ]
@@ -383,6 +435,8 @@ const internationalQualifications = [
     timeline: internationalTimeline,
     openPeriodText: internationalOpenText,
     closedPeriodText: internationalClosedText,
+    standardisedTest: "No",
+    englishRequirement: "Yes",
     resources: [
       { label: "Admission Requirements", url: "https://nus.edu.sg/oam/admissions/international-qualifications/international-qualifications/vietnam-national-high-school" }
     ]
@@ -394,6 +448,8 @@ const internationalQualifications = [
     timeline: internationalTimeline,
     openPeriodText: internationalOpenText,
     closedPeriodText: internationalClosedText,
+    standardisedTest: "Yes",
+    englishRequirement: "No",
     resources: [
       { label: "Admission Requirements", url: "https://nus.edu.sg/oam/admissions/international-qualifications/international-qualifications/other-high-school-qualifications" }
     ]
@@ -409,5 +465,6 @@ const qualificationsData = [
 
 // Attach to window
 window.qualificationsData = qualificationsData;
+
 
 
