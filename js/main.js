@@ -1,4 +1,4 @@
-//main.js
+// main.js
 
 // Remove query params from URL
 if (window.location.search) {
@@ -12,6 +12,17 @@ const quizForm = document.getElementById("quizForm");
 const continueBtn = document.getElementById("continueBtn");
 const downloadPdfBtn = document.getElementById("downloadPdfBtn");
 const pdfContent = document.getElementById("pdfContent");
+
+// Utility: logging toggle
+const DEBUG = false;
+function logDebug(...args) {
+  if (DEBUG) console.log(...args);
+}
+
+// Utility: find qualification by name
+function getQualificationByName(name) {
+  return window.qualificationsData.find(q => q.name === name);
+}
 
 // Render current question
 function renderQuestion() {
@@ -57,10 +68,11 @@ function renderQuestion() {
 }
 
 // Handle form submission
-quizForm.addEventListener("submit", function(e) {
+quizForm.addEventListener("submit", function (e) {
   e.preventDefault();
   const step = window.surveyFlow[currentStep];
   let answer;
+
   if (step.id !== "qualification") {
     answer = quizForm.querySelector('input[name="userAnswer"]:checked')?.value;
   } else {
@@ -81,46 +93,34 @@ quizForm.addEventListener("submit", function(e) {
   }
 });
 
+// Show final page with notice card + resources
 function showFinalPage() {
   quizContainer.innerHTML = "";
   continueBtn.style.display = "none";
   downloadPdfBtn.style.display = "inline-block";
 
   const selectedQualification = answers["qualification"];
-  const qualificationEntry = window.qualificationsData.find(q => q.name === selectedQualification);
+  const qualificationEntry = getQualificationByName(selectedQualification);
 
   let customHtml = "";
 
   try {
     if (qualificationEntry) {
+      logDebug("Selected qualification:", qualificationEntry);
+
+      // Delegate rendering to templates
       if (qualificationEntry.type === "international") {
-        customHtml = window.templates.internationalQualificationTemplate({
-          name: qualificationEntry.name,
-          timeline: qualificationEntry.timeline,
-          openPeriodText: qualificationEntry.openPeriodText,
-          closedPeriodText: qualificationEntry.closedPeriodText,
-          resources: qualificationEntry.resources
-        });
+        customHtml = window.templates.internationalQualificationTemplate(qualificationEntry);
       } else if (qualificationEntry.type === "transfer") {
-        customHtml = window.templates.transferTemplate({
-          periods: qualificationEntry.periods,
-          timeline: qualificationEntry.timeline,
-          resources: qualificationEntry.resources
-        });
+        customHtml = window.templates.transferTemplate(qualificationEntry);
       } else {
-        customHtml = window.templates.localQualificationTemplate({
-          qualificationName: qualificationEntry.name,
-          timeline: qualificationEntry.timeline,
-          openPeriodText: qualificationEntry.openPeriodText,
-          closedPeriodText: qualificationEntry.closedPeriodText,
-          resources: qualificationEntry.resources,
-          mtlUrl: qualificationEntry.mtlUrl
-        });
+        customHtml = window.templates.localQualificationTemplate(qualificationEntry);
       }
     } else {
       throw new Error("Qualification not found");
     }
   } catch (err) {
+    console.error(err);
     customHtml = `
       <div class="info-card">
         <h3>Sorry for the error!</h3>
@@ -134,10 +134,10 @@ function showFinalPage() {
 }
 
 // PDF download
-downloadPdfBtn.addEventListener("click", function() {
+downloadPdfBtn.addEventListener("click", function () {
   html2pdf().set({
     margin: 0.5,
-    filename: 'NUS_Application_Quiz.pdf',
+    filename: "NUS_Application_Quiz.pdf",
     html2canvas: { scale: 2 }
   }).from(pdfContent).save();
 });
