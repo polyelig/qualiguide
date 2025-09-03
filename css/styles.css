@@ -215,6 +215,20 @@ select[name="userAnswer"]:focus {
   background: #f6faff;
 }
 
+select {
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  background: #fff;
+  appearance: none;
+}
+select:focus {
+  outline: none;
+  box-shadow: 0 0 5px rgba(33,150,243,0.5);
+}
+
+
 .question-label {
   font-weight: bold;
   font-size: 22px;
@@ -262,5 +276,6 @@ select[name="userAnswer"]:focus {
     border-radius: 8px;
   }
 }
+
 
 
