@@ -160,6 +160,7 @@ window.templates.transferTemplate = function(qualification) {
       <h2>${qualification.name}</h2>
       ${qualification.timeline ? `<p><strong>Application Timeline:</strong> ${qualification.displayPeriod}</p>` : ""}
       <h3>Resources</h3>
+      ${renderLoginInstructions(qualification).outerHTML}
       ${renderResources(qualification).outerHTML}
     </div>
   `;
