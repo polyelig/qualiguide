@@ -1,172 +1,105 @@
-if(window.location.search) window.history.replaceState({}, document.title, window.location.pathname);
+// -------------------------------
+// main.js
+// -------------------------------
 
-var currentStep = 0;
-var answers = {};
-var quizContainer = document.getElementById("quizContainer");
-var quizForm = document.getElementById("quizForm");
-var continueBtn = document.getElementById("continueBtn");
-var downloadPdfBtn = document.getElementById("downloadPdfBtn");
-var pdfContent = document.getElementById("pdfContent");
+document.addEventListener("DOMContentLoaded", () => {
+  const quizContainer = document.getElementById("quizContainer");
+  const continueBtn = document.getElementById("continueBtn");
+  const downloadPdfBtn = document.getElementById("downloadPdfBtn");
+  const pdfContent = document.getElementById("pdfContent");
 
-// Utility to find qualification by name
-function getQualificationByName(name){ return window.qualificationsData.find(q=>q.name===name); }
-
-// Render current question
-function renderQuestion(){
-  var step = window.surveyFlow[currentStep];
-  if(!step) return;
-  quizContainer.innerHTML="";
-
-  var label = document.createElement("label");
-  label.className="question-label";
-  label.textContent = step.question;
-  quizContainer.appendChild(label);
-
-  if(step.id!=="qualification"){
-    var optionsList = document.createElement("div");
-    optionsList.className="options-list";
-    step.options.forEach(opt=>{
-      var optionLabel = document.createElement("label");
-      optionLabel.className="option";
-      var radio = document.createElement("input");
-      radio.type="radio";
-      radio.name="userAnswer";
-      radio.value=opt;
-      radio.required=true;
-      optionLabel.appendChild(radio);
-      optionLabel.appendChild(document.createTextNode(opt));
-      optionsList.appendChild(optionLabel);
-    });
-    quizContainer.appendChild(optionsList);
-  } else {
-    var select = document.createElement("select");
-    select.name="userAnswer";
-    select.required=true;
-    select.innerHTML='<option value="" disabled selected>Select your qualification...</option>';
-    step.options.forEach(opt=>{
-      var option = document.createElement("option");
-      option.value=opt;
-      option.textContent=opt;
-      select.appendChild(option);
-    });
-    quizContainer.appendChild(select);
+  // -------------------------------
+  // Helper: Determine Template
+  // -------------------------------
+  function getTemplate(qualification) {
+    switch (qualification.type) {
+      case "international":
+        return templates.internationalQualificationTemplate;
+      case "local":
+        return templates.localQualificationTemplate;
+      case "transfer":
+        return templates.transferTemplate;
+      default:
+        console.warn("Unknown qualification type:", qualification.type);
+        return () => "<p>Unknown Qualification Type</p>";
+    }
   }
 
-  downloadPdfBtn.style.display="none";
-  continueBtn.style.display="inline-block";
-}
+  // -------------------------------
+  // Helper: Ensure displayPeriod is filled
+  // -------------------------------
+  function getDisplayPeriod(qualification) {
+    if (qualification.displayPeriod) return qualification.displayPeriod;
 
-// Handle form submission
-quizForm.addEventListener("submit",function(e){
-  e.preventDefault();
-  var step = window.surveyFlow[currentStep];
-  var answer;
+    if (qualification.timeline?.start && qualification.timeline?.end) {
+      return `${qualification.timeline.start} to ${qualification.timeline.end}`;
+    }
 
-  if(step.id!=="qualification") answer = quizForm.querySelector('input[name="userAnswer"]:checked')?.value;
-  else answer = quizForm.querySelector('select[name="userAnswer"]')?.value;
+    if (qualification.periods?.length) {
+      return qualification.periods.map(p => `${p.label}: ${p.rangeText}`).join("; ");
+    }
 
-  if(!answer) return;
-  answers[step.id]=answer;
-
-  var nextId = typeof step.next==="function"? step.next(answer):step.next;
-  var nextIndex = window.surveyFlow.findIndex(q=>q.id===nextId);
-
-  if(nextIndex!==-1){ currentStep=nextIndex; renderQuestion();}
-  else showFinalPage(answer);
-});
-
-function showFinalPage(selected) {
-  quizContainer.innerHTML = "";
-  continueBtn.style.display = "none";
-  downloadPdfBtn.style.display = "inline-block";
-
-  const qualName = selected || answers["qualification"];
-  const qualEntry = getQualificationByName(qualName);
+    return "TBD";
+  }
 
   // -------------------------------
-  // TIMELINE LOGIC
+  // Render selected qualification
   // -------------------------------
-  let timelineHTML = "";
+  function renderQualification(qualification) {
+    // Ensure displayPeriod
+    qualification.displayPeriod = getDisplayPeriod(qualification);
 
-  if (qualEntry.type === "transfer" && qualEntry.periods) {
-    // Transfer: multiple periods
-    timelineHTML = qualEntry.periods.map(p => `
-      <div class="period-card open">
-        ${p.label}: ${p.rangeText}
-      </div>
-    `).join("");
-  } else if (qualEntry.timeline) {
-    // Local or international: single timeline
-    const start = qualEntry.timeline.start;
-    const end = qualEntry.timeline.end;
-    if (start && end) {
-      timelineHTML = `
-        <div class="period-card open">
-          Application Timeline: ${start} to ${end}
-        </div>
-      `;
+    const templateFunc = getTemplate(qualification);
+    quizContainer.innerHTML = templateFunc(qualification);
+
+    // Optional: attach event listeners if needed
+    downloadPdfBtn.style.display = "inline-block"; // show PDF button after rendering
+  }
+
+  // -------------------------------
+  // Handle Continue button
+  // -------------------------------
+  continueBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    // Example: navigate to next quiz page
+    // Replace with your surveyFlow logic
+    if (window.nextPage) {
+      window.nextPage(); // your surveyFlow function
     } else {
-      timelineHTML = `
-        <div class="period-card closed">
-          Application has not started yet.
-        </div>
-      `;
+      alert("Continue clicked. Implement navigation logic.");
     }
-  } else {
-    timelineHTML = `
-      <div class="period-card closed">
-        Application has not started yet.
-      </div>
-    `;
+  });
+
+  // -------------------------------
+  // Handle Download PDF
+  // -------------------------------
+  downloadPdfBtn.addEventListener("click", () => {
+    const element = quizContainer; // render quiz content as PDF
+    const opt = {
+      margin:       0.5,
+      filename:     "application_info.pdf",
+      image:        { type: 'jpeg', quality: 0.98 },
+      html2canvas:  { scale: 2 },
+      jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+    };
+    html2pdf().set(opt).from(element).save();
+  });
+
+  // -------------------------------
+  // Example: get selected qualification
+  // Replace this with actual selection logic from surveyFlow
+  // -------------------------------
+  const selectedQualificationId = window.selectedQualificationId || "singapore-cambridge-gce-a-level"; // default
+  const allQualifications = [...(window.localQualifications || []), ...(window.internationalQualifications || []), window.transferQualification].flat();
+  const selectedQualification = allQualifications.find(q => q.id === selectedQualificationId);
+
+  if (!selectedQualification) {
+    quizContainer.innerHTML = "<p>No qualification selected.</p>";
+    continueBtn.disabled = true;
+    downloadPdfBtn.style.display = "none";
+    return;
   }
 
-  // -------------------------------
-  // RESOURCES LOGIC
-  // -------------------------------
-  let resourcesList = qualEntry.resources ? [...qualEntry.resources] : [];
-
-  if (qualEntry.type === "international") {
-    if (qualEntry.standardisedTest === "Yes") {
-      resourcesList.push(window.conditionalResources.standardisedTest);
-    }
-    if (qualEntry.englishRequirement === "Yes") {
-      resourcesList.push(window.conditionalResources.englishRequirement);
-    }
-  }
-
-  const resourcesHTML = resourcesList.length > 0 ? `
-    <div class="info-card">
-      <h2>Resources & Guides</h2>
-      <ul class="resource-list">
-        ${resourcesList.map(r => `<li><a href="${r.url}" target="_blank">${r.label}</a>${r.description ? " " + r.description : ""}</li>`).join("")}
-      </ul>
-    </div>
-  ` : "";
-
-  // -------------------------------
-  // FINAL PAGE HTML
-  // -------------------------------
-  const finalHTML = `
-    <div class="info-card">
-      <h2>Qualification</h2>
-      <p>${qualEntry.fullName || qualEntry.name}</p>
-    </div>
-    <hr class="section-divider">
-    ${timelineHTML}
-    <hr class="section-divider">
-    ${resourcesHTML}
-  `;
-
-  quizContainer.innerHTML = finalHTML;
-  pdfContent.innerHTML = finalHTML;
-}
-
-
-// PDF download
-downloadPdfBtn.addEventListener("click", function(){
-  html2pdf().set({margin:0.5,filename:"NUS_Application_Quiz.pdf",html2canvas:{scale:2}}).from(pdfContent).save();
+  // Render
+  renderQualification(selectedQualification);
 });
-
-// Initial render
-renderQuestion();
-
