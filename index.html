@@ -1,26 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>NUS Application Quiz Simulator</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="css/styles.css">
+  <meta charset="UTF-8">
+  <title>NUS Application Quiz Simulator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-<div class="container">
-  <form id="quizForm">
-    <div id="quizContainer"></div>
-    <button id="continueBtn" type="submit">Continue</button>
-  </form>
-  <div id="pdfContent"></div>
-  <button id="downloadPdfBtn" style="display:none;">📄 Download This Page as PDF</button>
-</div>
-<!-- Libraries -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-<!-- Survey JS -->
-<script src="js/qualifications.js"></script>
-<script src="js/surveyFlow.js"></script>
-<script src="js/template.js"></script> 
-<script src="js/main.js"></script>
+  <div class="container">
+    <form id="quizForm">
+      <div id="quizContainer"></div>
+      <button id="continueBtn" type="submit">Continue</button>
+    </form>
+
+    <!-- Notice card for application status -->
+    <div id="notice-container"></div>
+
+    <!-- Resources section -->
+    <div class="info-card">
+      <h2>🎓 Application Resources</h2>
+      <ul id="resources-container" class="resource-list"></ul>
+    </div>
+
+    <!-- PDF export -->
+    <div id="pdfContent"></div>
+    <button id="downloadPdfBtn" style="display:none;">📄 Download This Page as PDF</button>
+  </div>
+
+  <!-- Libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+  <!-- Survey JS -->
+  <script src="js/qualifications.js"></script>
+  <script src="js/resources.js"></script>
+  <script src="js/surveyFlow.js"></script>
+  <script src="js/template.js"></script>
+  <script src="js/main.js"></script>
 </body>
 </html>
