@@ -2,39 +2,52 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>NUS Application Quiz Simulator</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NUS Application Quiz</title>
   <link rel="stylesheet" href="css/styles.css">
+  <style>
+    /* Minimal styling for demonstration */
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    .question-label { font-weight: bold; margin-bottom: 10px; display: block; }
+    .options-list label { display: block; margin-bottom: 6px; }
+    .info-card { border: 1px solid #ccc; padding: 15px; margin-bottom: 20px; border-radius: 5px; }
+    .notice-box { padding: 15px; border-radius: 5px; margin-bottom: 10px; }
+    .notice-upcoming { background-color: #fffae6; border: 1px solid #ffd700; }
+    .notice-open { background-color: #e6ffed; border: 1px solid #00cc44; }
+    .notice-closed { background-color: #ffe6e6; border: 1px solid #ff3333; }
+    .resource-list { padding-left: 20px; }
+  </style>
 </head>
 <body>
-  <div class="container">
-    <form id="quizForm">
-      <div id="quizContainer"></div>
-      <button id="continueBtn" type="submit">Continue</button>
-    </form>
 
-    <!-- Notice card for application status -->
-    <div id="notice-container"></div>
+  <h1>NUS Application Quiz</h1>
 
-    <!-- Resources section -->
-    <div class="info-card">
-      <h2>🎓 Application Resources</h2>
-      <ul id="resources-container" class="resource-list"></ul>
-    </div>
+  <form id="quizForm">
+    <div id="quizContainer"></div>
+    <button type="submit" id="continueBtn">Continue</button>
+  </form>
 
-    <!-- PDF export -->
-    <div id="pdfContent"></div>
-    <button id="downloadPdfBtn" style="display:none;">📄 Download This Page as PDF</button>
-  </div>
+  <button id="downloadPdfBtn" style="display:none;">Download PDF</button>
+  <div id="pdfContent" style="display:none;"></div>
 
-  <!-- Libraries -->
+  <!-- ------------------ JS Scripts ------------------ -->
+  <!-- 1. Qualifications data -->
+  <script src="js/qualifications.js"></script>
+
+  <!-- 2. Survey flow -->
+  <script src="js/surveyFlow.js"></script>
+
+  <!-- 3. Resources data -->
+  <script src="js/resources.js"></script>
+
+  <!-- 4. Templates -->
+  <script src="js/template.js"></script>
+
+  <!-- 5. Main logic -->
+  <script src="js/main.js"></script>
+
+  <!-- 6. html2pdf library for PDF download -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
-  <!-- Survey JS -->
-  <script src="js/qualifications.js"></script>
-  <script src="js/resources.js"></script>
-  <script src="js/surveyFlow.js"></script>
-  <script src="js/template.js"></script>
-  <script src="js/main.js"></script>
 </body>
 </html>
