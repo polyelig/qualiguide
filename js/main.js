@@ -3,177 +3,114 @@
 // -------------------------------
 
 // Remove query params from URL
-if (window.location.search) {
-  window.history.replaceState({}, document.title, window.location.pathname);
-}
+if(window.location.search) window.history.replaceState({}, document.title, window.location.pathname);
 
-let currentStep = 0;
-let answers = {};
-const quizContainer = document.getElementById("quizContainer");
-const quizForm = document.getElementById("quizForm");
-const continueBtn = document.getElementById("continueBtn");
-const downloadPdfBtn = document.getElementById("downloadPdfBtn");
-const pdfContent = document.getElementById("pdfContent");
+var currentStep = 0;
+var answers = {};
+var quizContainer = document.getElementById("quizContainer");
+var quizForm = document.getElementById("quizForm");
+var continueBtn = document.getElementById("continueBtn");
+var downloadPdfBtn = document.getElementById("downloadPdfBtn");
+var pdfContent = document.getElementById("pdfContent");
 
-// Utility: logging toggle
-const DEBUG = false;
-function logDebug(...args) {
-  if (DEBUG) console.log(...args);
-}
+// Utility to find qualification by name
+function getQualificationByName(name){ return window.qualificationsData.find(q=>q.name===name); }
 
-// Utility: find qualification by name or id
-function getQualificationByNameOrId(nameOrId) {
-  return window.qualificationsData.find(q => q.name === nameOrId || q.id === nameOrId);
-}
-
-// -------------------------------
 // Render current question
-// -------------------------------
-function renderQuestion() {
-  const step = window.surveyFlow[currentStep];
-  quizContainer.innerHTML = "";
+function renderQuestion(){
+  var step = window.surveyFlow[currentStep];
+  if(!step) return;
+  quizContainer.innerHTML="";
 
-  if (!step) return;
-
-  const label = document.createElement("label");
-  label.className = "question-label";
+  var label = document.createElement("label");
+  label.className="question-label";
   label.textContent = step.question;
   quizContainer.appendChild(label);
 
-  if (step.id !== "qualification") {
-    const optionsList = document.createElement("div");
-    optionsList.className = "options-list";
-    step.options.forEach(opt => {
-      const optionLabel = document.createElement("label");
-      optionLabel.className = "option";
-      const radio = document.createElement("input");
-      radio.type = "radio";
-      radio.name = "userAnswer";
-      radio.value = opt;
-      radio.required = true;
+  if(step.id!=="qualification"){
+    var optionsList = document.createElement("div");
+    optionsList.className="options-list";
+    step.options.forEach(opt=>{
+      var optionLabel = document.createElement("label");
+      optionLabel.className="option";
+      var radio = document.createElement("input");
+      radio.type="radio";
+      radio.name="userAnswer";
+      radio.value=opt;
+      radio.required=true;
       optionLabel.appendChild(radio);
       optionLabel.appendChild(document.createTextNode(opt));
       optionsList.appendChild(optionLabel);
     });
     quizContainer.appendChild(optionsList);
   } else {
-    const select = document.createElement("select");
-    select.name = "userAnswer";
-    select.required = true;
-    select.innerHTML = `<option value="" disabled selected>Select your qualification...</option>`;
-    step.options.forEach(opt => {
-      const option = document.createElement("option");
-      option.value = opt;
-      option.textContent = opt;
+    var select = document.createElement("select");
+    select.name="userAnswer";
+    select.required=true;
+    select.innerHTML='<option value="" disabled selected>Select your qualification...</option>';
+    step.options.forEach(opt=>{
+      var option = document.createElement("option");
+      option.value=opt;
+      option.textContent=opt;
       select.appendChild(option);
     });
     quizContainer.appendChild(select);
   }
+
+  downloadPdfBtn.style.display="none";
+  continueBtn.style.display="inline-block";
 }
 
-// -------------------------------
 // Handle form submission
-// -------------------------------
-quizForm.addEventListener("submit", function (e) {
+quizForm.addEventListener("submit",function(e){
   e.preventDefault();
-  const step = window.surveyFlow[currentStep];
-  let answer;
+  var step = window.surveyFlow[currentStep];
+  var answer;
 
-  if (step.id !== "qualification") {
-    answer = quizForm.querySelector('input[name="userAnswer"]:checked')?.value;
-  } else {
-    answer = quizForm.querySelector('select[name="userAnswer"]')?.value;
-  }
-  if (!answer) return;
+  if(step.id!=="qualification") answer = quizForm.querySelector('input[name="userAnswer"]:checked')?.value;
+  else answer = quizForm.querySelector('select[name="userAnswer"]')?.value;
 
-  answers[step.id] = answer;
+  if(!answer) return;
+  answers[step.id]=answer;
 
-  const nextId = typeof step.next === "function" ? step.next(answer) : step.next;
+  var nextId = typeof step.next==="function"? step.next(answer):step.next;
+  var nextIndex = window.surveyFlow.findIndex(q=>q.id===nextId);
 
-  // Handle slugified qualification ID if necessary
-  const nextIndex = window.surveyFlow.findIndex(q => q.id === nextId);
-
-  if (nextIndex !== -1) {
-    currentStep = nextIndex;
-    renderQuestion();
-  } else {
-    showFinalPage();
-  }
+  if(nextIndex!==-1){ currentStep=nextIndex; renderQuestion();}
+  else showFinalPage(answer);
 });
 
-// -------------------------------
 // Show final page
-// -------------------------------
-function showFinalPage() {
-  quizContainer.innerHTML = "";
-  continueBtn.style.display = "none";
-  downloadPdfBtn.style.display = "inline-block";
+function showFinalPage(selected){
+  quizContainer.innerHTML="";
+  continueBtn.style.display="none";
+  downloadPdfBtn.style.display="inline-block";
 
-  const selectedQualificationName = answers["qualification"];
-  if (!selectedQualificationName) {
-    quizContainer.innerHTML = `
-      <div class="info-card">
-        <h3>Error: No qualification selected</h3>
-        <p>Please refresh the page and try again.</p>
-      </div>
-    `;
-    return;
-  }
+  var qualName = selected || answers["qualification"];
+  if(qualName==="Local universities (NUS, NTU, SMU, SIT, SUTD, SUSS, UAS)" || qualName==="Singapore Citizen/ Singapore Permanent Resident") qualName="Transfer";
+  var qualEntry = getQualificationByName(qualName);
 
-  // Convert to slug ID
-  const selectedQualificationId = selectedQualificationName
-    .toLowerCase()
-    .replace(/\s+/g, '-')
-    .replace(/[()\/,.]+/g, '')
-    .replace(/-+/g, '-')
-    .replace(/^-+/, '')
-    .replace(/-+$/, '');
+  var customHtml="";
+  try{
+    if(!qualEntry) throw new Error("Qualification not found");
 
-  const qualificationEntry = getQualificationByNameOrId(selectedQualificationName) || getQualificationByNameOrId(selectedQualificationId);
-
-  let customHtml = "";
-
-  try {
-    if (qualificationEntry) {
-      logDebug("Selected qualification:", qualificationEntry);
-
-      // Render appropriate template
-      if (qualificationEntry.type === "international") {
-        customHtml = window.templates.internationalQualificationTemplate(qualificationEntry);
-      } else if (qualificationEntry.type === "transfer") {
-        customHtml = window.templates.transferTemplate(qualificationEntry);
-      } else {
-        customHtml = window.templates.localQualificationTemplate(qualificationEntry);
-      }
-    } else {
-      throw new Error("Qualification not found");
-    }
-  } catch (err) {
+    if(qualEntry.type==="international") customHtml = window.templates.internationalQualificationTemplate(qualEntry);
+    else if(qualEntry.type==="transfer") customHtml = window.templates.transferTemplate(qualEntry);
+    else customHtml = window.templates.localQualificationTemplate(qualEntry);
+  } catch(err){
     console.error(err);
-    customHtml = `
-      <div class="info-card">
-        <h3>Sorry for the error!</h3>
-        <p>Please check <a href="https://nus.edu.sg/oam/admissions" target="_blank">NUS Admissions Website</a> for more information.</p>
-      </div>
-    `;
+    customHtml = '<div class="info-card"><h3>Sorry for the error!</h3><p>Please check <a href="https://nus.edu.sg/oam/admissions" target="_blank">NUS Admissions Website</a> for more info.</p></div>';
   }
 
-  quizContainer.innerHTML = customHtml;
-  pdfContent.innerHTML = customHtml;
+  quizContainer.innerHTML=customHtml;
+  pdfContent.innerHTML=customHtml;
 }
 
-// -------------------------------
 // PDF download
-// -------------------------------
-downloadPdfBtn.addEventListener("click", function () {
-  html2pdf().set({
-    margin: 0.5,
-    filename: "NUS_Application_Quiz.pdf",
-    html2canvas: { scale: 2 }
-  }).from(pdfContent).save();
+downloadPdfBtn.addEventListener("click", function(){
+  html2pdf().set({margin:0.5,filename:"NUS_Application_Quiz.pdf",html2canvas:{scale:2}}).from(pdfContent).save();
 });
 
-// -------------------------------
 // Initial render
-// -------------------------------
 renderQuestion();
+
