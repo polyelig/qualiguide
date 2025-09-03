@@ -5,55 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>NUS Application Quiz</title>
   <link rel="stylesheet" href="css/styles.css">
-  <style>
-    body, html {
-      height: 100%;
-      margin: 0;
-      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-      background: #f5f5f5;
-    }
-    #quizWrapper {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      padding: 20px;
-    }
-    #quizContainer {
-      width: 100%;
-      max-width: 800px;
-      background: #fff;
-      margin: auto;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
-    .options-list label {
-      display: block;
-      margin: 8px 0;
-    }
-    .question-label {
-      font-weight: bold;
-      margin-bottom: 15px;
-      display: block;
-    }
-    .info-card, .notice-box {
-      margin-top: 15px;
-      padding: 15px;
-      border-radius: 8px;
-      background: #eef;
-    }
-    #continueBtn, #downloadPdfBtn {
-      margin-top: 20px;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-    #downloadPdfBtn { display: none; background: #4CAF50; color: white; }
-    #continueBtn { background: #2196F3; color: white; }
-  </style>
 </head>
 <body>
 
@@ -61,15 +12,18 @@
     <h1>NUS Application Quiz</h1>
   </header>
 
-
-  <div id="quizWrapper">
-    <form id="quizForm">
-      <div id="quizContainer"></div>
-      <button type="submit" id="continueBtn">Continue</button>
-      <button type="button" id="downloadPdfBtn">Download PDF</button>
-    </form>
-    <div id="pdfContent" style="display:none;"></div>
-  </div>
+  <main>
+    <div class="container" id="quizWrapper">
+      <form id="quizForm">
+        <div id="quizContainer"></div>
+        <div class="form-actions">
+          <button type="submit" id="continueBtn">Continue</button>
+          <button type="button" id="downloadPdfBtn">Download PDF</button>
+        </div>
+      </form>
+      <div id="pdfContent" style="display:none;"></div>
+    </div>
+  </main>
 
   <script src="js/resources.js"></script>
   <script src="js/qualifications.js"></script>
@@ -78,15 +32,9 @@
   <script src="js/main.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
-
-
   <footer class="site-footer">
     <p>&copy; 2025 NUS Admissions</p>
   </footer>
 
 </body>
 </html>
-
-
-
-
