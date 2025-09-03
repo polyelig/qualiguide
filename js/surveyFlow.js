@@ -2,16 +2,6 @@
 // surveyFlow.js
 // -------------------------------
 
-function slugify(str) {
-  return str.toString()
-            .toLowerCase()
-            .replace(/\s+/g,'-')
-            .replace(/[()\/,.]+/g,'')
-            .replace(/-+/g,'-')
-            .replace(/^-+/, '')
-            .replace(/-+$/,'');
-}
-
 // Build the full list of qualifications (excluding Transfer)
 const allQualifications = [
   ...(window.localQualifications || []),
@@ -28,7 +18,7 @@ const surveyFlow = [
       "I am not a current or former undergraduate"
     ],
     next: function(answer){ 
-      // All three options lead to nationality page for simplification
+      // All three options lead to nationality page
       return "nationality";
     }
   },
@@ -45,8 +35,9 @@ const surveyFlow = [
     question: "What qualification will you be using to apply to the National University of Singapore (NUS)?",
     options: allQualifications.map(q => q.name),
     next: function(answer){
-      // Generate a unique end ID for rendering the qualification page
-      return "end_" + slugify(answer);
+      // Find the qualification by name and return its actual ID
+      const qual = allQualifications.find(q => q.name === answer);
+      return qual ? "end_" + qual.id : null;
     }
   }
 ];
