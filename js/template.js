@@ -82,6 +82,47 @@ function renderNoticeCard(qualification) {
   `;
 }
 
+function renderLoginInstructions(qualification) {
+  if (qualification.type === "transfer") {
+    return `<div class="login-instructions">
+      <h3>🖥️ Prospective Transfer Applicants</h3>
+      <p>As you are a transfer candidate, log in with Singpass to proceed.</p>
+    </div>`;
+  }
+
+  if (qualification.type === "local") {
+    if (qualification.id === "polytechnic-diploma-singapore") {
+      return `<div class="login-instructions">
+        <h3>🖥️ Singapore Citizen / PR / FIN Holders</h3>
+        <p>Log in with Singpass to proceed using the Polytechnic Diploma qualification.</p>
+        <hr>
+        <h3>🌏 Foreigners (without FIN)</h3>
+        <p>Log in with email to proceed using the Polytechnic Diploma qualification.</p>
+      </div>`;
+    } else {
+      return `<div class="login-instructions">
+        <h3>🖥️ Prospective Applicants</h3>
+        <p>Log in with Singpass to proceed using the ${qualification.name}.</p>
+      </div>`;
+    }
+  }
+
+  if (qualification.type === "international") {
+    // Example with two sets of login instructions
+    return `<div class="login-instructions">
+      <h3>🔎 Singapore Citizen / PR / FIN Holders</h3>
+      <p>Log in with Singpass to apply under the appropriate category using the ${qualification.name}.</p>
+      <p>📌 Check if you fulfil the Mother Tongue Language (MTL) requirements.</p>
+      <hr>
+      <h3>🌏 Foreigners (without FIN)</h3>
+      <p>Log in with email to apply under the international category using the ${qualification.name}.</p>
+    </div>`;
+  }
+
+  return "";
+}
+
+
 // -------------------------------
 // Templates for each qualification type
 // -------------------------------
