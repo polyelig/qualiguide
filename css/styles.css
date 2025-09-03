@@ -5,6 +5,29 @@ body {
   padding: 20px;
 }
 
+.site-header, .site-footer {
+  width: 100%;
+  background-color: #003366;
+  color: white;
+  text-align: center;
+  padding: 16px 0;
+}
+
+.site-header h1 {
+  margin: 0;
+  font-size: 1.8rem;
+}
+
+.site-footer p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+main {
+  padding: 20px;
+  min-height: calc(100vh - 160px); /* adjust to header + footer height */
+}
+
 .container {
   max-width: 900px;
   margin: 40px auto 0 auto;
@@ -21,6 +44,16 @@ body {
   border-radius: 10px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
+
+.options-list .option {
+  display: block;
+  margin-bottom: 8px; /* reduced from 16px or higher */
+}
+
+.options-list input[type="radio"], .options-list input[type="checkbox"] {
+  margin-right: 8px;
+}
+
 
 .section-divider {
   margin: 24px auto;
@@ -229,3 +262,4 @@ select[name="userAnswer"]:focus {
     border-radius: 8px;
   }
 }
+
