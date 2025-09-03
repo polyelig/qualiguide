@@ -21,12 +21,14 @@ function logDebug(...args) {
   if (DEBUG) console.log(...args);
 }
 
-// Utility: find qualification by id
-function getQualificationById(id) {
-  return window.qualificationsData.find(q => q.id === id);
+// Utility: find qualification by name or id
+function getQualificationByNameOrId(nameOrId) {
+  return window.qualificationsData.find(q => q.name === nameOrId || q.id === nameOrId);
 }
 
+// -------------------------------
 // Render current question
+// -------------------------------
 function renderQuestion() {
   const step = window.surveyFlow[currentStep];
   quizContainer.innerHTML = "";
@@ -61,7 +63,7 @@ function renderQuestion() {
     select.innerHTML = `<option value="" disabled selected>Select your qualification...</option>`;
     step.options.forEach(opt => {
       const option = document.createElement("option");
-      option.value = window.surveyFlow[currentStep].id === "qualification" ? slugify(opt) : opt;
+      option.value = opt;
       option.textContent = opt;
       select.appendChild(option);
     });
@@ -69,19 +71,9 @@ function renderQuestion() {
   }
 }
 
-// Slugify function reused from surveyFlow.js
-function slugify(str) {
-  return str
-    .toString()
-    .toLowerCase()
-    .replace(/\s+/g, '-')           // Replace spaces with -
-    .replace(/[()\/,.]+/g, '')      // Remove special characters
-    .replace(/-+/g, '-')            // Collapse dashes
-    .replace(/^-+/, '')             // Trim - from start
-    .replace(/-+$/, '');            // Trim - from end
-}
-
+// -------------------------------
 // Handle form submission
+// -------------------------------
 quizForm.addEventListener("submit", function (e) {
   e.preventDefault();
   const step = window.surveyFlow[currentStep];
@@ -94,10 +86,11 @@ quizForm.addEventListener("submit", function (e) {
   }
   if (!answer) return;
 
-  // Store the answer by id
-  answers[step.id] = step.id === "qualification" ? answer : answer;
+  answers[step.id] = answer;
 
   const nextId = typeof step.next === "function" ? step.next(answer) : step.next;
+
+  // Handle slugified qualification ID if necessary
   const nextIndex = window.surveyFlow.findIndex(q => q.id === nextId);
 
   if (nextIndex !== -1) {
@@ -108,14 +101,35 @@ quizForm.addEventListener("submit", function (e) {
   }
 });
 
-// Show final page with notice card + resources
+// -------------------------------
+// Show final page
+// -------------------------------
 function showFinalPage() {
   quizContainer.innerHTML = "";
   continueBtn.style.display = "none";
   downloadPdfBtn.style.display = "inline-block";
 
-  const selectedQualificationId = answers["qualification"];
-  const qualificationEntry = getQualificationById(selectedQualificationId);
+  const selectedQualificationName = answers["qualification"];
+  if (!selectedQualificationName) {
+    quizContainer.innerHTML = `
+      <div class="info-card">
+        <h3>Error: No qualification selected</h3>
+        <p>Please refresh the page and try again.</p>
+      </div>
+    `;
+    return;
+  }
+
+  // Convert to slug ID
+  const selectedQualificationId = selectedQualificationName
+    .toLowerCase()
+    .replace(/\s+/g, '-')
+    .replace(/[()\/,.]+/g, '')
+    .replace(/-+/g, '-')
+    .replace(/^-+/, '')
+    .replace(/-+$/, '');
+
+  const qualificationEntry = getQualificationByNameOrId(selectedQualificationName) || getQualificationByNameOrId(selectedQualificationId);
 
   let customHtml = "";
 
@@ -123,7 +137,7 @@ function showFinalPage() {
     if (qualificationEntry) {
       logDebug("Selected qualification:", qualificationEntry);
 
-      // Delegate rendering to templates
+      // Render appropriate template
       if (qualificationEntry.type === "international") {
         customHtml = window.templates.internationalQualificationTemplate(qualificationEntry);
       } else if (qualificationEntry.type === "transfer") {
@@ -148,7 +162,9 @@ function showFinalPage() {
   pdfContent.innerHTML = customHtml;
 }
 
+// -------------------------------
 // PDF download
+// -------------------------------
 downloadPdfBtn.addEventListener("click", function () {
   html2pdf().set({
     margin: 0.5,
@@ -157,5 +173,7 @@ downloadPdfBtn.addEventListener("click", function () {
   }).from(pdfContent).save();
 });
 
+// -------------------------------
 // Initial render
+// -------------------------------
 renderQuestion();
