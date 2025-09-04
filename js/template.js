@@ -143,7 +143,7 @@ function renderLoginInstructionsCard(qualification) {
     return `
       <div class="info-card info-card--compact">
         <h3>🖥️ Login Instructions</h3>
-        <p>Log in with your <strong>Singpass</strong> to apply using ${qualification.name}.</p>
+        <p>Log in with your <strong>Singpass</strong> to apply using the ${qualification.name} qualification.</p>
         ${qualification.mtlUrl ? `<p>📌 Please check if you meet the Mother Tongue Language requirements: <a href="${qualification.mtlUrl}" target="_blank" rel="noopener noreferrer" class="resource-link">link</a></p>` : ""}
       </div>
     `;
@@ -154,11 +154,11 @@ function renderLoginInstructionsCard(qualification) {
       <div class="info-card info-card--compact">
         <h3>🖥️ Login Instructions</h3>
         <p><strong>🔎 Singapore Citizen/ PR/ FIN Holders:</strong><br> 
-         Log in with <strong>Singpass</strong> and apply under <em>Singapore Citizens/ PR</em> category using ${qualification.name}.</p>
+         Log in with <strong>Singpass</strong> and apply under <em>Singapore Citizens/ PR</em> category using the ${qualification.name} qualification.</p>
         <p>📌 Please check if you meet the Mother Tongue Language requirements.</p>
         <hr>
         <p><strong>🌏 Foreigners (without FIN):</strong><br> 
-         Log in with your <strong>email account</strong> and apply under <em>International Student</em> category using ${qualification.name}.</p>
+         Log in with your <strong>email account</strong> and apply under <em>International Student</em> category using the ${qualification.name} qualification.</p>
       </div>
     `;
   }
