@@ -1,43 +1,32 @@
 // -------------------------------
-// template.js (updated for new headers & resources card)
+// template.js
 // -------------------------------
 
-// Get today's date (for notice card)
 const today = new Date();
 
-// Utility: format a resource <li>
+// links inside list items
 function createResourceItem(resource) {
   const li = document.createElement("li");
-  li.style.marginBottom = "6px";
 
   const a = document.createElement("a");
   a.href = resource.url;
   a.target = "_blank";
-  a.rel = "noopener"; // security
+  a.rel = "noopener";
   a.textContent = resource.label;
 
   li.appendChild(a);
-
-  if (resource.description) {
-    li.append(` ${resource.description}`);
-  }
-
+  if (resource.description) li.append(` ${resource.description}`);
   return li;
 }
 
-// Render resources (merged list: common + conditional + unique)
 function renderResources(qualification) {
   const list = document.createElement("ul");
   list.className = "resource-list";
 
-  // Common resources
   if (window.commonResources) {
-    window.commonResources.forEach(resource => {
-      list.appendChild(createResourceItem(resource));
-    });
+    window.commonResources.forEach(r => list.appendChild(createResourceItem(r)));
   }
 
-  // Conditional resources
   if (qualification.standardisedTest === "Yes" && window.conditionalResources?.standardisedTest) {
     list.appendChild(createResourceItem(window.conditionalResources.standardisedTest));
   }
@@ -45,80 +34,82 @@ function renderResources(qualification) {
     list.appendChild(createResourceItem(window.conditionalResources.englishRequirement));
   }
 
-  // Unique resources
   const unique = (window.uniqueResources && window.uniqueResources[qualification.id]) || [];
-  unique.forEach(resource => {
-    list.appendChild(createResourceItem(resource));
-  });
+  unique.forEach(r => list.appendChild(createResourceItem(r)));
 
   return list;
 }
 
-// Wrap resources like the login instructions (same card style)
+// Better resources card styling (own card, consistent with login)
 function renderResourcesCard(qualification) {
   return `
-    <div class="info-card">
+    <div class="info-card resources-card">
       <h3>Application Resources</h3>
       ${renderResources(qualification).outerHTML}
     </div>
   `;
 }
 
-// Notice card (header-only per your format; transfer shows a list)
-function renderNoticeCard(qualification) {
-  // Helper: compute AY label from a start date (AY starts in Aug)
-  const getAcademicYear = (d) => {
-    if (!d || isNaN(d)) return null;
-    const m = d.getMonth(); // 0-based
-    const y = d.getFullYear();
-    const ayStart = (m >= 7) ? y + 1 : y; // Aug-Dec -> next calendar year as AY first; Jan-Jul -> current
-    return `AY${ayStart}/${ayStart + 1}`;
-  };
+// AY label (AY starts in Aug)
+function getAcademicYear(fromDate) {
+  if (!fromDate || isNaN(fromDate)) return null;
+  const m = fromDate.getMonth(); // 0-11
+  const y = fromDate.getFullYear();
+  const ayStart = (m >= 7) ? y + 1 : y;
+  return `AY${ayStart}/${ayStart + 1}`;
+}
 
-  // Transfer applicants: show multiple periods list
-  if (qualification.type === "transfer" && qualification.periods) {
-    const header = `📅 Application Periods for the ${qualification.name} Qualification`;
-    const periodsList = qualification.periods
-      .map(p => `<li>${p.label}: ${p.rangeText}</li>`)
-      .join("");
+// Multi-line notice card across all templates
+function renderNoticeCard(qualification) {
+  // Transfer = no single timeline; show list but same styling
+  if (qualification.type === "transfer" && Array.isArray(qualification.periods)) {
+    const headerLine1 = `📅 Application Periods for the ${qualification.name} Qualification`;
+    const list = qualification.periods.map(p => `<li>${p.label}: ${p.rangeText}</li>`).join("");
     return `
-      <div class="notice-card notice-info">
-        <h2>${header}</h2>
-        <ul>${periodsList}</ul>
+      <div class="notice-card notice-upcoming">
+        <h2>${headerLine1}</h2>
+        <ul>${list}</ul>
       </div>
     `;
   }
 
-  // Other qualifications with a timeline
   if (!qualification.timeline) return "";
 
-  const startDate = new Date(qualification.timeline.start);
-  const endDate = new Date(qualification.timeline.end);
+  const start = new Date(qualification.timeline.start);
+  const end   = new Date(qualification.timeline.end);
+  const ay    = getAcademicYear(start) ? getAcademicYear(start) + " " : "";
 
-  let message = "";
-  if (today < startDate) {
-    message = `not started yet. Opens on ${qualification.displayPeriod}`;
-  } else if (today >= startDate && today <= endDate) {
-    message = `open: ${qualification.displayPeriod}`;
+  let statusText, cardClass;
+  if (today < start) {
+    statusText = "has not started yet.";
+    cardClass = "notice-upcoming";
+  } else if (today <= end) {
+    statusText = "is open.";
+    cardClass = "notice-open";
   } else {
-    message = `closed.`;
+    statusText = "has closed.";
+    cardClass = "notice-closed";
   }
 
-  const ay = getAcademicYear(startDate);
-  const header = `📅 ${ay ? ay + " " : ""}Application Period for the ${qualification.name} Qualification is ${message}`;
-
-  const cardClass =
-    today < startDate ? "notice-upcoming" :
-    (today <= endDate ? "notice-open" : "notice-closed");
+  // Required multi-line format:
+  // line1: 📅 AY2026/2027 Application Period for the
+  // line2: [Qualification name] Qualification has not started yet. / is open. / has closed.
+  // line3: Opens on 17 December 2025 to 23 March 2026  (or “Open: …” if you prefer)
+  const line1 = `📅 ${ay}Application Period for the`;
+  const line2 = `${qualification.name} Qualification ${statusText}`;
+  const line3Prefix = (today < start) ? "Opens on " : (today <= end ? "Open: " : "Period: ");
+  const line3 = `${line3Prefix}${qualification.displayPeriod}`;
 
   return `
     <div class="notice-card ${cardClass}">
-      <h2>${header}</h2>
+      <h2>${line1}</h2>
+      <p>${line2}</p>
+      <p>${line3}</p>
     </div>
   `;
 }
 
-// Render login instructions
+// Login instructions (unchanged except rel=noopener on links)
 function renderLoginInstructions(qualification) {
   switch (qualification.type) {
     case "transfer":
@@ -164,9 +155,6 @@ function renderLoginInstructions(qualification) {
   }
 }
 
-// -------------------------------
-// Templates for each qualification type
-// -------------------------------
 window.templates = {};
 
 window.templates.internationalQualificationTemplate = function(qualification) {
