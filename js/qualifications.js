@@ -469,7 +469,6 @@ const internationalQualifications = [
     openPeriodText: internationalOpenText,
     closedPeriodText: internationalClosedText,
     displayPeriod: internationalOpenText,
-    displayPeriod: internationalOpenText,
     standardisedTest: "No",
     englishRequirement: "Yes",
     resources: [
@@ -483,7 +482,6 @@ const internationalQualifications = [
     timeline: internationalTimeline,
     openPeriodText: internationalOpenText,
     closedPeriodText: internationalClosedText,
-    displayPeriod: internationalOpenText,
     displayPeriod: internationalOpenText,
     standardisedTest: "Yes",
     englishRequirement: "No",
@@ -502,6 +500,7 @@ const qualificationsData = [
 
 // Attach to window
 window.qualificationsData = qualificationsData;
+
 
 
 
