@@ -18,24 +18,66 @@ const surveyFlow = [
       "I am not a current or former undergraduate"
     ],
     next: function(answer){ 
-      // All three options lead to nationality page
-      return "nationality";
+      switch (answer) {
+        case "Local universities (NUS, NTU, SMU, SIT, SUTD, SUSS, UAS)":
+          return "local_transfer";
+        case "Overseas tertiary institutions":
+          return "nationality_transfer";
+        case "I am not a current or former undergraduate":
+          return "nationality";
+        default:
+          return null;
+      }
     }
   },
+
+  // Local Transfer → direct end
+  {
+    id: "local_transfer",
+    question: "As you are currently studying in or have graduated from a local university, you will be considered a Transfer applicant.",
+    options: [],
+    next: function(){ return "end_transfer"; }
+  },
+
+  // Overseas Transfer → nationality check
+  {
+    id: "nationality_transfer",
+    question: "What is your nationality?",
+    options: [
+      "Singapore Citizen/ Singapore Permanent Resident", 
+      "Foreigner"
+    ],
+    next: function(answer){
+      switch (answer) {
+        case "Singapore Citizen/ Singapore Permanent Resident":
+          return "end_transfer";
+        case "Foreigner":
+          return "qualification";
+        default:
+          return null;
+      }
+    }
+  },
+
+  // Non-transfer applicants nationality
   {
     id: "nationality",
     question: "What is your nationality?",
-    options: ["Singapore Citizen/ Singapore Permanent Resident", "Foreigner"],
-    next: function(answer){
-      return "qualification";
+    options: [
+      "Singapore Citizen/ Singapore Permanent Resident", 
+      "Foreigner"
+    ],
+    next: function(answer){ 
+      return "qualification"; 
     }
   },
+
+  // Qualifications selection
   {
     id: "qualification",
     question: "What qualification will you be using to apply to the National University of Singapore (NUS)?",
     options: allQualifications.map(q => q.name),
     next: function(answer){
-      // Find the qualification by name and return its actual ID
       const qual = allQualifications.find(q => q.name === answer);
       return qual ? "end_" + qual.id : null;
     }
