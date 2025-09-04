@@ -192,18 +192,34 @@ select[name="userAnswer"]:focus {
 /* -------------------------------
    Actions row
 ---------------------------------*/
+/* Sticky bar is full-width */
 .form-actions {
-  width: min(var(--content-width), 100%);
-  margin: 10px auto 0;
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
+  width: 100%;
+  margin: 10px 0 0;
   position: sticky;
   bottom: 0;
-  background: linear-gradient(to top, #fff 70%, rgba(255,255,255,0));
-  padding: 6px 0 0 0; /* brings Continue inward */
+  background: transparent;
+  /* no padding here; gradient goes on the inner wrapper */
 }
-.final-actions { justify-content: space-between; }
+
+/* Inner wrapper matches the question column width and aligns buttons */
+.actions-inner {
+  width: min(var(--content-width), 100%);
+  margin: 0 auto;
+  display: flex;
+  justify-content: flex-end;   /* Continue flush right (question pages) */
+  gap: 10px;
+  background: linear-gradient(to top, #fff 70%, rgba(255,255,255,0));
+  padding: 6px 0 0 0;
+}
+
+/* Final pages: make actions full container width and split Date/PDF */
+.final-actions .actions-inner {
+  width: 100%;
+  max-width: 100%;
+  justify-content: space-between;
+}
+
 .actions-date {
   align-self: center;
   font-size: 13px;
@@ -338,4 +354,5 @@ button:disabled { opacity: 0.6; cursor: not-allowed; }
   .notice-card, .info-card { padding: 14px; border-radius: 10px; }
   .form-actions { justify-content: center; }
 }
+
 
