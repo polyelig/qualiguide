@@ -201,7 +201,7 @@ select[name="userAnswer"]:focus {
   position: sticky;
   bottom: 0;
   background: linear-gradient(to top, #fff 70%, rgba(255,255,255,0));
-  padding: 6px 24px 0 24px; /* brings Continue inward */
+  padding: 6px 0 0 0; /* brings Continue inward */
 }
 .final-actions { justify-content: space-between; }
 .actions-date {
@@ -338,3 +338,4 @@ button:disabled { opacity: 0.6; cursor: not-allowed; }
   .notice-card, .info-card { padding: 14px; border-radius: 10px; }
   .form-actions { justify-content: center; }
 }
+
