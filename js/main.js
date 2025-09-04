@@ -1,5 +1,5 @@
 // -------------------------------
-// main.js
+// main.js (updated)
 // -------------------------------
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -19,14 +19,16 @@ document.addEventListener("DOMContentLoaded", () => {
     const step = flowMap[stepId];
     if (!step) return;
 
-    currentStepId = stepId; // 🔑 keep track of current step
+    currentStepId = stepId; // track current step
     quizContainer.innerHTML = "";
 
+    // Question
     const questionLabel = document.createElement("div");
     questionLabel.className = "question-label";
     questionLabel.textContent = step.question;
     quizContainer.appendChild(questionLabel);
 
+    // No options → auto-advance
     if (!step.options || step.options.length === 0) {
       const nextStepId = step.next();
       if (nextStepId?.startsWith("end_")) {
@@ -37,6 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
+    // Render options
     const optionsDiv = document.createElement("div");
     optionsDiv.className = "options-list";
 
@@ -48,14 +51,17 @@ document.addEventListener("DOMContentLoaded", () => {
       input.type = "radio";
       input.name = "userAnswer";
       input.value = opt;
+      input.id = `${stepId}-${opt}`;
 
       const label = document.createElement("label");
       label.textContent = opt;
+      label.setAttribute("for", input.id);
 
       optionDiv.appendChild(input);
       optionDiv.appendChild(label);
       optionsDiv.appendChild(optionDiv);
 
+      // Click handler ensures input is checked
       optionDiv.addEventListener("click", () => {
         input.checked = true;
       });
@@ -105,12 +111,15 @@ document.addEventListener("DOMContentLoaded", () => {
   // Handle continue button
   quizForm.addEventListener("submit", (e) => {
     e.preventDefault();
-    const selected = quizForm.userAnswer?.value;
-    if (!selected) return alert("Please select an option.");
 
-    const step = flowMap[currentStepId];
+    // ✅ Always get selected input inside quizContainer
+    const selectedInput = quizContainer.querySelector('input[name="userAnswer"]:checked');
+    if (!selectedInput) return alert("Please select an option.");
+    const selected = selectedInput.value;
+
     answers[currentStepId] = selected;
 
+    const step = flowMap[currentStepId];
     const nextStepId = step.next(selected);
 
     if (nextStepId?.startsWith("end_")) {
