@@ -15,7 +15,7 @@
   <main>
     <div class="container" id="quizWrapper">
       <form id="quizForm">
-        <!-- Page title (populated only on result pages) -->
+        <!-- Title only populated on end pages -->
         <div id="pageTitle"></div>
 
         <div id="quizContainer"></div>
@@ -34,11 +34,11 @@
   <script src="js/template.js"></script>
   <script src="js/surveyFlow.js"></script>
 
-  <!-- Load PDF lib BEFORE main.js to avoid race -->
+  <!-- Load PDF lib BEFORE main.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <script src="js/main.js"></script>
 
-  <!-- Global anti tab-nabbing: add rel=noopener to any target=_blank (including dynamically added) -->
+  <!-- Global anti tab-nabbing -->
   <script>
     (function(){
       const applyNoopener = (root=document) => {
@@ -46,18 +46,15 @@
             .forEach(a => a.setAttribute('rel', (a.getAttribute('rel')||'').trim() + ' noopener'));
       };
       applyNoopener();
-      // Watch for late inserts
       const mo = new MutationObserver(muts => muts.forEach(m => {
-        m.addedNodes.forEach(n => {
-          if (n.nodeType === 1) { applyNoopener(n); }
-        });
+        m.addedNodes.forEach(n => { if (n.nodeType === 1) applyNoopener(n); });
       }));
       mo.observe(document.documentElement, {childList:true, subtree:true});
     })();
   </script>
 
   <footer class="site-footer">
-    <p>&copy; 2025 NUS Office of Admissions</p>
+    <p>&copy; 2025 NUS Admissions</p>
   </footer>
 
 </body>
