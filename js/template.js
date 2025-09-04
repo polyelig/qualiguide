@@ -131,10 +131,10 @@ function renderLoginInstructionsCard(qualification) {
       <div class="info-card info-card--compact">
         <h3>🖥️ Login Instructions</h3>
         <p><strong>Singapore Citizen/ PR/ FIN Holders:</strong><br>
-          Log in with Singpass to apply using the Polytechnic Diploma from Singapore qualification.</p>
+          Please log in to the Applicant Portal with Singpass to apply using the Polytechnic Diploma from Singapore qualification.</p>
         <hr>
         <p><strong>🌏 Foreigners (without FIN):</strong><br>
-        Log in with your email account to apply using the Polytechnic Diploma from Singapore qualification.</p>
+        Pleas log in tot the Applicant Portal with your email account to apply using the Polytechnic Diploma from Singapore qualification.</p>
       </div>
     `;
   }
@@ -143,7 +143,7 @@ function renderLoginInstructionsCard(qualification) {
     return `
       <div class="info-card info-card--compact">
         <h3>🖥️ Login Instructions</h3>
-        <p>Log in with your <strong>Singpass</strong> to apply using the ${qualification.name} qualification.</p>
+        <p>Please log in the the Applicant Portal with your <strong>Singpass</strong> to apply using the ${qualification.name} qualification.</p>
         ${qualification.mtlUrl ? `<p>📌 Please check if you meet the Mother Tongue Language requirements: <a href="${qualification.mtlUrl}" target="_blank" rel="noopener noreferrer" class="resource-link">link</a></p>` : ""}
       </div>
     `;
@@ -154,11 +154,11 @@ function renderLoginInstructionsCard(qualification) {
       <div class="info-card info-card--compact">
         <h3>🖥️ Login Instructions</h3>
         <p><strong>🔎 Singapore Citizen/ PR/ FIN Holders:</strong><br> 
-         Log in with <strong>Singpass</strong> and apply under <em>Singapore Citizens/ PR</em> category using the ${qualification.name} qualification.</p>
+         Please log in to the Applicant Portal with <strong>Singpass</strong> and apply under <em>Singapore Citizens/ Singapore Permanent Residents with International Qualifications</em> category using the ${qualification.name} qualification.</p>
         <p>📌 Please check if you meet the Mother Tongue Language requirements.</p>
         <hr>
         <p><strong>🌏 Foreigners (without FIN):</strong><br> 
-         Log in with your <strong>email account</strong> and apply under <em>International Student</em> category using the ${qualification.name} qualification.</p>
+         Please log in to the Applicant Portal with your <strong>email account</strong> and apply under <em>International Student with International Qualification</em> category using the ${qualification.name} qualification.</p>
       </div>
     `;
   }
@@ -167,7 +167,7 @@ function renderLoginInstructionsCard(qualification) {
   return `
     <div class="info-card info-card--compact">
       <h3>🖥️ Login Instructions</h3>
-      <p>As you are a transfer applicant, please log in to the Applicant Portal with your <strong>Singpass</strong> to proceed.</p>
+      <p>As you have indicated that you are currently studying/ have enrolled in/ have graduated from a tertiary institution, please log in to the Applicant Portal with your Singpass to proceed with your application as a Transfer candidate.</p>
     </div>
   `;
 }
