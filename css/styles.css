@@ -15,13 +15,13 @@ html, body {
 }
 
 :root {
-  --content-width: 780px;
+  --content-width: 920px;     /* wider inner column */
   --header-h: 48px;
   --footer-h: 44px;
 }
 
 /* -------------------------------
-   Fixed Header & Footer (tighter)
+   Fixed Header & Footer
 ---------------------------------*/
 .site-header, .site-footer {
   position: fixed;
@@ -38,7 +38,6 @@ html, body {
   top: 0;
   height: var(--header-h);
 }
-
 .site-footer {
   bottom: 0;
   height: var(--footer-h);
@@ -48,7 +47,7 @@ html, body {
 .site-footer p { margin: 0; font-size: 0.9rem; }
 
 /* -------------------------------
-   Main viewport (between header & footer)
+   Main viewport
 ---------------------------------*/
 main {
   position: fixed;
@@ -56,8 +55,8 @@ main {
   bottom: var(--footer-h);
   left: 0;
   right: 0;
-  padding: 12px 16px;      /* tighter spacing to keep actions visible */
-  overflow: hidden;        /* no page scroll; container handles final scroll */
+  padding: 12px 16px;
+  overflow: hidden;
   display: flex;
   align-items: stretch;
 }
@@ -66,12 +65,12 @@ main {
    White container
 ---------------------------------*/
 .container {
-  max-width: 1000px;
+  max-width: 1100px;
   margin: 0 auto;
   background-color: #fff;
   border-radius: 12px;
   box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-  padding: 16px;                 /* tighter padding */
+  padding: 16px;                 /* tighter margins */
   flex: 1 1 auto;
   display: flex;
   flex-direction: column;
@@ -79,28 +78,20 @@ main {
 }
 
 /* -------------------------------
-   Page Title (end pages)
+   Title block (inside scroll area)
 ---------------------------------*/
-#pageTitle {
+.page-title-block {
   text-align: center;
   margin: 0 0 12px 0;
   padding-bottom: 6px;
   border-bottom: 1px solid #eef2f6;
 }
-#pageTitle .page-title {
-  font-size: 28px;                /* slightly smaller to fit */
+.page-title-block .page-title {
+  font-size: 28px;
   font-weight: 800;
-  letter-spacing: 0.2px;
-  margin: 0 0 4px 0;
   color: #0f2b4d;
   white-space: normal;
-  overflow-wrap: anywhere;        /* allow wrapping for long titles */
-  text-align: center;
-}
-#pageTitle .page-subtitle {
-  font-size: 13px;
-  color: #6b7a90;
-  margin: 0 0 2px 0;
+  overflow-wrap: anywhere;
 }
 
 /* -------------------------------
@@ -115,18 +106,16 @@ main {
 
 /* -------------------------------
    Quiz Container
-   - No scroll on questions
-   - Final pages: add .final-scroll (JS) to enable contained scroll
 ---------------------------------*/
 #quizContainer {
   width: min(var(--content-width), 100%);
   margin: 0 auto;
-  flex: 1 1 auto;           /* take remaining space above actions */
+  flex: 1 1 auto;
   overflow-y: hidden;       /* questions: no scroll */
-  padding: 10px 0;          /* tighter */
+  padding: 6px 0;
 }
 
-/* End pages: expand to full width of the white container */
+/* End pages: expand content to full container width */
 .final-mode {
   width: 100% !important;
   max-width: 100% !important;
@@ -136,7 +125,7 @@ main {
 .final-scroll {
   overflow-y: auto !important;
   scrollbar-gutter: stable both-edges;
-  padding-right: 8px;       /* keep text clear of scrollbar */
+  padding-right: 8px;
 }
 
 /* -------------------------------
@@ -144,7 +133,7 @@ main {
 ---------------------------------*/
 .question-label {
   font-weight: 700;
-  font-size: 20px;
+  font-size: 22px;
   margin-bottom: 10px;
   text-align: center;
 }
@@ -153,14 +142,14 @@ main {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  margin: 16px 0 0 0;      /* tighter */
+  margin: 16px 0 0 0;
   align-items: stretch;
 }
 
 .option {
   display: flex;
   align-items: center;
-  font-size: 16px;
+  font-size: 18px;
   background: #fff;
   border: 2px solid #bcc3c8;
   border-radius: 10px;
@@ -168,18 +157,16 @@ main {
   cursor: pointer;
   transition: border-color 0.2s, background 0.2s;
 }
-
 .option input[type="radio"] {
   margin-right: 12px;
   accent-color: #00437a;
   width: 18px; height: 18px;
 }
-
 .option:has(input[type="radio"]:checked) {
   border-color: #00437a;
   background: #f6faff;
 }
-/* Fallback for browsers w/o :has() */
+/* fallback for browsers w/o :has() */
 .no-has .option input[type="radio"]:checked + label {
   font-weight: 600;
   text-decoration: underline;
@@ -203,19 +190,24 @@ select[name="userAnswer"]:focus {
 }
 
 /* -------------------------------
-   Actions row (Continue / PDF)
-   - Always visible at container bottom
+   Actions row
 ---------------------------------*/
 .form-actions {
   width: min(var(--content-width), 100%);
-  margin: 10px auto 0;      /* tighter */
+  margin: 10px auto 0;
   display: flex;
   justify-content: flex-end;
   gap: 10px;
-  position: sticky;         /* ensure visibility even if content pushes */
+  position: sticky;
   bottom: 0;
   background: linear-gradient(to top, #fff 70%, rgba(255,255,255,0));
-  padding-top: 6px;
+  padding: 6px 24px 0 24px; /* brings Continue inward */
+}
+.final-actions { justify-content: space-between; }
+.actions-date {
+  align-self: center;
+  font-size: 13px;
+  color: #5b6b7a;
 }
 
 button {
@@ -229,7 +221,6 @@ button {
   transition: background 0.2s;
 }
 button:disabled { opacity: 0.6; cursor: not-allowed; }
-
 #continueBtn { background-color: #2196F3; }
 #downloadPdfBtn { display: none; background-color: #4CAF50; }
 
@@ -243,22 +234,20 @@ button:disabled { opacity: 0.6; cursor: not-allowed; }
   border-radius: 12px;
   box-shadow: 0 2px 12px rgba(0,0,0,0.08);
   line-height: 1.6;
-  font-size: 18px;
+  font-size: 16px;
   text-align: center;
 }
-
-.notice-card {
-  font-weight: bold;
-}
+.notice-card h2,
+.notice-card p { font-weight: 700; }
 
 .notice-open     { background-color: #f6fff9; border-left: 6px solid #2e7d32; }
-.notice-closed   { background-color: #fff3f3; border-left: 6px solid #c62828; }
-.notice-upcoming { background-color: #f9f9ff; border-left: 6px solid #00437a; }
+.notice-closed   { background-color: #ffeceb; border-left: 6px solid #c62828; }
+.notice-upcoming { background-color: #ffeceb; border-left: 6px solid #c62828; }
 
-.notice-card h2 { margin: 0 0 6px 0; font-size: 20px; font-weight: 700; }
+.notice-card h2 { margin: 0 0 6px 0; font-size: 20px; }
 .notice-card p  { margin: 4px 0; }
 
-/* Transfer list: center block but left-align bullets */
+/* Transfer list styling */
 .notice-card ul {
   display: inline-block;
   text-align: left;
@@ -266,12 +255,11 @@ button:disabled { opacity: 0.6; cursor: not-allowed; }
   padding-left: 18px;
 }
 
-/* Headings inside info cards */
 .info-card h2 { margin: 0 0 10px 0; font-size: 20px; font-weight: 600; }
 .info-card h3 { margin: 0 0 10px 0; font-size: 18px; font-weight: 700; border-bottom: 1px solid #ddd; padding-bottom: 6px; }
 
 /* -------------------------------
-   Resources as cards
+   Application Resources
 ---------------------------------*/
 .resource-list {
   list-style: none;
@@ -298,16 +286,21 @@ button:disabled { opacity: 0.6; cursor: not-allowed; }
 
 .resource-link {
   text-decoration: none;
-  color: #0f2b4d;
+  color: #00437a;
   font-weight: 700;
   line-height: 1.4;
   position: relative;
   padding-left: 20px;
+  transition: color 0.2s;
 }
 .resource-link::before {
   content: "↗";
   position: absolute;
   left: 0; top: 0;
+}
+.resource-link:hover {
+  color: #0066cc;             /* bright blue on hover */
+  text-decoration: underline; /* underline to emphasize link */
 }
 .resource-desc {
   color: #6b7a90;
@@ -336,15 +329,12 @@ button:disabled { opacity: 0.6; cursor: not-allowed; }
 @media (max-width: 900px) {
   .container {
     max-width: 98vw;
-    padding: 20px;
+    padding: 14px;
     border-radius: 10px;
   }
 }
-
 @media (max-width: 600px) {
-  .container { padding: 14px; box-shadow: none; }
+  .container { padding: 12px; box-shadow: none; }
   .notice-card, .info-card { padding: 14px; border-radius: 10px; }
   .form-actions { justify-content: center; }
 }
-
-
