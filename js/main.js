@@ -34,13 +34,26 @@ document.addEventListener("DOMContentLoaded", () => {
   const flowMap = {};
   window.surveyFlow.forEach(q => flowMap[q.id] = q);
 
+  // Helpers to manage scroll modes
+  function setQuestionScrollMode() {
+    // No scroll on question pages
+    quizContainer.style.overflowY = "hidden";
+  }
+
+  function setFinalScrollMode() {
+    // Scroll contained within the main container on final pages
+    quizContainer.style.overflowY = "auto";
+  }
+
   function renderStep(stepId) {
     const step = flowMap[stepId];
     if (!step) return;
 
     currentStepId = stepId;
-    // Clear title on question steps
+
+    // Questions: clear title and disable container scroll
     pageTitle.innerHTML = "";
+    setQuestionScrollMode();
 
     quizContainer.innerHTML = "";
 
@@ -112,12 +125,14 @@ document.addEventListener("DOMContentLoaded", () => {
     continueBtn.style.display = "block";
     downloadPdfBtn.style.display = "none";
 
-    quizContainer.scrollIntoView({ behavior: "smooth", block: "start" });
+    // ensure user is at top of the container
+    quizContainer.scrollTop = 0;
   }
 
   function setPageTitle(qualification) {
     pageTitle.innerHTML = `
       <div class="page-title">${qualification.name}</div>
+      <div class="page-subtitle">Application Overview</div>
     `;
   }
 
@@ -153,10 +168,14 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     quizContainer.innerHTML = html;
+
+    // Final pages: enable container-only scroll
+    setFinalScrollMode();
+
     downloadPdfBtn.style.display = "inline-block";
     continueBtn.style.display = "none";
 
-    quizContainer.scrollIntoView({ behavior: "smooth", block: "start" });
+    quizContainer.scrollTop = 0;
   }
 
   // Handle continue
@@ -187,23 +206,46 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // PDF Download
+  // PDF Download – capture full content (temporarily disable clipping)
   downloadPdfBtn.addEventListener("click", () => {
     if (typeof html2pdf === "undefined") {
       alert("PDF engine is still loading. Please try again in a moment.");
       return;
     }
-    const element = quizContainer;
+
+    // Temporarily expand container to include all content
+    const prevOverflow = quizContainer.style.overflow;
+    const prevHeight   = quizContainer.style.height;
+    const prevMaxH     = quizContainer.style.maxHeight;
+
+    quizContainer.style.overflow = "visible";
+    quizContainer.style.height = "auto";
+    quizContainer.style.maxHeight = "none";
+
     const opt = {
-      margin: 0.5,
-      filename: "nus_application_quiz.pdf",
-      html2canvas: { scale: 2 },
-      jsPDF: { unit: "in", format: "a4", orientation: "portrait" }
+      margin:       0.5,
+      filename:     "nus_application_quiz.pdf",
+      html2canvas:  { scale: 2, useCORS: true, windowWidth: document.documentElement.offsetWidth },
+      jsPDF:        { unit: "in", format: "a4", orientation: "portrait" },
+      pagebreak:    { mode: ['css', 'legacy'] } // respects .page-break if used
     };
-    html2pdf().set(opt).from(element).save();
+
+    html2pdf().set(opt).from(quizContainer).save().then(() => {
+      // restore scroll clipping for on-screen UX
+      quizContainer.style.overflow  = prevOverflow;
+      quizContainer.style.height    = prevHeight;
+      quizContainer.style.maxHeight = prevMaxH;
+      // return to container-only scroll mode after printing
+      setFinalScrollMode();
+    }).catch(() => {
+      // restore even if failed
+      quizContainer.style.overflow  = prevOverflow;
+      quizContainer.style.height    = prevHeight;
+      quizContainer.style.maxHeight = prevMaxH;
+      setFinalScrollMode();
+    });
   });
 
   // Start
   renderStep(currentStepId);
 });
-
