@@ -1,5 +1,5 @@
 // -------------------------------
-// main.js (full)
+// main.js (full, updated)
 // -------------------------------
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const quizForm = document.getElementById("quizForm");
   const continueBtn = document.getElementById("continueBtn");
   const downloadPdfBtn = document.getElementById("downloadPdfBtn");
-  const pageTitle = document.getElementById("pageTitle");
+  const pageTitle = document.getElementById("pageTitle"); // retained but not used on end pages
 
   // Feature-detect :has(); set a class for CSS fallbacks
   try {
@@ -40,13 +40,29 @@ document.addEventListener("DOMContentLoaded", () => {
   function setQuestionScrollMode() {
     // No scroll on question pages
     quizContainer.classList.remove("final-scroll");
+    quizContainer.classList.remove("final-mode");
     quizContainer.style.overflowY = "hidden";
   }
 
   function setFinalScrollMode() {
-    // Scroll contained within the main container on final pages
+    // Scroll contained within the main container on end pages
     quizContainer.classList.add("final-scroll");
+    quizContainer.classList.add("final-mode"); // full width of white container
     quizContainer.style.overflowY = "auto";
+  }
+
+  // -------------------------------
+  // Title inside scroll area (end pages)
+  // -------------------------------
+  function setPageTitleHTML(qualification) {
+    // Insert <wbr> after slashes to allow clean wrapping into two lines
+    const titleHtml = String(qualification.name).replace(/\s*\/\s*/g, "/<wbr> ");
+    return `
+      <div class="page-title-block">
+        <div class="page-title">${titleHtml}</div>
+        <div class="page-subtitle">Application Overview</div>
+      </div>
+    `;
   }
 
   // -------------------------------
@@ -58,8 +74,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     currentStepId = stepId;
 
-    // Questions: clear title and disable container scroll
-    pageTitle.innerHTML = "";
+    // Questions: clear out any static title and disable container scroll
+    if (pageTitle) pageTitle.innerHTML = ""; // we no longer use this on end pages
     setQuestionScrollMode();
 
     quizContainer.innerHTML = "";
@@ -92,6 +108,7 @@ document.addEventListener("DOMContentLoaded", () => {
       select.appendChild(defaultOption);
 
       step.options.forEach(opt => {
+        // expect { label, value }
         const option = document.createElement("option");
         option.value = opt.value;
         option.textContent = opt.label;
@@ -138,15 +155,6 @@ document.addEventListener("DOMContentLoaded", () => {
     quizContainer.scrollTop = 0;
   }
 
-  function setPageTitle(qualification) {
-    // Insert <wbr> after slashes to allow clean wrapping into two lines
-    const titleHtml = String(qualification.name).replace(/\s*\/\s*/g, "/<wbr> ");
-    pageTitle.innerHTML = `
-      <div class="page-title">${titleHtml}</div>
-      <div class="page-subtitle">Application Overview</div>
-    `;
-  }
-
   function renderEndPage(qualificationId) {
     const allQuals = window.qualificationsData || [];
     let qualification =
@@ -160,28 +168,28 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    setPageTitle(qualification);
+    // Build the scrolling header inside the container
+    const headerHTML = setPageTitleHTML(qualification);
 
-    quizContainer.innerHTML = "";
-
-    let html = "";
+    let contentHTML = "";
     switch (qualification.type) {
       case "international":
-        html = window.templates.internationalQualificationTemplate(qualification);
+        contentHTML = window.templates.internationalQualificationTemplate(qualification);
         break;
       case "local":
-        html = window.templates.localQualificationTemplate(qualification);
+        contentHTML = window.templates.localQualificationTemplate(qualification);
         break;
       case "transfer":
-        html = window.templates.transferTemplate(qualification);
+        contentHTML = window.templates.transferTemplate(qualification);
         break;
       default:
-        html = `<div class="info-card"><p>${qualification.name}</p></div>`;
+        contentHTML = `<div class="info-card"><p>${qualification.name}</p></div>`;
     }
 
-    quizContainer.innerHTML = html;
+    // Push title + content into the same scrollable area
+    quizContainer.innerHTML = headerHTML + contentHTML;
 
-    // Final pages: enable container-only scroll (visible scrollbar)
+    // End-page layout: enable container-only scroll and full width
     setFinalScrollMode();
 
     downloadPdfBtn.style.display = "inline-block";
