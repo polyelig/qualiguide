@@ -501,6 +501,12 @@ const qualificationsData = [
 // Attach to window
 window.qualificationsData = qualificationsData;
 
+// Attach separate arrays globally for surveyFlow
+window.localQualifications = localQualifications;
+window.internationalQualifications = internationalQualifications;
+
+
+
 
 
 
