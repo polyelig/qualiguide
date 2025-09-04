@@ -1,5 +1,5 @@
 // -------------------------------
-// main.js (updated)
+// main.js (patched)
 // -------------------------------
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -15,85 +15,86 @@ document.addEventListener("DOMContentLoaded", () => {
   const flowMap = {};
   window.surveyFlow.forEach(q => flowMap[q.id] = q);
 
-function renderStep(stepId) {
-  const step = flowMap[stepId];
-  if (!step) return;
+  function renderStep(stepId) {
+    const step = flowMap[stepId];
+    if (!step) return;
 
-  currentStepId = stepId; // track current step
-  quizContainer.innerHTML = "";
+    currentStepId = stepId; // track current step
+    quizContainer.innerHTML = "";
 
-  // Question label
-  const questionLabel = document.createElement("div");
-  questionLabel.className = "question-label";
-  questionLabel.textContent = step.question;
-  quizContainer.appendChild(questionLabel);
+    // Question label
+    const questionLabel = document.createElement("div");
+    questionLabel.className = "question-label";
+    questionLabel.textContent = step.question;
+    quizContainer.appendChild(questionLabel);
 
-  // No options → auto-advance
-  if (!step.options || step.options.length === 0) {
-    const nextStepId = step.next();
-    if (nextStepId?.startsWith("end_")) {
-      renderEndPage(nextStepId.replace("end_", ""));
-    } else if (nextStepId) {
-      renderStep(nextStepId);
+    // No options → auto-advance
+    if (!step.options || step.options.length === 0) {
+      const nextStepId = typeof step.next === "function" ? step.next() : step.next;
+      if (nextStepId?.startsWith?.("end_")) {
+        renderEndPage(nextStepId.replace("end_", ""));
+      } else if (nextStepId) {
+        renderStep(nextStepId);
+      }
+      return;
     }
-    return;
-  }
 
-  // Special case: qualifications dropdown
-  if (stepId === "qualification") {
-    const select = document.createElement("select");
-    select.name = "userAnswer";
-    select.className = "dropdown";
+    // Special case: qualifications dropdown (options are {label, value})
+    if (stepId === "qualification") {
+      const select = document.createElement("select");
+      select.name = "userAnswer";
+      select.className = "dropdown";
 
-    const defaultOption = document.createElement("option");
-    defaultOption.value = "";
-    defaultOption.textContent = "-- Select your qualification --";
-    select.appendChild(defaultOption);
+      const defaultOption = document.createElement("option");
+      defaultOption.value = "";
+      defaultOption.textContent = "-- Select your qualification --";
+      select.appendChild(defaultOption);
 
-    step.options.forEach(opt => {
-      const option = document.createElement("option");
-      option.value = opt;
-      option.textContent = opt;
-      select.appendChild(option);
-    });
-
-    quizContainer.appendChild(select);
-
-  } else {
-    // Radio buttons for all other questions
-    const optionsDiv = document.createElement("div");
-    optionsDiv.className = "options-list";
-
-    step.options.forEach(opt => {
-      const optionDiv = document.createElement("div");
-      optionDiv.className = "option";
-
-      const input = document.createElement("input");
-      input.type = "radio";
-      input.name = "userAnswer";
-      input.value = opt;
-      input.id = `${stepId}-${opt}`;
-
-      const label = document.createElement("label");
-      label.textContent = opt;
-      label.setAttribute("for", input.id);
-
-      optionDiv.appendChild(input);
-      optionDiv.appendChild(label);
-      optionsDiv.appendChild(optionDiv);
-
-      optionDiv.addEventListener("click", () => {
-        input.checked = true;
+      step.options.forEach(opt => {
+        const option = document.createElement("option");
+        // options are objects: { label, value }
+        option.value = opt.value;
+        option.textContent = opt.label;
+        select.appendChild(option);
       });
-    });
 
-    quizContainer.appendChild(optionsDiv);
+      quizContainer.appendChild(select);
+
+    } else {
+      // Radio buttons for all other questions (options are strings)
+      const optionsDiv = document.createElement("div");
+      optionsDiv.className = "options-list";
+
+      step.options.forEach(opt => {
+        const optionDiv = document.createElement("div");
+        optionDiv.className = "option";
+
+        const input = document.createElement("input");
+        input.type = "radio";
+        input.name = "userAnswer";
+        input.value = opt;
+        const safeId = String(opt).replace(/\s+/g, "-").replace(/[^a-zA-Z0-9\-]/g, "");
+        input.id = `${stepId}-${safeId}`;
+
+        const label = document.createElement("label");
+        label.textContent = opt;
+        label.setAttribute("for", input.id);
+
+        optionDiv.appendChild(input);
+        optionDiv.appendChild(label);
+        optionsDiv.appendChild(optionDiv);
+
+        optionDiv.addEventListener("click", () => {
+          input.checked = true;
+        });
+      });
+
+      quizContainer.appendChild(optionsDiv);
+    }
+
+    continueBtn.style.display = "block";
+    downloadPdfBtn.style.display = "none";
   }
-
-  continueBtn.style.display = "block";
-  downloadPdfBtn.style.display = "none";
-}
-
 
   function renderEndPage(qualificationId) {
     const allQuals = window.qualificationsData || [];
@@ -105,6 +106,8 @@ function renderStep(stepId) {
 
     if (!qualification) {
       quizContainer.innerHTML = "<p>Qualification not found.</p>";
+      continueBtn.style.display = "none";
+      downloadPdfBtn.style.display = "none";
       return;
     }
 
@@ -134,17 +137,26 @@ function renderStep(stepId) {
   quizForm.addEventListener("submit", (e) => {
     e.preventDefault();
 
-    // ✅ Always get selected input inside quizContainer
-    const selectedInput = quizContainer.querySelector('input[name="userAnswer"]:checked');
-    if (!selectedInput) return alert("Please select an option.");
-    const selected = selectedInput.value;
+    // Check for <select> first (qualification step)
+    const selectEl = quizContainer.querySelector('select[name="userAnswer"]');
+    let selected = null;
+
+    if (selectEl) {
+      selected = selectEl.value;
+      if (!selected) return alert("Please select an option.");
+    } else {
+      // fallback to radios
+      const selectedInput = quizContainer.querySelector('input[name="userAnswer"]:checked');
+      if (!selectedInput) return alert("Please select an option.");
+      selected = selectedInput.value;
+    }
 
     answers[currentStepId] = selected;
 
     const step = flowMap[currentStepId];
-    const nextStepId = step.next(selected);
+    const nextStepId = typeof step.next === "function" ? step.next(selected) : step.next;
 
-    if (nextStepId?.startsWith("end_")) {
+    if (nextStepId?.startsWith?.("end_")) {
       renderEndPage(nextStepId.replace("end_", ""));
     } else if (nextStepId) {
       renderStep(nextStepId);
@@ -166,4 +178,3 @@ function renderStep(stepId) {
   // Start quiz
   renderStep(currentStepId);
 });
-
