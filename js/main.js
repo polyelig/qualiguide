@@ -8,10 +8,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const continueBtn = document.getElementById("continueBtn");
   const downloadPdfBtn = document.getElementById("downloadPdfBtn");
 
-  let currentStepId = window.surveyFlow[0]?.id || null;
+  let currentStep = 0;
   const answers = {};
 
-  // Flatten survey flow for lookup by ID
+  // Flatten survey flow for easy lookup by ID
   const flowMap = {};
   window.surveyFlow.forEach(q => flowMap[q.id] = q);
 
@@ -19,7 +19,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const step = flowMap[stepId];
     if (!step) return;
 
-    currentStepId = stepId;
     quizContainer.innerHTML = "";
 
     // Question
@@ -28,9 +27,8 @@ document.addEventListener("DOMContentLoaded", () => {
     questionLabel.textContent = step.question;
     quizContainer.appendChild(questionLabel);
 
-    // Auto-advance if no options (e.g., Transfer)
+    // If no options → auto-advance
     if (!step.options || step.options.length === 0) {
-      continueBtn.style.display = "none";
       const nextStepId = step.next();
       if (nextStepId?.startsWith("end_")) {
         const qualId = nextStepId.replace("end_", "");
@@ -41,65 +39,52 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // Dropdown for qualifications (more than 5 options) or radio for few options
+    // Options
     const optionsDiv = document.createElement("div");
     optionsDiv.className = "options-list";
 
-    if (step.id === "qualification") {
-      const select = document.createElement("select");
-      select.name = "userAnswer";
-      select.id = "userAnswer";
+    step.options.forEach(opt => {
+      const optionDiv = document.createElement("div");
+      optionDiv.className = "option";
 
-      const defaultOpt = document.createElement("option");
-      defaultOpt.value = "";
-      defaultOpt.textContent = "-- Select your qualification --";
-      select.appendChild(defaultOpt);
+      const input = document.createElement("input");
+      input.type = "radio";
+      input.name = "userAnswer";
+      input.value = opt;
 
-      step.options.forEach(opt => {
-        const option = document.createElement("option");
-        option.value = opt;
-        option.textContent = opt;
-        select.appendChild(option);
+      const label = document.createElement("label");
+      label.textContent = opt;
+
+      optionDiv.appendChild(input);
+      optionDiv.appendChild(label);
+      optionsDiv.appendChild(optionDiv);
+
+      optionDiv.addEventListener("click", () => {
+        input.checked = true;
       });
-
-      optionsDiv.appendChild(select);
-    } else {
-      step.options.forEach(opt => {
-        const optionDiv = document.createElement("div");
-        optionDiv.className = "option";
-
-        const input = document.createElement("input");
-        input.type = "radio";
-        input.name = "userAnswer";
-        input.value = opt;
-
-        const label = document.createElement("label");
-        label.textContent = opt;
-
-        optionDiv.appendChild(input);
-        optionDiv.appendChild(label);
-        optionsDiv.appendChild(optionDiv);
-
-        optionDiv.addEventListener("click", () => {
-          input.checked = true;
-        });
-      });
-    }
+    });
 
     quizContainer.appendChild(optionsDiv);
+
     continueBtn.style.display = "block";
     downloadPdfBtn.style.display = "none";
   }
 
   function renderEndPage(qualificationId) {
     const allQuals = window.qualificationsData || [];
-    const qualification = allQuals.find(q => q.id === qualificationId);
+    let qualification = allQuals.find(q => q.id === qualificationId);
+
+    // Fallback: if Transfer, use the transferQualification
+    if (!qualification && qualificationId === "transfer") {
+      qualification = allQuals.find(q => q.type === "transfer");
+    }
 
     if (!qualification) {
       quizContainer.innerHTML = "<p>Qualification not found.</p>";
-      continueBtn.style.display = "none";
       return;
     }
+
+    quizContainer.innerHTML = "";
 
     let html = "";
     switch (qualification.type) {
@@ -124,39 +109,34 @@ document.addEventListener("DOMContentLoaded", () => {
   // Handle form submission
   quizForm.addEventListener("submit", (e) => {
     e.preventDefault();
-
-    let selected;
-    if (currentStepId === "qualification") {
-      selected = document.getElementById("userAnswer")?.value;
-    } else {
-      selected = quizForm.userAnswer?.value;
-    }
-
+    const selected = quizForm.userAnswer?.value;
     if (!selected) return alert("Please select an option.");
 
-    answers[currentStepId] = selected;
-    const nextStepId = flowMap[currentStepId].next(selected);
+    const stepId = window.surveyFlow[currentStep].id;
+    answers[stepId] = selected;
 
-    if (!nextStepId) return;
+    const nextStepId = window.surveyFlow[currentStep].next(selected);
 
-    if (nextStepId.startsWith("end_")) {
+    if (nextStepId?.startsWith("end_")) {
       const qualId = nextStepId.replace("end_", "");
       renderEndPage(qualId);
-    } else {
+    } else if (nextStepId) {
       renderStep(nextStepId);
     }
   });
 
   // PDF Download
   downloadPdfBtn.addEventListener("click", () => {
-    html2pdf().set({
+    const element = quizContainer;
+    const opt = {
       margin: 0.5,
       filename: "nus_application_quiz.pdf",
       html2canvas: { scale: 2 },
       jsPDF: { unit: "in", format: "a4", orientation: "portrait" }
-    }).from(quizContainer).save();
+    };
+    html2pdf().set(opt).from(element).save();
   });
 
   // Render first step
-  if (currentStepId) renderStep(currentStepId);
+  renderStep(window.surveyFlow[currentStep].id);
 });
