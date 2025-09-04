@@ -1,5 +1,5 @@
 // -------------------------------
-// template.js
+// template.js (updated for new headers & resources card)
 // -------------------------------
 
 // Get today's date (for notice card)
@@ -13,6 +13,7 @@ function createResourceItem(resource) {
   const a = document.createElement("a");
   a.href = resource.url;
   a.target = "_blank";
+  a.rel = "noopener"; // security
   a.textContent = resource.label;
 
   li.appendChild(a);
@@ -53,16 +54,36 @@ function renderResources(qualification) {
   return list;
 }
 
-// Notice card (open, closed, upcoming, or Transfer periods)
+// Wrap resources like the login instructions (same card style)
+function renderResourcesCard(qualification) {
+  return `
+    <div class="info-card">
+      <h3>Application Resources</h3>
+      ${renderResources(qualification).outerHTML}
+    </div>
+  `;
+}
+
+// Notice card (header-only per your format; transfer shows a list)
 function renderNoticeCard(qualification) {
-  // Transfer applicants: show multiple periods
+  // Helper: compute AY label from a start date (AY starts in Aug)
+  const getAcademicYear = (d) => {
+    if (!d || isNaN(d)) return null;
+    const m = d.getMonth(); // 0-based
+    const y = d.getFullYear();
+    const ayStart = (m >= 7) ? y + 1 : y; // Aug-Dec -> next calendar year as AY first; Jan-Jul -> current
+    return `AY${ayStart}/${ayStart + 1}`;
+  };
+
+  // Transfer applicants: show multiple periods list
   if (qualification.type === "transfer" && qualification.periods) {
+    const header = `📅 Application Periods for the ${qualification.name} Qualification`;
     const periodsList = qualification.periods
       .map(p => `<li>${p.label}: ${p.rangeText}</li>`)
       .join("");
     return `
       <div class="notice-card notice-info">
-        <h2>Application Periods</h2>
+        <h2>${header}</h2>
         <ul>${periodsList}</ul>
       </div>
     `;
@@ -75,23 +96,24 @@ function renderNoticeCard(qualification) {
   const endDate = new Date(qualification.timeline.end);
 
   let message = "";
-  let cardClass = "";
-
   if (today < startDate) {
-    message = `Application has not started yet. Opens on ${qualification.displayPeriod}`;
-    cardClass = "notice-upcoming";
+    message = `not started yet. Opens on ${qualification.displayPeriod}`;
   } else if (today >= startDate && today <= endDate) {
-    message = `Application period is open: ${qualification.displayPeriod}`;
-    cardClass = "notice-open";
+    message = `open: ${qualification.displayPeriod}`;
   } else {
-    message = "Application period is closed";
-    cardClass = "notice-closed";
+    message = `closed.`;
   }
+
+  const ay = getAcademicYear(startDate);
+  const header = `📅 ${ay ? ay + " " : ""}Application Period for the ${qualification.name} Qualification is ${message}`;
+
+  const cardClass =
+    today < startDate ? "notice-upcoming" :
+    (today <= endDate ? "notice-open" : "notice-closed");
 
   return `
     <div class="notice-card ${cardClass}">
-      <h2>Application Notice</h2>
-      <p>${message}</p>
+      <h2>${header}</h2>
     </div>
   `;
 }
@@ -122,7 +144,7 @@ function renderLoginInstructions(qualification) {
           <div class="info-card">
             <h3>🖥️ Prospective Applicants</h3>
             <p>Please log in with your Singpass to apply using ${qualification.name}.</p>
-            ${qualification.mtlUrl ? `<p>📌 Check Mother Tongue Language requirements: <a href="${qualification.mtlUrl}" target="_blank">link</a></p>` : ""}
+            ${qualification.mtlUrl ? `<p>📌 Check Mother Tongue Language requirements: <a href="${qualification.mtlUrl}" target="_blank" rel="noopener">link</a></p>` : ""}
           </div>
         `;
       }
@@ -154,9 +176,8 @@ window.templates.internationalQualificationTemplate = function(qualification) {
       <h2>${qualification.name}</h2>
       ${qualification.timeline ? `<p><strong>Application Timeline:</strong> ${qualification.displayPeriod}</p>` : ""}
       ${renderLoginInstructions(qualification)}
-      <h3>Resources</h3>
-      ${renderResources(qualification).outerHTML}
     </div>
+    ${renderResourcesCard(qualification)}
   `;
 };
 
@@ -166,11 +187,10 @@ window.templates.localQualificationTemplate = function(qualification) {
     <div class="info-card">
       <h2>${qualification.name}</h2>
       ${qualification.timeline ? `<p><strong>Application Timeline:</strong> ${qualification.displayPeriod}</p>` : ""}
-      ${qualification.mtlUrl ? `<p><a href="${qualification.mtlUrl}" target="_blank">Mother Tongue Language Requirements</a></p>` : ""}
+      ${qualification.mtlUrl ? `<p><a href="${qualification.mtlUrl}" target="_blank" rel="noopener">Mother Tongue Language Requirements</a></p>` : ""}
       ${renderLoginInstructions(qualification)}
-      <h3>Resources</h3>
-      ${renderResources(qualification).outerHTML}
     </div>
+    ${renderResourcesCard(qualification)}
   `;
 };
 
@@ -181,8 +201,7 @@ window.templates.transferTemplate = function(qualification) {
       <h2>${qualification.name}</h2>
       ${qualification.timeline || qualification.periods ? `<p><strong>Application Timeline:</strong> ${qualification.displayPeriod}</p>` : ""}
       ${renderLoginInstructions(qualification)}
-      <h3>Resources</h3>
-      ${renderResources(qualification).outerHTML}
     </div>
+    ${renderResourcesCard(qualification)}
   `;
 };
