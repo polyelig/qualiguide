@@ -8,11 +8,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const continueBtn = document.getElementById("continueBtn");
   const downloadPdfBtn = document.getElementById("downloadPdfBtn");
 
-  // Track current question index and answers
   let currentStep = 0;
   const answers = {};
 
-  // Flatten survey flow for easy lookup by ID
   const flowMap = {};
   window.surveyFlow.forEach(q => flowMap[q.id] = q);
 
@@ -22,6 +20,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     quizContainer.innerHTML = "";
 
+    // If this is the transfer step, skip options and go directly to transfer template
+    if (step.id === "transfer") {
+      if (window.transferQualification) {
+        renderEndPage("transfer");
+        return;
+      }
+    }
+
     // Question
     const questionLabel = document.createElement("div");
     questionLabel.className = "question-label";
@@ -29,31 +35,52 @@ document.addEventListener("DOMContentLoaded", () => {
     quizContainer.appendChild(questionLabel);
 
     // Options
-    const optionsDiv = document.createElement("div");
-    optionsDiv.className = "options-list";
+    if (step.id === "qualification") {
+      // Dropdown
+      const select = document.createElement("select");
+      select.name = "userAnswer";
 
-    step.options.forEach(opt => {
-      const optionDiv = document.createElement("div");
-      optionDiv.className = "option";
+      const defaultOpt = document.createElement("option");
+      defaultOpt.value = "";
+      defaultOpt.textContent = "-- Please select --";
+      select.appendChild(defaultOpt);
 
-      const input = document.createElement("input");
-      input.type = "radio";
-      input.name = "userAnswer";
-      input.value = opt;
-
-      const label = document.createElement("label");
-      label.textContent = opt;
-
-      optionDiv.appendChild(input);
-      optionDiv.appendChild(label);
-      optionsDiv.appendChild(optionDiv);
-
-      optionDiv.addEventListener("click", () => {
-        input.checked = true;
+      step.options.forEach(opt => {
+        const optionEl = document.createElement("option");
+        optionEl.value = opt;
+        optionEl.textContent = opt;
+        select.appendChild(optionEl);
       });
-    });
 
-    quizContainer.appendChild(optionsDiv);
+      quizContainer.appendChild(select);
+    } else {
+      // Radio buttons
+      const optionsDiv = document.createElement("div");
+      optionsDiv.className = "options-list";
+
+      step.options.forEach(opt => {
+        const optionDiv = document.createElement("div");
+        optionDiv.className = "option";
+
+        const input = document.createElement("input");
+        input.type = "radio";
+        input.name = "userAnswer";
+        input.value = opt;
+
+        const label = document.createElement("label");
+        label.textContent = opt;
+
+        optionDiv.appendChild(input);
+        optionDiv.appendChild(label);
+        optionsDiv.appendChild(optionDiv);
+
+        optionDiv.addEventListener("click", () => {
+          input.checked = true;
+        });
+      });
+
+      quizContainer.appendChild(optionsDiv);
+    }
 
     continueBtn.style.display = "block";
     downloadPdfBtn.style.display = "none";
@@ -97,9 +124,13 @@ document.addEventListener("DOMContentLoaded", () => {
   quizForm.addEventListener("submit", (e) => {
     e.preventDefault();
     const selected = quizForm.userAnswer?.value;
-    if (!selected) return alert("Please select an option.");
-
     const stepId = window.surveyFlow[currentStep].id;
+
+    // Skip validation if it's transfer (direct render already handled)
+    if (stepId !== "transfer" && !selected) {
+      return alert("Please select an option.");
+    }
+
     answers[stepId] = selected;
 
     const nextStepId = window.surveyFlow[currentStep].next(selected);
@@ -119,13 +150,13 @@ document.addEventListener("DOMContentLoaded", () => {
     const element = quizContainer;
     const opt = {
       margin: 0.5,
-      filename: "nus_application_quiz.pdf",
+      filename: "NUS_Qualification_Guide.pdf",
       html2canvas: { scale: 2 },
       jsPDF: { unit: "in", format: "a4", orientation: "portrait" }
     };
     html2pdf().set(opt).from(element).save();
   });
 
-  // Render first step
+  // Start
   renderStep(window.surveyFlow[currentStep].id);
 });
