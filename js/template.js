@@ -53,8 +53,22 @@ function renderResources(qualification) {
   return list;
 }
 
-// Notice card (open, closed, upcoming)
+// Notice card (open, closed, upcoming, or Transfer periods)
 function renderNoticeCard(qualification) {
+  // Transfer applicants: show multiple periods
+  if (qualification.type === "transfer" && qualification.periods) {
+    const periodsList = qualification.periods
+      .map(p => `<li>${p.label}: ${p.rangeText}</li>`)
+      .join("");
+    return `
+      <div class="notice-card notice-info">
+        <h2>Application Periods</h2>
+        <ul>${periodsList}</ul>
+      </div>
+    `;
+  }
+
+  // Other qualifications with a timeline
   if (!qualification.timeline) return "";
 
   const startDate = new Date(qualification.timeline.start);
@@ -165,7 +179,7 @@ window.templates.transferTemplate = function(qualification) {
     ${renderNoticeCard(qualification)}
     <div class="info-card">
       <h2>${qualification.name}</h2>
-      ${qualification.timeline ? `<p><strong>Application Timeline:</strong> ${qualification.displayPeriod}</p>` : ""}
+      ${qualification.timeline || qualification.periods ? `<p><strong>Application Timeline:</strong> ${qualification.displayPeriod}</p>` : ""}
       ${renderLoginInstructions(qualification)}
       <h3>Resources</h3>
       ${renderResources(qualification).outerHTML}
