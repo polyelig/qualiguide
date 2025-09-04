@@ -227,7 +227,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const opt = {
       margin: 0.5,
-      filename: "nus_application_quiz.pdf",
+      filename: "NUS_Qualification_Guide.pdf",
       html2canvas: { scale: 2, useCORS: true, windowWidth: document.documentElement.offsetWidth },
       jsPDF: { unit: "in", format: "a4", orientation: "portrait" },
       pagebreak: { mode: ["css", "legacy"] }
@@ -251,3 +251,4 @@ document.addEventListener("DOMContentLoaded", () => {
   // init
   renderStep(currentStepId);
 });
+
