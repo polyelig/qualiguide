@@ -1,5 +1,5 @@
 // -------------------------------
-// main.js
+// main.js (full)
 // -------------------------------
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -32,9 +32,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Map for quick access
   const flowMap = {};
-  window.surveyFlow.forEach(q => flowMap[q.id] = q);
+  window.surveyFlow.forEach(q => (flowMap[q.id] = q));
 
-  // Helpers to manage scroll modes
+  // -------------------------------
+  // Scroll modes
+  // -------------------------------
   function setQuestionScrollMode() {
     // No scroll on question pages
     quizContainer.style.overflowY = "hidden";
@@ -45,6 +47,9 @@ document.addEventListener("DOMContentLoaded", () => {
     quizContainer.style.overflowY = "auto";
   }
 
+  // -------------------------------
+  // Rendering
+  // -------------------------------
   function renderStep(stepId) {
     const step = flowMap[stepId];
     if (!step) return;
@@ -116,7 +121,9 @@ document.addEventListener("DOMContentLoaded", () => {
         optionDiv.appendChild(label);
         optionsDiv.appendChild(optionDiv);
 
-        optionDiv.addEventListener("click", () => { input.checked = true; });
+        optionDiv.addEventListener("click", () => {
+          input.checked = true;
+        });
       });
 
       quizContainer.appendChild(optionsDiv);
@@ -125,7 +132,7 @@ document.addEventListener("DOMContentLoaded", () => {
     continueBtn.style.display = "block";
     downloadPdfBtn.style.display = "none";
 
-    // ensure user is at top of the container
+    // Ensure user is at top of the container
     quizContainer.scrollTop = 0;
   }
 
@@ -138,8 +145,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function renderEndPage(qualificationId) {
     const allQuals = window.qualificationsData || [];
-    let qualification = allQuals.find(q => q.id === qualificationId) ||
-                        (qualificationId === "transfer" ? allQuals.find(q => q.type === "transfer") : null);
+    let qualification =
+      allQuals.find(q => q.id === qualificationId) ||
+      (qualificationId === "transfer" ? allQuals.find(q => q.type === "transfer") : null);
 
     if (!qualification) {
       quizContainer.innerHTML = "<p>Qualification not found.</p>";
@@ -178,8 +186,10 @@ document.addEventListener("DOMContentLoaded", () => {
     quizContainer.scrollTop = 0;
   }
 
-  // Handle continue
-  quizForm.addEventListener("submit", (e) => {
+  // -------------------------------
+  // Events
+  // -------------------------------
+  quizForm.addEventListener("submit", e => {
     e.preventDefault();
 
     const selectEl = quizContainer.querySelector('select[name="userAnswer"]');
@@ -223,29 +233,36 @@ document.addEventListener("DOMContentLoaded", () => {
     quizContainer.style.maxHeight = "none";
 
     const opt = {
-      margin:       0.5,
-      filename:     "nus_application_quiz.pdf",
-      html2canvas:  { scale: 2, useCORS: true, windowWidth: document.documentElement.offsetWidth },
-      jsPDF:        { unit: "in", format: "a4", orientation: "portrait" },
-      pagebreak:    { mode: ['css', 'legacy'] } // respects .page-break if used
+      margin: 0.5,
+      filename: "nus_application_quiz.pdf",
+      html2canvas: { scale: 2, useCORS: true, windowWidth: document.documentElement.offsetWidth },
+      jsPDF: { unit: "in", format: "a4", orientation: "portrait" },
+      pagebreak: { mode: ["css", "legacy"] } // respects .page-break if used
     };
 
-    html2pdf().set(opt).from(quizContainer).save().then(() => {
-      // restore scroll clipping for on-screen UX
-      quizContainer.style.overflow  = prevOverflow;
-      quizContainer.style.height    = prevHeight;
-      quizContainer.style.maxHeight = prevMaxH;
-      // return to container-only scroll mode after printing
-      setFinalScrollMode();
-    }).catch(() => {
-      // restore even if failed
-      quizContainer.style.overflow  = prevOverflow;
-      quizContainer.style.height    = prevHeight;
-      quizContainer.style.maxHeight = prevMaxH;
-      setFinalScrollMode();
-    });
+    html2pdf()
+      .set(opt)
+      .from(quizContainer)
+      .save()
+      .then(() => {
+        // restore scroll clipping for on-screen UX
+        quizContainer.style.overflow = prevOverflow;
+        quizContainer.style.height = prevHeight;
+        quizContainer.style.maxHeight = prevMaxH;
+        // return to container-only scroll mode after printing
+        setFinalScrollMode();
+      })
+      .catch(() => {
+        // restore even if failed
+        quizContainer.style.overflow = prevOverflow;
+        quizContainer.style.height = prevHeight;
+        quizContainer.style.maxHeight = prevMaxH;
+        setFinalScrollMode();
+      });
   });
 
-  // Start
+  // -------------------------------
+  // Init
+  // -------------------------------
   renderStep(currentStepId);
 });
