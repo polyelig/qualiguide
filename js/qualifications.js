@@ -2,6 +2,26 @@
 // qualifications.js
 // -------------------------------
 
+// --- Transfer Qualification ---
+const transferQualification = {
+  id: "transfer",
+  name: "Transfer",
+  type: "transfer",
+  periods: [
+    { label: "📅 AY2024/2025 Semester 2", rangeText: "29 October 2024 to 12 November 2024" },
+    { label: "📅 AY2025/2026 Semester 1", rangeText: "4 February 2025 to 18 February 2025" }
+  ],
+  displayPeriod: "Multiple Periods",
+  timeline: null,
+  resources: [
+    { label: "Important Dates", url: "https://nus.edu.sg/oam/admissions/important-dates" },
+    { label: "Application Guides & Sample Forms", url: "https://nus.edu.sg/oam/admissions/application-guides-sample-forms" },
+    { label: "Programme Prerequisites", url: "https://nus.edu.sg/oam/admissions/before-you-apply" },
+    { label: "Update of Applicant Information", url: "https://nus.edu.sg/oam/admissions/after-you-apply" },
+    { label: "NUS Transfer Eligibility Chart", url: "https://nus.edu.sg/oam/docs/default-source/transfer-applicants/nus-oam-transfer-eligibility-chart.pdf" }
+  ]
+};
+
 // --- Local Qualifications ---
 const localQualifications = [
   {
@@ -55,26 +75,6 @@ const localQualifications = [
     ]
   }
 ];
-
-// --- Transfer Qualification ---
-const transferQualification = {
-  id: "transfer",
-  name: "Transfer",
-  type: "transfer",
-  periods: [
-    { label: "📅 AY2024/2025 Semester 2", rangeText: "29 October 2024 to 12 November 2024" },
-    { label: "📅 AY2025/2026 Semester 1", rangeText: "4 February 2025 to 18 February 2025" }
-  ],
-  displayPeriod: "Multiple Periods",
-  timeline: null,
-  resources: [
-    { label: "Important Dates", url: "https://nus.edu.sg/oam/admissions/important-dates" },
-    { label: "Application Guides & Sample Forms", url: "https://nus.edu.sg/oam/admissions/application-guides-sample-forms" },
-    { label: "Programme Prerequisites", url: "https://nus.edu.sg/oam/admissions/before-you-apply" },
-    { label: "Update of Applicant Information", url: "https://nus.edu.sg/oam/admissions/after-you-apply" },
-    { label: "NUS Transfer Eligibility Chart", url: "https://nus.edu.sg/oam/docs/default-source/transfer-applicants/nus-oam-transfer-eligibility-chart.pdf" }
-  ]
-};
 
 
 // --- International Qualifications ---
@@ -500,6 +500,7 @@ const qualificationsData = [
 
 // Attach to window
 window.qualificationsData = qualificationsData;
+
 
 
 
