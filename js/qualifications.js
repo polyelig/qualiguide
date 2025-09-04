@@ -54,7 +54,7 @@ const localQualifications = [
     id: "nus-high-school-diploma",
     name: "NUS High School Diploma",
     type: "local",
-    timeline: { start: "2025-12-17", end: "2026-02-02" },
+    timeline: { start: "2025-12-17", end: "2026-01-02" },
     openPeriodText: "17 December 2025 to 2 January 2026",
     closedPeriodText: "has closed.",
     displayPeriod: "17 December 2025 to 2 January 2026",
@@ -504,6 +504,7 @@ window.qualificationsData = qualificationsData;
 // Attach separate arrays globally for surveyFlow
 window.localQualifications = localQualifications;
 window.internationalQualifications = internationalQualifications;
+
 
 
 
