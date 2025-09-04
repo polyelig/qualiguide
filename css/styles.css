@@ -247,6 +247,10 @@ button:disabled { opacity: 0.6; cursor: not-allowed; }
   text-align: center;
 }
 
+.notice-card {
+  font-weight: bold;
+}
+
 .notice-open     { background-color: #f6fff9; border-left: 6px solid #2e7d32; }
 .notice-closed   { background-color: #fff3f3; border-left: 6px solid #c62828; }
 .notice-upcoming { background-color: #f9f9ff; border-left: 6px solid #00437a; }
@@ -342,4 +346,5 @@ button:disabled { opacity: 0.6; cursor: not-allowed; }
   .notice-card, .info-card { padding: 14px; border-radius: 10px; }
   .form-actions { justify-content: center; }
 }
+
 
