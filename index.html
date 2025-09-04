@@ -15,7 +15,11 @@
   <main>
     <div class="container" id="quizWrapper">
       <form id="quizForm">
+        <!-- Page title (populated only on result pages) -->
+        <div id="pageTitle"></div>
+
         <div id="quizContainer"></div>
+
         <div class="form-actions">
           <button type="submit" id="continueBtn">Continue</button>
           <button type="button" id="downloadPdfBtn">Download PDF</button>
@@ -29,11 +33,31 @@
   <script src="js/qualifications.js"></script>
   <script src="js/template.js"></script>
   <script src="js/surveyFlow.js"></script>
-  <script src="js/main.js"></script>
+
+  <!-- Load PDF lib BEFORE main.js to avoid race -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script src="js/main.js"></script>
+
+  <!-- Global anti tab-nabbing: add rel=noopener to any target=_blank (including dynamically added) -->
+  <script>
+    (function(){
+      const applyNoopener = (root=document) => {
+        root.querySelectorAll('a[target="_blank"]:not([rel*="noopener"])')
+            .forEach(a => a.setAttribute('rel', (a.getAttribute('rel')||'').trim() + ' noopener'));
+      };
+      applyNoopener();
+      // Watch for late inserts
+      const mo = new MutationObserver(muts => muts.forEach(m => {
+        m.addedNodes.forEach(n => {
+          if (n.nodeType === 1) { applyNoopener(n); }
+        });
+      }));
+      mo.observe(document.documentElement, {childList:true, subtree:true});
+    })();
+  </script>
 
   <footer class="site-footer">
-    <p>&copy; 2025 NUS Admissions</p>
+    <p>&copy; 2025 NUS Office of Admissions</p>
   </footer>
 
 </body>
