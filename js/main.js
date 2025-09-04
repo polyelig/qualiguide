@@ -39,11 +39,13 @@ document.addEventListener("DOMContentLoaded", () => {
   // -------------------------------
   function setQuestionScrollMode() {
     // No scroll on question pages
+    quizContainer.classList.remove("final-scroll");
     quizContainer.style.overflowY = "hidden";
   }
 
   function setFinalScrollMode() {
     // Scroll contained within the main container on final pages
+    quizContainer.classList.add("final-scroll");
     quizContainer.style.overflowY = "auto";
   }
 
@@ -137,8 +139,10 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function setPageTitle(qualification) {
+    // Insert <wbr> after slashes to allow clean wrapping into two lines
+    const titleHtml = String(qualification.name).replace(/\s*\/\s*/g, "/<wbr> ");
     pageTitle.innerHTML = `
-      <div class="page-title">${qualification.name}</div>
+      <div class="page-title">${titleHtml}</div>
       <div class="page-subtitle">Application Overview</div>
     `;
   }
@@ -177,7 +181,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     quizContainer.innerHTML = html;
 
-    // Final pages: enable container-only scroll
+    // Final pages: enable container-only scroll (visible scrollbar)
     setFinalScrollMode();
 
     downloadPdfBtn.style.display = "inline-block";
@@ -225,10 +229,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Temporarily expand container to include all content
     const prevOverflow = quizContainer.style.overflow;
+    const prevOverflowY = quizContainer.style.overflowY;
     const prevHeight   = quizContainer.style.height;
     const prevMaxH     = quizContainer.style.maxHeight;
 
     quizContainer.style.overflow = "visible";
+    quizContainer.style.overflowY = "visible";
     quizContainer.style.height = "auto";
     quizContainer.style.maxHeight = "none";
 
@@ -247,6 +253,7 @@ document.addEventListener("DOMContentLoaded", () => {
       .then(() => {
         // restore scroll clipping for on-screen UX
         quizContainer.style.overflow = prevOverflow;
+        quizContainer.style.overflowY = prevOverflowY;
         quizContainer.style.height = prevHeight;
         quizContainer.style.maxHeight = prevMaxH;
         // return to container-only scroll mode after printing
@@ -255,6 +262,7 @@ document.addEventListener("DOMContentLoaded", () => {
       .catch(() => {
         // restore even if failed
         quizContainer.style.overflow = prevOverflow;
+        quizContainer.style.overflowY = prevOverflowY;
         quizContainer.style.height = prevHeight;
         quizContainer.style.maxHeight = prevMaxH;
         setFinalScrollMode();
