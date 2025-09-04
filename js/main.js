@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const continueBtn = document.getElementById("continueBtn");
   const downloadPdfBtn = document.getElementById("downloadPdfBtn");
 
-  let currentStep = 0;
+  let currentStepId = window.surveyFlow[0].id;  // start at first step
   const answers = {};
 
   // Flatten survey flow for easy lookup by ID
@@ -19,27 +19,24 @@ document.addEventListener("DOMContentLoaded", () => {
     const step = flowMap[stepId];
     if (!step) return;
 
+    currentStepId = stepId; // 🔑 keep track of current step
     quizContainer.innerHTML = "";
 
-    // Question
     const questionLabel = document.createElement("div");
     questionLabel.className = "question-label";
     questionLabel.textContent = step.question;
     quizContainer.appendChild(questionLabel);
 
-    // If no options → auto-advance
     if (!step.options || step.options.length === 0) {
       const nextStepId = step.next();
       if (nextStepId?.startsWith("end_")) {
-        const qualId = nextStepId.replace("end_", "");
-        renderEndPage(qualId);
+        renderEndPage(nextStepId.replace("end_", ""));
       } else if (nextStepId) {
         renderStep(nextStepId);
       }
       return;
     }
 
-    // Options
     const optionsDiv = document.createElement("div");
     optionsDiv.className = "options-list";
 
@@ -74,7 +71,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const allQuals = window.qualificationsData || [];
     let qualification = allQuals.find(q => q.id === qualificationId);
 
-    // Fallback: if Transfer, use the transferQualification
     if (!qualification && qualificationId === "transfer") {
       qualification = allQuals.find(q => q.type === "transfer");
     }
@@ -106,20 +102,19 @@ document.addEventListener("DOMContentLoaded", () => {
     continueBtn.style.display = "none";
   }
 
-  // Handle form submission
+  // Handle continue button
   quizForm.addEventListener("submit", (e) => {
     e.preventDefault();
     const selected = quizForm.userAnswer?.value;
     if (!selected) return alert("Please select an option.");
 
-    const stepId = window.surveyFlow[currentStep].id;
-    answers[stepId] = selected;
+    const step = flowMap[currentStepId];
+    answers[currentStepId] = selected;
 
-    const nextStepId = window.surveyFlow[currentStep].next(selected);
+    const nextStepId = step.next(selected);
 
     if (nextStepId?.startsWith("end_")) {
-      const qualId = nextStepId.replace("end_", "");
-      renderEndPage(qualId);
+      renderEndPage(nextStepId.replace("end_", ""));
     } else if (nextStepId) {
       renderStep(nextStepId);
     }
@@ -137,6 +132,6 @@ document.addEventListener("DOMContentLoaded", () => {
     html2pdf().set(opt).from(element).save();
   });
 
-  // Render first step
-  renderStep(window.surveyFlow[currentStep].id);
+  // Start quiz
+  renderStep(currentStepId);
 });
