@@ -118,7 +118,6 @@ document.addEventListener("DOMContentLoaded", () => {
   function setPageTitle(qualification) {
     pageTitle.innerHTML = `
       <div class="page-title">${qualification.name}</div>
-      <div class="page-subtitle">Application Overview</div>
     `;
   }
 
@@ -207,3 +206,4 @@ document.addEventListener("DOMContentLoaded", () => {
   // Start
   renderStep(currentStepId);
 });
+
