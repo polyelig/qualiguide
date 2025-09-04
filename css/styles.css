@@ -71,7 +71,7 @@ main {
   background-color: #fff;
   border-radius: 12px;
   box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-  padding: 24px;                 /* tighter padding */
+  padding: 16px;                 /* tighter padding */
   flex: 1 1 auto;
   display: flex;
   flex-direction: column;
@@ -88,7 +88,7 @@ main {
   border-bottom: 1px solid #eef2f6;
 }
 #pageTitle .page-title {
-  font-size: 26px;                /* slightly smaller to fit */
+  font-size: 28px;                /* slightly smaller to fit */
   font-weight: 800;
   letter-spacing: 0.2px;
   margin: 0 0 4px 0;
@@ -124,6 +124,12 @@ main {
   flex: 1 1 auto;           /* take remaining space above actions */
   overflow-y: hidden;       /* questions: no scroll */
   padding: 10px 0;          /* tighter */
+}
+
+/* End pages: expand to full width of the white container */
+.final-mode {
+  width: 100% !important;
+  max-width: 100% !important;
 }
 
 /* Final pages: container scroll (visible scrollbar) */
@@ -237,7 +243,7 @@ button:disabled { opacity: 0.6; cursor: not-allowed; }
   border-radius: 12px;
   box-shadow: 0 2px 12px rgba(0,0,0,0.08);
   line-height: 1.6;
-  font-size: 16px;
+  font-size: 18px;
   text-align: center;
 }
 
@@ -336,3 +342,4 @@ button:disabled { opacity: 0.6; cursor: not-allowed; }
   .notice-card, .info-card { padding: 14px; border-radius: 10px; }
   .form-actions { justify-content: center; }
 }
+
