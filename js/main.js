@@ -15,31 +15,52 @@ document.addEventListener("DOMContentLoaded", () => {
   const flowMap = {};
   window.surveyFlow.forEach(q => flowMap[q.id] = q);
 
-  function renderStep(stepId) {
-    const step = flowMap[stepId];
-    if (!step) return;
+function renderStep(stepId) {
+  const step = flowMap[stepId];
+  if (!step) return;
 
-    currentStepId = stepId; // track current step
-    quizContainer.innerHTML = "";
+  currentStepId = stepId; // track current step
+  quizContainer.innerHTML = "";
 
-    // Question
-    const questionLabel = document.createElement("div");
-    questionLabel.className = "question-label";
-    questionLabel.textContent = step.question;
-    quizContainer.appendChild(questionLabel);
+  // Question label
+  const questionLabel = document.createElement("div");
+  questionLabel.className = "question-label";
+  questionLabel.textContent = step.question;
+  quizContainer.appendChild(questionLabel);
 
-    // No options → auto-advance
-    if (!step.options || step.options.length === 0) {
-      const nextStepId = step.next();
-      if (nextStepId?.startsWith("end_")) {
-        renderEndPage(nextStepId.replace("end_", ""));
-      } else if (nextStepId) {
-        renderStep(nextStepId);
-      }
-      return;
+  // No options → auto-advance
+  if (!step.options || step.options.length === 0) {
+    const nextStepId = step.next();
+    if (nextStepId?.startsWith("end_")) {
+      renderEndPage(nextStepId.replace("end_", ""));
+    } else if (nextStepId) {
+      renderStep(nextStepId);
     }
+    return;
+  }
 
-    // Render options
+  // Special case: qualifications dropdown
+  if (stepId === "qualification") {
+    const select = document.createElement("select");
+    select.name = "userAnswer";
+    select.className = "dropdown";
+
+    const defaultOption = document.createElement("option");
+    defaultOption.value = "";
+    defaultOption.textContent = "-- Select your qualification --";
+    select.appendChild(defaultOption);
+
+    step.options.forEach(opt => {
+      const option = document.createElement("option");
+      option.value = opt;
+      option.textContent = opt;
+      select.appendChild(option);
+    });
+
+    quizContainer.appendChild(select);
+
+  } else {
+    // Radio buttons for all other questions
     const optionsDiv = document.createElement("div");
     optionsDiv.className = "options-list";
 
@@ -61,17 +82,18 @@ document.addEventListener("DOMContentLoaded", () => {
       optionDiv.appendChild(label);
       optionsDiv.appendChild(optionDiv);
 
-      // Click handler ensures input is checked
       optionDiv.addEventListener("click", () => {
         input.checked = true;
       });
     });
 
     quizContainer.appendChild(optionsDiv);
-
-    continueBtn.style.display = "block";
-    downloadPdfBtn.style.display = "none";
   }
+
+  continueBtn.style.display = "block";
+  downloadPdfBtn.style.display = "none";
+}
+
 
   function renderEndPage(qualificationId) {
     const allQuals = window.qualificationsData || [];
@@ -144,3 +166,4 @@ document.addEventListener("DOMContentLoaded", () => {
   // Start quiz
   renderStep(currentStepId);
 });
+
