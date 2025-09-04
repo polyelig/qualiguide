@@ -7,17 +7,27 @@ const today = new Date();
 // links inside list items
 function createResourceItem(resource) {
   const li = document.createElement("li");
+  li.className = "resource-card";
 
   const a = document.createElement("a");
   a.href = resource.url;
   a.target = "_blank";
   a.rel = "noopener";
   a.textContent = resource.label;
+  a.className = "resource-link";
 
   li.appendChild(a);
-  if (resource.description) li.append(` ${resource.description}`);
+
+  if (resource.description) {
+    const desc = document.createElement("div");
+    desc.className = "resource-desc";
+    desc.textContent = resource.description;
+    li.appendChild(desc);  // sits below the link
+  }
+
   return li;
 }
+
 
 function renderResources(qualification) {
   const list = document.createElement("ul");
