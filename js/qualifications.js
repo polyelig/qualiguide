@@ -84,7 +84,7 @@ const internationalClosedText = "has closed.";
 
 const internationalQualifications = [
   {
-    id: "a-level-aqa-cambridge-edexcel-london-ocr-oxford-international-aqa-wjec",
+    id: "a-level-all-boards",
     name: "A-Level (AQA, Cambridge, Edexcel, London, OCR, Oxford International AQA, WJEC)",
     type: "international",
     timeline: internationalTimeline,
@@ -502,6 +502,7 @@ const qualificationsData = [
 
 // Attach to window
 window.qualificationsData = qualificationsData;
+
 
 
 
