@@ -8,6 +8,9 @@ const allQualifications = [
   ...(window.internationalQualifications || [])
 ].filter(q => q.id !== "transfer");
 
+// Debugging: log qualifications
+console.log("All qualifications for dropdown:", allQualifications.map(q => q.name));
+
 const surveyFlow = [
   {
     id: "transfer",
@@ -79,7 +82,11 @@ const surveyFlow = [
     options: allQualifications.map(q => q.name),
     next: function(answer){
       const qual = allQualifications.find(q => q.name === answer);
-      return qual ? "end_" + qual.id : null;
+      if (!qual) {
+        console.warn("Selected qualification not found:", answer);
+        return null;
+      }
+      return "end_" + qual.id;
     }
   }
 ];
