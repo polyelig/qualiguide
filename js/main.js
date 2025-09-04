@@ -73,40 +73,37 @@ document.addEventListener("DOMContentLoaded", () => {
     downloadPdfBtn.style.display = "none";
   }
 
-  function renderEndPage(qualificationId) {
-    const allQuals = [
-      ...(window.localQualifications || []),
-      ...(window.internationalQualifications || []),
-      ...(window.transferQualification ? [window.transferQualification] : [])
-    ];
-    const qualification = allQuals.find(q => q.id === qualificationId);
+function renderEndPage(qualificationId) {
+  const allQuals = window.qualificationsData || [];
+  const qualification = allQuals.find(q => q.id === qualificationId);
 
-    if (!qualification) {
-      quizContainer.innerHTML = "<p>Qualification not found.</p>";
-      return;
-    }
-
-    quizContainer.innerHTML = "";
-
-    let html = "";
-    switch (qualification.type) {
-      case "international":
-        html = window.templates.internationalQualificationTemplate(qualification);
-        break;
-      case "local":
-        html = window.templates.localQualificationTemplate(qualification);
-        break;
-      case "transfer":
-        html = window.templates.transferTemplate(qualification);
-        break;
-      default:
-        html = `<div class="info-card"><p>${qualification.name}</p></div>`;
-    }
-
-    quizContainer.innerHTML = html;
-    downloadPdfBtn.style.display = "inline-block";
-    continueBtn.style.display = "none";
+  if (!qualification) {
+    quizContainer.innerHTML = "<p>Qualification not found.</p>";
+    return;
   }
+
+  quizContainer.innerHTML = "";
+
+  let html = "";
+  switch (qualification.type) {
+    case "international":
+      html = window.templates.internationalQualificationTemplate(qualification);
+      break;
+    case "local":
+      html = window.templates.localQualificationTemplate(qualification);
+      break;
+    case "transfer":
+      html = window.templates.transferTemplate(qualification);
+      break;
+    default:
+      html = `<div class="info-card"><p>${qualification.name}</p></div>`;
+  }
+
+  quizContainer.innerHTML = html;
+  downloadPdfBtn.style.display = "inline-block";
+  continueBtn.style.display = "none";
+}
+
 
   // Handle form submission
   quizForm.addEventListener("submit", (e) => {
@@ -144,3 +141,4 @@ document.addEventListener("DOMContentLoaded", () => {
   // Render first step
   renderStep(window.surveyFlow[currentStep].id);
 });
+
