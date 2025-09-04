@@ -1,5 +1,5 @@
 // -------------------------------
-// main.js (patched)
+// main.js
 // -------------------------------
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -7,11 +7,30 @@ document.addEventListener("DOMContentLoaded", () => {
   const quizForm = document.getElementById("quizForm");
   const continueBtn = document.getElementById("continueBtn");
   const downloadPdfBtn = document.getElementById("downloadPdfBtn");
+  const pageTitle = document.getElementById("pageTitle");
 
-  let currentStepId = window.surveyFlow[0].id;  // start at first step
+  // Feature-detect :has(); set a class for CSS fallbacks
+  try {
+    if (!CSS.supports("selector(:has(*))")) {
+      document.documentElement.classList.add("no-has");
+    }
+  } catch {
+    document.documentElement.classList.add("no-has");
+  }
+
+  // Defensive: surveyFlow must exist
+  if (!Array.isArray(window.surveyFlow) || window.surveyFlow.length === 0) {
+    console.error("Survey flow not found.");
+    quizContainer.innerHTML = "<p>We’re sorry, something went wrong loading the survey. Please refresh.</p>";
+    continueBtn.style.display = "none";
+    downloadPdfBtn.style.display = "none";
+    return;
+  }
+
+  let currentStepId = window.surveyFlow[0].id;
   const answers = {};
 
-  // Flatten survey flow for easy lookup by ID
+  // Map for quick access
   const flowMap = {};
   window.surveyFlow.forEach(q => flowMap[q.id] = q);
 
@@ -19,10 +38,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const step = flowMap[stepId];
     if (!step) return;
 
-    currentStepId = stepId; // track current step
+    currentStepId = stepId;
+    // Clear title on question steps
+    pageTitle.innerHTML = "";
+
     quizContainer.innerHTML = "";
 
-    // Question label
     const questionLabel = document.createElement("div");
     questionLabel.className = "question-label";
     questionLabel.textContent = step.question;
@@ -39,7 +60,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // Special case: qualifications dropdown (options are {label, value})
+    // Qualification dropdown (options are {label, value})
     if (stepId === "qualification") {
       const select = document.createElement("select");
       select.name = "userAnswer";
@@ -52,16 +73,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
       step.options.forEach(opt => {
         const option = document.createElement("option");
-        // options are objects: { label, value }
         option.value = opt.value;
         option.textContent = opt.label;
         select.appendChild(option);
       });
 
       quizContainer.appendChild(select);
-
     } else {
-      // Radio buttons for all other questions (options are strings)
+      // Radio buttons for other steps (options are strings)
       const optionsDiv = document.createElement("div");
       optionsDiv.className = "options-list";
 
@@ -84,9 +103,7 @@ document.addEventListener("DOMContentLoaded", () => {
         optionDiv.appendChild(label);
         optionsDiv.appendChild(optionDiv);
 
-        optionDiv.addEventListener("click", () => {
-          input.checked = true;
-        });
+        optionDiv.addEventListener("click", () => { input.checked = true; });
       });
 
       quizContainer.appendChild(optionsDiv);
@@ -94,15 +111,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
     continueBtn.style.display = "block";
     downloadPdfBtn.style.display = "none";
+
+    quizContainer.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function setPageTitle(qualification) {
+    pageTitle.innerHTML = `
+      <div class="page-title">${qualification.name}</div>
+      <div class="page-subtitle">Application Overview</div>
+    `;
   }
 
   function renderEndPage(qualificationId) {
     const allQuals = window.qualificationsData || [];
-    let qualification = allQuals.find(q => q.id === qualificationId);
-
-    if (!qualification && qualificationId === "transfer") {
-      qualification = allQuals.find(q => q.type === "transfer");
-    }
+    let qualification = allQuals.find(q => q.id === qualificationId) ||
+                        (qualificationId === "transfer" ? allQuals.find(q => q.type === "transfer") : null);
 
     if (!qualification) {
       quizContainer.innerHTML = "<p>Qualification not found.</p>";
@@ -110,6 +133,8 @@ document.addEventListener("DOMContentLoaded", () => {
       downloadPdfBtn.style.display = "none";
       return;
     }
+
+    setPageTitle(qualification);
 
     quizContainer.innerHTML = "";
 
@@ -131,13 +156,14 @@ document.addEventListener("DOMContentLoaded", () => {
     quizContainer.innerHTML = html;
     downloadPdfBtn.style.display = "inline-block";
     continueBtn.style.display = "none";
+
+    quizContainer.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
-  // Handle continue button
+  // Handle continue
   quizForm.addEventListener("submit", (e) => {
     e.preventDefault();
 
-    // Check for <select> first (qualification step)
     const selectEl = quizContainer.querySelector('select[name="userAnswer"]');
     let selected = null;
 
@@ -145,7 +171,6 @@ document.addEventListener("DOMContentLoaded", () => {
       selected = selectEl.value;
       if (!selected) return alert("Please select an option.");
     } else {
-      // fallback to radios
       const selectedInput = quizContainer.querySelector('input[name="userAnswer"]:checked');
       if (!selectedInput) return alert("Please select an option.");
       selected = selectedInput.value;
@@ -165,6 +190,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // PDF Download
   downloadPdfBtn.addEventListener("click", () => {
+    if (typeof html2pdf === "undefined") {
+      alert("PDF engine is still loading. Please try again in a moment.");
+      return;
+    }
     const element = quizContainer;
     const opt = {
       margin: 0.5,
@@ -175,6 +204,6 @@ document.addEventListener("DOMContentLoaded", () => {
     html2pdf().set(opt).from(element).save();
   });
 
-  // Start quiz
+  // Start
   renderStep(currentStepId);
 });
