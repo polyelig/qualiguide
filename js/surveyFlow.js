@@ -9,8 +9,14 @@ const allQualifications = [
 ].filter(q => q.id !== "transfer");
 
 // Debugging: log qualifications
-console.log("All qualifications for dropdown:", allQualifications.map(q => q.name));
+console.log(
+  "All qualifications for dropdown:",
+  allQualifications.map(q => q.name)
+);
 
+// -------------------------------
+// Survey Flow
+// -------------------------------
 const surveyFlow = [
   {
     id: "transfer",
@@ -22,7 +28,7 @@ const surveyFlow = [
     ],
     next: function(answer){ 
       switch (answer) {
-        case "Local universities (NUS, NTU, SMU, SIT, SUTD, SUSS, UAS)":
+        case "Local universities (NUS, NTU, SMU, SIT, SUTD, SUSS, UAS":
           return "local_transfer";
         case "Overseas tertiary institutions":
           return "nationality_transfer";
@@ -75,15 +81,15 @@ const surveyFlow = [
     }
   },
 
-  // Qualifications selection
+  // Qualifications selection (ID-based)
   {
     id: "qualification",
     question: "What qualification will you be using to apply to the National University of Singapore (NUS)?",
-    options: allQualifications.map(q => q.name),
-    next: function(answer){
-      const qual = allQualifications.find(q => q.name === answer);
+    options: allQualifications.map(q => ({ label: q.name, value: q.id })),
+    next: function(answerId){
+      const qual = allQualifications.find(q => q.id === answerId);
       if (!qual) {
-        console.warn("Selected qualification not found:", answer);
+        console.warn("Selected qualification not found:", answerId);
         return null;
       }
       return "end_" + qual.id;
