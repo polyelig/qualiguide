@@ -8,11 +8,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const continueBtn = document.getElementById("continueBtn");
   const downloadPdfBtn = document.getElementById("downloadPdfBtn");
 
-  // Track current question index and answers
-  let currentStep = 0;
+  let currentStepId = window.surveyFlow[0]?.id || null;
   const answers = {};
 
-  // Flatten survey flow for easy lookup by ID
+  // Flatten survey flow for lookup by ID
   const flowMap = {};
   window.surveyFlow.forEach(q => flowMap[q.id] = q);
 
@@ -20,6 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const step = flowMap[stepId];
     if (!step) return;
 
+    currentStepId = stepId;
     quizContainer.innerHTML = "";
 
     // Question
@@ -28,117 +28,135 @@ document.addEventListener("DOMContentLoaded", () => {
     questionLabel.textContent = step.question;
     quizContainer.appendChild(questionLabel);
 
-    // If no options → auto-advance
+    // Auto-advance if no options (e.g., Transfer)
     if (!step.options || step.options.length === 0) {
+      continueBtn.style.display = "none";
       const nextStepId = step.next();
-      if (nextStepId.startsWith("end_")) {
+      if (nextStepId?.startsWith("end_")) {
         const qualId = nextStepId.replace("end_", "");
         renderEndPage(qualId);
-      } else {
-        const nextIndex = window.surveyFlow.findIndex(q => q.id === nextStepId);
-        if (nextIndex >= 0) currentStep = nextIndex;
-        renderStep(window.surveyFlow[currentStep].id);
+      } else if (nextStepId) {
+        renderStep(nextStepId);
       }
-      return; // don’t render buttons/options
+      return;
     }
 
-    // Options
+    // Dropdown for qualifications (more than 5 options) or radio for few options
     const optionsDiv = document.createElement("div");
     optionsDiv.className = "options-list";
 
-    step.options.forEach(opt => {
-      const optionDiv = document.createElement("div");
-      optionDiv.className = "option";
+    if (step.id === "qualification") {
+      const select = document.createElement("select");
+      select.name = "userAnswer";
+      select.id = "userAnswer";
 
-      const input = document.createElement("input");
-      input.type = "radio";
-      input.name = "userAnswer";
-      input.value = opt;
+      const defaultOpt = document.createElement("option");
+      defaultOpt.value = "";
+      defaultOpt.textContent = "-- Select your qualification --";
+      select.appendChild(defaultOpt);
 
-      const label = document.createElement("label");
-      label.textContent = opt;
-
-      optionDiv.appendChild(input);
-      optionDiv.appendChild(label);
-      optionsDiv.appendChild(optionDiv);
-
-      optionDiv.addEventListener("click", () => {
-        input.checked = true;
+      step.options.forEach(opt => {
+        const option = document.createElement("option");
+        option.value = opt;
+        option.textContent = opt;
+        select.appendChild(option);
       });
-    });
+
+      optionsDiv.appendChild(select);
+    } else {
+      step.options.forEach(opt => {
+        const optionDiv = document.createElement("div");
+        optionDiv.className = "option";
+
+        const input = document.createElement("input");
+        input.type = "radio";
+        input.name = "userAnswer";
+        input.value = opt;
+
+        const label = document.createElement("label");
+        label.textContent = opt;
+
+        optionDiv.appendChild(input);
+        optionDiv.appendChild(label);
+        optionsDiv.appendChild(optionDiv);
+
+        optionDiv.addEventListener("click", () => {
+          input.checked = true;
+        });
+      });
+    }
 
     quizContainer.appendChild(optionsDiv);
-
     continueBtn.style.display = "block";
     downloadPdfBtn.style.display = "none";
   }
 
-function renderEndPage(qualificationId) {
-  const allQuals = window.qualificationsData || [];
-  const qualification = allQuals.find(q => q.id === qualificationId);
+  function renderEndPage(qualificationId) {
+    const allQuals = window.qualificationsData || [];
+    const qualification = allQuals.find(q => q.id === qualificationId);
 
-  if (!qualification) {
-    quizContainer.innerHTML = "<p>Qualification not found.</p>";
-    return;
+    if (!qualification) {
+      quizContainer.innerHTML = "<p>Qualification not found.</p>";
+      continueBtn.style.display = "none";
+      return;
+    }
+
+    let html = "";
+    switch (qualification.type) {
+      case "international":
+        html = window.templates.internationalQualificationTemplate(qualification);
+        break;
+      case "local":
+        html = window.templates.localQualificationTemplate(qualification);
+        break;
+      case "transfer":
+        html = window.templates.transferTemplate(qualification);
+        break;
+      default:
+        html = `<div class="info-card"><p>${qualification.name}</p></div>`;
+    }
+
+    quizContainer.innerHTML = html;
+    downloadPdfBtn.style.display = "inline-block";
+    continueBtn.style.display = "none";
   }
-
-  quizContainer.innerHTML = "";
-
-  let html = "";
-  switch (qualification.type) {
-    case "international":
-      html = window.templates.internationalQualificationTemplate(qualification);
-      break;
-    case "local":
-      html = window.templates.localQualificationTemplate(qualification);
-      break;
-    case "transfer":
-      html = window.templates.transferTemplate(qualification);
-      break;
-    default:
-      html = `<div class="info-card"><p>${qualification.name}</p></div>`;
-  }
-
-  quizContainer.innerHTML = html;
-  downloadPdfBtn.style.display = "inline-block";
-  continueBtn.style.display = "none";
-}
-
 
   // Handle form submission
   quizForm.addEventListener("submit", (e) => {
     e.preventDefault();
-    const selected = quizForm.userAnswer?.value;
+
+    let selected;
+    if (currentStepId === "qualification") {
+      selected = document.getElementById("userAnswer")?.value;
+    } else {
+      selected = quizForm.userAnswer?.value;
+    }
+
     if (!selected) return alert("Please select an option.");
 
-    const stepId = window.surveyFlow[currentStep].id;
-    answers[stepId] = selected;
+    answers[currentStepId] = selected;
+    const nextStepId = flowMap[currentStepId].next(selected);
 
-    const nextStepId = window.surveyFlow[currentStep].next(selected);
+    if (!nextStepId) return;
 
     if (nextStepId.startsWith("end_")) {
       const qualId = nextStepId.replace("end_", "");
       renderEndPage(qualId);
     } else {
-      const nextIndex = window.surveyFlow.findIndex(q => q.id === nextStepId);
-      if (nextIndex >= 0) currentStep = nextIndex;
-      renderStep(window.surveyFlow[currentStep].id);
+      renderStep(nextStepId);
     }
   });
 
   // PDF Download
   downloadPdfBtn.addEventListener("click", () => {
-    const element = quizContainer;
-    const opt = {
+    html2pdf().set({
       margin: 0.5,
       filename: "nus_application_quiz.pdf",
       html2canvas: { scale: 2 },
       jsPDF: { unit: "in", format: "a4", orientation: "portrait" }
-    };
-    html2pdf().set(opt).from(element).save();
+    }).from(quizContainer).save();
   });
 
   // Render first step
-  renderStep(window.surveyFlow[currentStep].id);
+  if (currentStepId) renderStep(currentStepId);
 });
-
