@@ -1,5 +1,5 @@
 // -------------------------------
-// surveyFlow.js
+// surveyFlow.js (patched)
 // -------------------------------
 
 // Build the full list of qualifications (excluding Transfer)
@@ -28,7 +28,7 @@ const surveyFlow = [
     ],
     next: function(answer){ 
       switch (answer) {
-        case "Local universities (NUS, NTU, SMU, SIT, SUTD, SUSS, UAS":
+        case "Local universities (NUS, NTU, SMU, SIT, SUTD, SUSS, UAS)":
           return "local_transfer";
         case "Overseas tertiary institutions":
           return "nationality_transfer";
@@ -76,7 +76,7 @@ const surveyFlow = [
       "Singapore Citizen/ Singapore Permanent Resident", 
       "Foreigner"
     ],
-    next: function(answer){ 
+    next: function(){ 
       return "qualification"; 
     }
   },
