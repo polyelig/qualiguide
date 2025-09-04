@@ -1,8 +1,7 @@
 // -------------------------------
-// template.js (full)
+// template.js (updated)
 // -------------------------------
 
-// Today's date for notice logic
 const today = new Date();
 
 /* -------------------------------
@@ -15,7 +14,7 @@ function createResourceItem(resource) {
   const a = document.createElement("a");
   a.href = resource.url;
   a.target = "_blank";
-  a.rel = "noopener";
+  a.rel = "noopener noreferrer";
   a.textContent = resource.label;
   a.className = "resource-link";
   li.appendChild(a);
@@ -24,7 +23,7 @@ function createResourceItem(resource) {
     const desc = document.createElement("div");
     desc.className = "resource-desc";
     desc.textContent = resource.description;
-    li.appendChild(desc); // description on its own line under the link
+    li.appendChild(desc);
   }
 
   return li;
@@ -39,7 +38,7 @@ function renderResources(qualification) {
     window.commonResources.forEach(r => list.appendChild(createResourceItem(r)));
   }
 
-  // Conditional flags
+  // Conditional
   if (qualification.standardisedTest === "Yes" && window.conditionalResources?.standardisedTest) {
     list.appendChild(createResourceItem(window.conditionalResources.standardisedTest));
   }
@@ -56,8 +55,8 @@ function renderResources(qualification) {
 
 function renderResourcesCard(qualification) {
   return `
-    <div class="info-card resources-card">
-      <h3>Application Resources</h3>
+    <div class="info-card info-card--compact">
+      <h3>📚 Application Resources</h3>
       ${renderResources(qualification).outerHTML}
     </div>
   `;
@@ -68,15 +67,15 @@ function renderResourcesCard(qualification) {
 --------------------------------*/
 function getAcademicYear(fromDate) {
   if (!(fromDate instanceof Date) || isNaN(fromDate)) return null;
-  const month = fromDate.getMonth();    // 0-11
-  const year  = fromDate.getFullYear();
-  const ayStart = (month >= 7) ? year + 1 : year; // Aug-Dec → next year, Jan–Jul → same year
+  const m = fromDate.getMonth(); // 0-11
+  const y = fromDate.getFullYear();
+  const ayStart = (m >= 7) ? y + 1 : y; // Aug–Dec -> next year start
   return `AY${ayStart}/${ayStart + 1}`;
 }
 
-// Multi-line notice across all templates, transfer uses list with the same styling
+// Multi-line notice across all templates
 function renderNoticeCard(qualification) {
-  // Transfer: multiple periods, same notice style & centered heading
+  // Transfer: multiple periods, same notice style
   if (qualification.type === "transfer" && Array.isArray(qualification.periods)) {
     const header = `📅 Application Periods for the ${qualification.name} Qualification`;
     const list = qualification.periods.map(p => `<li>${p.label}: ${p.rangeText}</li>`).join("");
@@ -88,32 +87,29 @@ function renderNoticeCard(qualification) {
     `;
   }
 
-  // Others: require timeline
   if (!qualification.timeline) return "";
 
   const start = new Date(qualification.timeline.start);
   const end   = new Date(qualification.timeline.end);
   const ayStr = getAcademicYear(start);
-  let statusText, cardClass;
 
+  let statusText, cardClass, line3Prefix;
   if (today < start) {
     statusText = "has not started yet.";
-    cardClass = "notice-upcoming";
+    cardClass = "notice-upcoming";     // light red (via CSS)
+    line3Prefix = "Opens on ";
   } else if (today <= end) {
     statusText = "is open.";
-    cardClass = "notice-open";
+    cardClass = "notice-open";         // green (via CSS)
+    line3Prefix = "Open: ";
   } else {
     statusText = "has closed.";
-    cardClass = "notice-closed";
+    cardClass = "notice-closed";       // light red (via CSS)
+    line3Prefix = "Period: ";
   }
 
-  // Required three-line layout:
-  // line1: 📅 AY2026/2027 Application Period for the
-  // line2: [Qualification name] Qualification <status>.
-  // line3: Opens on / Open: / Period: <displayPeriod>
   const line1 = `📅 ${ayStr ? ayStr + " " : ""}Application Period for the`;
   const line2 = `${qualification.name} Qualification ${statusText}`;
-  const line3Prefix = (today < start) ? "Opens on " : (today <= end ? "Open: " : "Period: ");
   const line3 = `${line3Prefix}${qualification.displayPeriod}`;
 
   return `
@@ -126,52 +122,50 @@ function renderNoticeCard(qualification) {
 }
 
 /* -------------------------------
-   Login instructions (with header)
+   Login instructions (separate, compact card)
 --------------------------------*/
-function renderLoginInstructions(qualification) {
-  switch (qualification.type) {
-    case "transfer":
-      return `
-        <div class="info-card">
-          <h3>Login Instructions</h3>
-          <p>As you are a transfer applicant, please log in to the Applicant Portal with your Singpass to proceed.</p>
-        </div>
-      `;
-    case "local":
-      if (qualification.id === "polytechnic-diploma-singapore") {
-        return `
-          <div class="info-card">
-            <h3>Login Instructions</h3>
-            <h4>🖥️ Singapore Citizen / PR / FIN Holders</h4>
-            <p>Please log in with your Singpass to apply using the Polytechnic Diploma from Singapore.</p>
-            <hr>
-            <h4>🌏 Foreigners (without FIN)</h4>
-            <p>Please log in with your email account to apply using the Polytechnic Diploma from Singapore.</p>
-          </div>
-        `;
-      }
-      return `
-        <div class="info-card">
-          <h3>Login Instructions</h3>
-          <p>Please log in with your Singpass to apply using ${qualification.name}.</p>
-          ${qualification.mtlUrl ? `<p>📌 Check Mother Tongue Language requirements: <a href="${qualification.mtlUrl}" target="_blank" rel="noopener">link</a></p>` : ""}
-        </div>
-      `;
-    case "international":
-      return `
-        <div class="info-card">
-          <h3>Login Instructions</h3>
-          <h4>🔎 Singapore Citizen / PR / FIN Holders</h4>
-          <p>Log in with Singpass and apply under Singapore Citizens / PR category using ${qualification.name}.</p>
-          <p>📌 Check Mother Tongue Language requirements.</p>
-          <hr>
-          <h4>🌏 Foreigners (without FIN)</h4>
-          <p>Log in with your email account and apply under International Student category using ${qualification.name}.</p>
-        </div>
-      `;
-    default:
-      return "";
+function renderLoginInstructionsCard(qualification) {
+  // No qualification name or timeline here; just the instructions
+  if (qualification.type === "local" && qualification.id === "polytechnic-diploma-singapore") {
+    return `
+      <div class="info-card info-card--compact">
+        <h3>🖥️ Login Instructions</h3>
+        <p><strong>Singapore Citizen / PR / FIN Holders:</strong> Log in with Singpass to apply using the Polytechnic Diploma from Singapore.</p>
+        <hr>
+        <p><strong>🌏 Foreigners (without FIN):</strong> Log in with your email account to apply using the Polytechnic Diploma from Singapore.</p>
+      </div>
+    `;
   }
+
+  if (qualification.type === "local") {
+    return `
+      <div class="info-card info-card--compact">
+        <h3>🖥️ Login Instructions</h3>
+        <p>Log in with your <strong>Singpass</strong> to apply using ${qualification.name}.</p>
+        ${qualification.mtlUrl ? `<p>📌 Check Mother Tongue Language requirements: <a href="${qualification.mtlUrl}" target="_blank" rel="noopener noreferrer" class="resource-link">link</a></p>` : ""}
+      </div>
+    `;
+  }
+
+  if (qualification.type === "international") {
+    return `
+      <div class="info-card info-card--compact">
+        <h3>🖥️ Login Instructions</h3>
+        <p><strong>🔎 Singapore Citizen / PR / FIN Holders:</strong> Log in with <strong>Singpass</strong> and apply under <em>Singapore Citizens / PR</em> category using ${qualification.name}.</p>
+        <p>📌 Check Mother Tongue Language requirements.</p>
+        <hr>
+        <p><strong>🌏 Foreigners (without FIN):</strong> Log in with your <strong>email account</strong> and apply under <em>International Student</em> category using ${qualification.name}.</p>
+      </div>
+    `;
+  }
+
+  // transfer
+  return `
+    <div class="info-card info-card--compact">
+      <h3>🖥️ Login Instructions</h3>
+      <p>As you are a transfer applicant, please log in to the Applicant Portal with your <strong>Singpass</strong> to proceed.</p>
+    </div>
+  `;
 }
 
 /* -------------------------------
@@ -182,11 +176,7 @@ window.templates = {};
 window.templates.internationalQualificationTemplate = function(qualification) {
   return `
     ${renderNoticeCard(qualification)}
-    <div class="info-card">
-      <h2>${qualification.name}</h2>
-      ${qualification.timeline ? `<p><strong>Application Timeline:</strong> ${qualification.displayPeriod}</p>` : ""}
-      ${renderLoginInstructions(qualification)}
-    </div>
+    ${renderLoginInstructionsCard(qualification)}
     ${renderResourcesCard(qualification)}
   `;
 };
@@ -194,12 +184,7 @@ window.templates.internationalQualificationTemplate = function(qualification) {
 window.templates.localQualificationTemplate = function(qualification) {
   return `
     ${renderNoticeCard(qualification)}
-    <div class="info-card">
-      <h2>${qualification.name}</h2>
-      ${qualification.timeline ? `<p><strong>Application Timeline:</strong> ${qualification.displayPeriod}</p>` : ""}
-      ${qualification.mtlUrl ? `<p><a href="${qualification.mtlUrl}" target="_blank" rel="noopener">Mother Tongue Language Requirements</a></p>` : ""}
-      ${renderLoginInstructions(qualification)}
-    </div>
+    ${renderLoginInstructionsCard(qualification)}
     ${renderResourcesCard(qualification)}
   `;
 };
@@ -207,11 +192,7 @@ window.templates.localQualificationTemplate = function(qualification) {
 window.templates.transferTemplate = function(qualification) {
   return `
     ${renderNoticeCard(qualification)}
-    <div class="info-card">
-      <h2>${qualification.name}</h2>
-      ${qualification.timeline || qualification.periods ? `<p><strong>Application Timeline:</strong> ${qualification.displayPeriod}</p>` : ""}
-      ${renderLoginInstructions(qualification)}
-    </div>
+    ${renderLoginInstructionsCard(qualification)}
     ${renderResourcesCard(qualification)}
   `;
 };
