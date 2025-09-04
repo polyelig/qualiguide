@@ -65,11 +65,12 @@ document.addEventListener("DOMContentLoaded", () => {
       dateEl = document.createElement("div");
       dateEl.id = "actionsDate";
       dateEl.className = "actions-date";
-      formActions.prepend(dateEl);
-    }
-    dateEl.textContent = `Date: ${formatToday()}`;
-    dateEl.style.display = "block";
+      const inner = formActions.querySelector(".actions-inner") || formActions;
+      inner.prepend(dateEl); // <--- prepend inside actions-inner
   }
+  dateEl.textContent = `Date: ${formatToday()}`;
+  dateEl.style.display = "block";
+}
 
   // ----- renderers
   function renderStep(stepId) {
@@ -251,4 +252,5 @@ document.addEventListener("DOMContentLoaded", () => {
   // init
   renderStep(currentStepId);
 });
+
 
