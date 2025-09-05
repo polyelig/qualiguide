@@ -131,8 +131,8 @@ main {
 #quizContainer {
   width: min(var(--content-width), 100%);
   margin: 0 auto;
-  flex: 1 1 auto;
-  overflow-y: hidden;       /* questions: no scroll */
+  flex: 0 0 auto;
+  overflow-y: visible;       /* questions: no scroll */
   padding: 6px 0;
 }
 
@@ -140,6 +140,7 @@ main {
 .final-mode {
   width: 100% !important;
   max-width: 100% !important;
+  flex: 1 1 auto !important;
 }
 
 /* Final pages: container scroll (visible scrollbar) */
@@ -378,6 +379,7 @@ button:disabled { opacity: 0.6; cursor: not-allowed; }
   .notice-card, .info-card { padding: 14px; border-radius: 10px; }
   .form-actions { justify-content: center; }
 }
+
 
 
 
