@@ -39,6 +39,26 @@ html, body {
   height: var(--header-h);
   padding: 0 16px;
 }
+
+.site-header .header-inner {
+  width: 100%;
+  max-width: 1100px;       /* matches your .container max width */
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.site-logo {
+  height: calc(var(--header-h) - 16px);
+  width: auto;
+  display: block;
+}
+.site-title {
+  margin: 0;
+  font-size: 1.6rem;
+  line-height: 1.1;
+  font-weight: 700;
+}
+   
 .site-footer {
   bottom: 0;
   height: var(--footer-h);
@@ -193,28 +213,31 @@ select[name="userAnswer"]:focus {
 /* -------------------------------
    Actions row
 ---------------------------------*/
-/* Sticky bar is full-width */
+/* Sticky OFF by default, so actions sit right under the content */
 .form-actions {
   width: 100%;
   margin: 10px 0 0;
-  position: sticky;
-  bottom: 0;
+  position: static;           /* was: sticky */
   background: transparent;
-  /* no padding here; gradient goes on the inner wrapper */
 }
 
-/* Inner wrapper matches the question column width and aligns buttons */
+/* Inner wrapper keeps alignment with the question column */
 .actions-inner {
   width: min(var(--content-width), 100%);
   margin: 0 auto;
   display: flex;
-  justify-content: flex-end;   /* Continue flush right (question pages) */
+  justify-content: flex-end;  /* Continue on the right */
   gap: 10px;
   background: linear-gradient(to top, #fff 70%, rgba(255,255,255,0));
-  padding: 6px 0 0 0;
+  padding: 6px 16px 0 0;      /* 16px right inset matches option padding */
 }
 
-/* Final pages: make actions full container width and split Date/PDF */
+/* On final pages only, make the bar sticky and full width */
+.final-actions {
+  position: sticky;
+  bottom: 0;
+}
+
 .final-actions .actions-inner {
   width: 100%;
   max-width: 100%;
@@ -355,6 +378,7 @@ button:disabled { opacity: 0.6; cursor: not-allowed; }
   .notice-card, .info-card { padding: 14px; border-radius: 10px; }
   .form-actions { justify-content: center; }
 }
+
 
 
 
