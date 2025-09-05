@@ -16,7 +16,7 @@ html, body {
 
 :root {
   --content-width: 920px;     /* wider inner column */
-  --header-h: 48px;
+  --header-h: 64px;
   --footer-h: 44px;
 }
 
@@ -37,6 +37,7 @@ html, body {
 .site-header {
   top: 0;
   height: var(--header-h);
+  padding: 0 16px;
 }
 .site-footer {
   bottom: 0;
@@ -354,5 +355,6 @@ button:disabled { opacity: 0.6; cursor: not-allowed; }
   .notice-card, .info-card { padding: 14px; border-radius: 10px; }
   .form-actions { justify-content: center; }
 }
+
 
 
