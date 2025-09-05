@@ -31,6 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function setQuestionScrollMode() {
     quizContainer.classList.remove("final-scroll", "final-mode");
     quizContainer.style.overflowY = "hidden";
+    quizContainer.style.flex = "0 0 auto";
     formActions.classList.remove("final-actions");
     const dateEl = document.getElementById("actionsDate");
     if (dateEl) dateEl.style.display = "none";
@@ -39,6 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function setFinalScrollMode() {
     quizContainer.classList.add("final-scroll", "final-mode");
     quizContainer.style.overflowY = "auto";
+    quizContainer.style.flex = "0 0 auto";
     formActions.classList.add("final-actions");
   }
 
@@ -252,5 +254,6 @@ document.addEventListener("DOMContentLoaded", () => {
   // init
   renderStep(currentStepId);
 });
+
 
 
