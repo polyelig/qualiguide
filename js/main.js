@@ -91,6 +91,14 @@ document.addEventListener("DOMContentLoaded", () => {
     questionLabel.textContent = step.question;
     quizContainer.appendChild(questionLabel);
 
+    // Subtitle (optional)
+      if (step.subtitle) {
+        const subtitleEl = document.createElement("div");
+        subtitleEl.className = "question-subtitle";
+        subtitleEl.textContent = step.subtitle;
+        quizContainer.appendChild(subtitleEl);
+      }
+
     if (!step.options || step.options.length === 0) {
       const nextStepId = typeof step.next === "function" ? step.next() : step.next;
       if (nextStepId?.startsWith?.("end_")) renderEndPage(nextStepId.replace("end_", ""));
@@ -254,6 +262,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // init
   renderStep(currentStepId);
 });
+
 
 
 
