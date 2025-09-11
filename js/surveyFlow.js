@@ -20,19 +20,20 @@ console.log(
 const surveyFlow = [
   {
     id: "transfer",
-    question: "Are you currently studying in a tertiary institution / have enrolled in / graduated from a tertiary institution?",
+    question: "Are you currently studying in a tertiary institution OR have enrolled in OR graduated from a tertiary institution?",
+    subtitle: "Tertiary institutions refer to universities and colleges of higher education, and does not include polytechnics and the Institute of Technical Education (ITE) in Singapore.",
     options: [
-      "Local universities (NUS, NTU, SMU, SIT, SUTD, SUSS, UAS)",
+      "Local universities (NUS, NTU, SMU, SIT, SUTD, SUSS)",
       "Overseas tertiary institutions",
-      "I am not a current or former undergraduate"
+      "I have never enrolled in a university before"
     ],
     next: function(answer){ 
       switch (answer) {
-        case "Local universities (NUS, NTU, SMU, SIT, SUTD, SUSS, UAS)":
+        case "Local universities (NUS, NTU, SMU, SIT, SUTD, SUSS)":
           return "local_transfer";
         case "Overseas tertiary institutions":
           return "nationality_transfer";
-        case "I am not a current or former undergraduate":
+        case "I have never enrolled in a university before":
           return "nationality";
         default:
           return null;
@@ -99,3 +100,4 @@ const surveyFlow = [
 
 // Expose to global
 window.surveyFlow = surveyFlow;
+
