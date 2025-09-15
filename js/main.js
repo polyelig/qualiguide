@@ -206,29 +206,51 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ----- events
-  quizForm.addEventListener("submit", e => {
-    e.preventDefault();
+// ----- events
+quizForm.addEventListener("submit", e => {
+  e.preventDefault();
 
-    const selectEl = quizContainer.querySelector('select[name="userAnswer"]');
-    let selected = null;
+  const selectEl = quizContainer.querySelector('select[name="userAnswer"]');
+  let selected = null;
 
-    if (selectEl) {
-      selected = selectEl.value;
-      if (!selected) return alert("Please select an option.");
-    } else {
-      const selectedInput = quizContainer.querySelector('input[name="userAnswer"]:checked');
-      if (!selectedInput) return alert("Please select an option.");
-      selected = selectedInput.value;
+  if (selectEl) {
+    selected = selectEl.value;
+    if (!selected) return alert("Please select an option.");
+  } else {
+    const selectedInput = quizContainer.querySelector('input[name="userAnswer"]:checked');
+    if (!selectedInput) return alert("Please select an option.");
+    selected = selectedInput.value;
+  }
+
+  // Save the answer for the current step
+  answers[currentStepId] = selected;
+
+  // --- NEW: special routing for Overseas → Foreigner → Local quals => end_transfer
+  if (currentStepId === "qualification") {
+    const allQuals = (window.localQualifications || []).concat(window.internationalQualifications || []);
+    const qual = allQuals.find(q => q.id === selected);
+    if (qual) {
+      const natTransfer = answers["nationality_transfer"]; // "Singapore Citizen/ Singapore Permanent Resident" | "Foreigner" | undefined
+      if (natTransfer === "Foreigner" && qual.type === "local") {
+        // Route to Transfer end page (audience-aware login text handled by template)
+        renderEndPage("transfer");
+        return;
+      } else {
+        // Normal behavior: go to the selected qualification's end page
+        renderEndPage(selected);
+        return;
+      }
     }
+  }
 
-    answers[currentStepId] = selected;
+  // Default next-step logic (unchanged)
+  const step = flowMap[currentStepId];
+  const nextStepId = typeof step.next === "function" ? step.next(selected) : step.next;
 
-    const step = flowMap[currentStepId];
-    const nextStepId = typeof step.next === "function" ? step.next(selected) : step.next;
+  if (nextStepId?.startsWith?.("end_")) renderEndPage(nextStepId.replace("end_", ""));
+  else if (nextStepId) renderStep(nextStepId);
+});
 
-    if (nextStepId?.startsWith?.("end_")) renderEndPage(nextStepId.replace("end_", ""));
-    else if (nextStepId) renderStep(nextStepId);
-  });
 
   // PDF: capture only the scroll area (not the actions bar)
   downloadPdfBtn.addEventListener("click", () => {
@@ -270,6 +292,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // init
   renderStep(currentStepId);
 });
+
 
 
 
