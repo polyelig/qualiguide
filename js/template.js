@@ -1,5 +1,5 @@
 // -------------------------------
-// template.js (audience-aware login + links)
+// template.js (audience-aware login + links, safe qualification naming)
 // -------------------------------
 
 const today = new Date();
@@ -7,6 +7,14 @@ const today = new Date();
 // External links used in login instructions
 const APPLICANT_PORTAL_URL = "https://myaces.nus.edu.sg/applicantPortal/app/login";
 const SINGPASS_URL = "https://portal.singpass.gov.sg/home/ui/support";
+
+/* -------------------------------
+   Helper: Safe qualification name
+--------------------------------*/
+function formatQualificationName(qName) {
+  // Avoid duplication: don’t add “Qualification” if already present (case-insensitive)
+  return qName.match(/qualification$/i) ? qName : `${qName} Qualification`;
+}
 
 /* -------------------------------
    Resource helpers
@@ -81,7 +89,7 @@ function getAcademicYear(fromDate) {
 function renderNoticeCard(qualification) {
   // Transfer: multiple periods, same notice style
   if (qualification.type === "transfer" && Array.isArray(qualification.periods)) {
-    const header = `📅 Application Periods for the ${qualification.name} Qualification`;
+    const header = `📅 Application Periods for the ${formatQualificationName(qualification.name)}`;
     const list = qualification.periods.map(p => `<li>${p.label}: ${p.rangeText}</li>`).join("");
     return `
       <div class="notice-card notice-upcoming">
@@ -113,7 +121,7 @@ function renderNoticeCard(qualification) {
   }
 
   const line1 = `📅 ${ayStr ? ayStr + " " : ""}Application Period for the`;
-  const line2 = `${qualification.name} Qualification ${statusText}`;
+  const line2 = `${formatQualificationName(qualification.name)} ${statusText}`;
   const line3 = `${line3Prefix}${qualification.displayPeriod}`;
 
   return `
@@ -128,10 +136,6 @@ function renderNoticeCard(qualification) {
 /* -------------------------------
    Login helpers (audience-aware)
 --------------------------------*/
-
-// Determine the correct MTL link per your rule:
-// - Local quals: use qualification.mtlUrl if present; otherwise try the first resource (admission page) if available.
-// - International quals: use the fixed page.
 function getMtlLink(qualification) {
   if (qualification.type === "local") {
     return qualification.mtlUrl || (qualification.resources?.[0]?.url) || null;
@@ -139,47 +143,42 @@ function getMtlLink(qualification) {
   return "https://nus.edu.sg/oam/admissions/singapore-citizens-sprs-with-international-qualifications";
 }
 
-// SG/PR card (used across types; text tailored below where needed)
 function sgprLoginCard(qualification) {
-  const qName = qualification.name;
+  const qName = formatQualificationName(qualification.name);
   const mtlHref = getMtlLink(qualification);
   const mtlLine = mtlHref
     ? `📌 Please check to see if you meet the <a href="${mtlHref}" target="_blank" rel="noopener noreferrer" class="resource-link">Mother Tongue Language requirements</a>.`
     : `📌 Please check to see if you meet the Mother Tongue Language requirements.`;
 
-  // Special local poly text (kept from your previous content)
   if (qualification.type === "local" && qualification.id === "polytechnic-diploma-singapore") {
     return `
       <div class="login-card info-card info-card--compact">
         <h4>🔎 Singapore Citizen / PR / FIN Holders</h4>
-        <p>Please log in to the <a href="${APPLICANT_PORTAL_URL}" target="_blank" rel="noopener noreferrer" class="resource-link">Applicant Portal</a> with your <a href="${SINGPASS_URL}" target="_blank" rel="noopener noreferrer" class="resource-link">Singpass</a> to apply using the <strong>Polytechnic Diploma from Singapore</strong> qualification.</p>
+        <p>Please log in to the <a href="${APPLICANT_PORTAL_URL}" target="_blank" rel="noopener noreferrer" class="resource-link">Applicant Portal</a> with your <a href="${SINGPASS_URL}" target="_blank" rel="noopener noreferrer" class="resource-link">Singpass</a> to apply using the <strong>${qName}</strong>.</p>
       </div>
     `;
   }
 
-  // International (same as your earlier intent, with explicit links)
   if (qualification.type === "international") {
     return `
       <div class="login-card info-card info-card--compact">
         <h4>🔎 Singapore Citizen / PR / FIN Holders</h4>
-        <p>Please log in to the <a href="${APPLICANT_PORTAL_URL}" target="_blank" rel="noopener noreferrer" class="resource-link">Applicant Portal</a> with your <a href="${SINGPASS_URL}" target="_blank" rel="noopener noreferrer" class="resource-link">Singpass</a> to apply as a <em>Singapore Citizen/ Permanent Resident/ FIN holder with International Qualifications</em> category using the <strong>${qName}</strong> qualification.</p>
+        <p>Please log in to the <a href="${APPLICANT_PORTAL_URL}" target="_blank" rel="noopener noreferrer" class="resource-link">Applicant Portal</a> with your <a href="${SINGPASS_URL}" target="_blank" rel="noopener noreferrer" class="resource-link">Singpass</a> to apply as a <em>Singapore Citizen/ Permanent Resident/ FIN holder with International Qualifications</em> using the <strong>${qName}</strong>.</p>
         <p>${mtlLine}</p>
       </div>
     `;
   }
 
-  // Local (non-poly)
   if (qualification.type === "local") {
     return `
       <div class="login-card info-card info-card--compact">
         <h4>🔎 Singapore Citizen / PR / FIN Holders</h4>
-        <p>Please log in to the <a href="${APPLICANT_PORTAL_URL}" target="_blank" rel="noopener noreferrer" class="resource-link">Applicant Portal</a> with your <a href="${SINGPASS_URL}" target="_blank" rel="noopener noreferrer" class="resource-link">Singpass</a> to apply using the <strong>${qName}</strong> qualification.</p>
+        <p>Please log in to the <a href="${APPLICANT_PORTAL_URL}" target="_blank" rel="noopener noreferrer" class="resource-link">Applicant Portal</a> with your <a href="${SINGPASS_URL}" target="_blank" rel="noopener noreferrer" class="resource-link">Singpass</a> to apply using the <strong>${qName}</strong>.</p>
         ${mtlHref ? `<p>${mtlLine}</p>` : ""}
       </div>
     `;
   }
 
-  // Transfer (SG/PR)
   if (qualification.type === "transfer") {
     return `
       <div class="login-card info-card info-card--compact">
@@ -189,7 +188,6 @@ function sgprLoginCard(qualification) {
     `;
   }
 
-  // Fallback (shouldn't hit)
   return `
     <div class="login-card info-card info-card--compact">
       <h4>🔎 Singapore Citizen / PR / FIN Holders</h4>
@@ -198,11 +196,9 @@ function sgprLoginCard(qualification) {
   `;
 }
 
-// Foreigner card (used across types; text tailored where needed)
 function foreignersLoginCard(qualification) {
-  const qName = qualification.name;
+  const qName = formatQualificationName(qualification.name);
 
-  // Transfer: placeholder per your requirement
   if (qualification.type === "transfer") {
     return `
       <div class="login-card info-card info-card--compact">
@@ -212,29 +208,24 @@ function foreignersLoginCard(qualification) {
     `;
   }
 
-  // Local poly (kept per your previous content, but corrected typos and links)
   if (qualification.type === "local" && qualification.id === "polytechnic-diploma-singapore") {
     return `
       <div class="login-card info-card info-card--compact">
         <h4>🌏 Foreigners (without FIN)</h4>
-        <p>Please log in to the <a href="${APPLICANT_PORTAL_URL}" target="_blank" rel="noopener noreferrer" class="resource-link">Applicant Portal</a> and log in with your <strong>email account</strong> to apply using the <strong>Polytechnic Diploma from Singapore</strong> qualification.</p>
+        <p>Please log in to the <a href="${APPLICANT_PORTAL_URL}" target="_blank" rel="noopener noreferrer" class="resource-link">Applicant Portal</a> and log in with your <strong>email account</strong> to apply using the <strong>${qName}</strong>.</p>
       </div>
     `;
   }
 
-  // All other local & international quals: email + International Student category
   return `
     <div class="login-card info-card info-card--compact">
       <h4>🌏 Foreigners (without FIN)</h4>
-      <p>Please log in to the <a href="${APPLICANT_PORTAL_URL}" target="_blank" rel="noopener noreferrer" class="resource-link">Applicant Portal</a> with your <strong>email account</strong> to apply as an <em>International Student with International Qualifications</em> using the <strong>${qName}</strong> qualification.</p>
+      <p>Please log in to the <a href="${APPLICANT_PORTAL_URL}" target="_blank" rel="noopener noreferrer" class="resource-link">Applicant Portal</a> with your <strong>email account</strong> to apply as an <em>International Student</em> using the <strong>${qName}</strong>.</p>
     </div>
   `;
 }
 
-// Audience-aware section (render one card based on audience)
-// audience: "sgpr" | "foreigner" | null (unknown)
 function renderLoginInstructionsSection(qualification, { audience } = {}) {
-  // Exception: Singapore-Cambridge GCE A-Level → always SG/PR card only
   if (qualification.id === "singapore-cambridge-gce-a-level") {
     return `
       <div class="info-card info-card--compact">
@@ -250,7 +241,6 @@ function renderLoginInstructionsSection(qualification, { audience } = {}) {
   } else if (audience === "foreigner") {
     cardHtml = foreignersLoginCard(qualification);
   } else {
-    // Fallback if audience isn't known — show both
     cardHtml = `
       <div class="login-grid">
         ${sgprLoginCard(qualification)}
@@ -272,7 +262,6 @@ function renderLoginInstructionsSection(qualification, { audience } = {}) {
 --------------------------------*/
 window.templates = {};
 
-// NOTE: main.js should now call these with a second arg { audience }
 window.templates.internationalQualificationTemplate = function(qualification, { audience } = {}) {
   return `
     ${renderNoticeCard(qualification)}
