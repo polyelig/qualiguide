@@ -144,7 +144,7 @@ function sgprLoginCard(qualification) {
   const qName = qualification.name;
   const mtlHref = getMtlLink(qualification);
   const mtlLine = mtlHref
-    ? `📌 Please check to see if you meet the Mother Tongue Language requirements. <a href="${mtlHref}" target="_blank" rel="noopener noreferrer" class="resource-link">View requirements</a>.`
+    ? `📌 Please check to see if you meet the <a href="${mtlHref}" target="_blank" rel="noopener noreferrer" class="resource-link">Mother Tongue Language requirements</a>.`
     : `📌 Please check to see if you meet the Mother Tongue Language requirements.`;
 
   // Special local poly text (kept from your previous content)
@@ -162,7 +162,7 @@ function sgprLoginCard(qualification) {
     return `
       <div class="login-card info-card info-card--compact">
         <h4>🔎 Singapore Citizen / PR / FIN Holders</h4>
-        <p>Please log in to the <a href="${APPLICANT_PORTAL_URL}" target="_blank" rel="noopener noreferrer" class="resource-link">Applicant Portal</a> with your <a href="${SINGPASS_URL}" target="_blank" rel="noopener noreferrer" class="resource-link">Singpass</a>, and apply under the <em>Singapore Citizens/ PR</em> category using <strong>${qName}</strong>.</p>
+        <p>Please log in to the <a href="${APPLICANT_PORTAL_URL}" target="_blank" rel="noopener noreferrer" class="resource-link">Applicant Portal</a> with your <a href="${SINGPASS_URL}" target="_blank" rel="noopener noreferrer" class="resource-link">Singpass</a>, and apply under the <em>Singapore Citizens/ PR</em> category using <strong>${qName}</strong> qualification.</p>
         <p>${mtlLine}</p>
       </div>
     `;
@@ -193,7 +193,7 @@ function sgprLoginCard(qualification) {
   return `
     <div class="login-card info-card info-card--compact">
       <h4>🔎 Singapore Citizen / PR / FIN Holders</h4>
-      <p>Go to the <a href="${APPLICANT_PORTAL_URL}" target="_blank" rel="noopener noreferrer" class="resource-link">Applicant Portal</a> and log in with <a href="${SINGPASS_URL}" target="_blank" rel="noopener noreferrer" class="resource-link">Singpass</a>.</p>
+      <p>Please log in to the <a href="${APPLICANT_PORTAL_URL}" target="_blank" rel="noopener noreferrer" class="resource-link">Applicant Portal</a> with your <a href="${SINGPASS_URL}" target="_blank" rel="noopener noreferrer" class="resource-link">Singpass</a>.</p>
     </div>
   `;
 }
@@ -217,7 +217,7 @@ function foreignersLoginCard(qualification) {
     return `
       <div class="login-card info-card info-card--compact">
         <h4>🌏 Foreigners (without FIN)</h4>
-        <p>Go to the <a href="${APPLICANT_PORTAL_URL}" target="_blank" rel="noopener noreferrer" class="resource-link">Applicant Portal</a> and log in with your <strong>email account</strong> to apply using the <strong>Polytechnic Diploma from Singapore</strong> qualification.</p>
+        <p>Please log in to the <a href="${APPLICANT_PORTAL_URL}" target="_blank" rel="noopener noreferrer" class="resource-link">Applicant Portal</a> and log in with your <strong>email account</strong> to apply using the <strong>Polytechnic Diploma from Singapore</strong> qualification.</p>
       </div>
     `;
   }
@@ -226,7 +226,7 @@ function foreignersLoginCard(qualification) {
   return `
     <div class="login-card info-card info-card--compact">
       <h4>🌏 Foreigners (without FIN)</h4>
-      <p>Go to the <a href="${APPLICANT_PORTAL_URL}" target="_blank" rel="noopener noreferrer" class="resource-link">Applicant Portal</a>, log in with your <strong>email account</strong>, and apply under the <em>International Student</em> category using <strong>${qName}</strong>.</p>
+      <p>Please log in to the <a href="${APPLICANT_PORTAL_URL}" target="_blank" rel="noopener noreferrer" class="resource-link">Applicant Portal</a> with your <strong>email account</strong>, and apply under the <em>International Student</em> category using <strong>${qName}</strong>.</p>
     </div>
   `;
 }
