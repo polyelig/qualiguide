@@ -220,6 +220,37 @@ select[name="userAnswer"]:focus {
   outline: none;
 }
 
+/* Scrollable qualifications dropdown with comfortable row spacing */
+select.dropdown[size]:not([size="1"]) {
+  /* keep the same look as your old single-row select */
+  width: 100%;
+  border: 2px solid #bcc3c8;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  padding: 6px;                 /* inner gutter around the list */
+  overflow-y: auto;             /* show scrollbar when needed */
+}
+
+/* Make each option roomy like before */
+select.dropdown[size]:not([size="1"]) option {
+  padding: 10px 14px;           /* ← restore comfy spacing */
+  line-height: 1.5;
+  font-size: 16px;
+}
+
+/* Focus state to match your theme */
+select.dropdown[size]:not([size="1"]):focus {
+  border-color: #00437a;
+  box-shadow: 0 0 6px rgba(33,150,243,0.25);
+  outline: none;
+}
+
+/* (Optional) slightly highlight the selected item’s background */
+select.dropdown[size]:not([size="1"]) option:checked {
+  background: #f6faff;
+}
+
 /* -------------------------------
    Actions row
 ---------------------------------*/
@@ -401,6 +432,7 @@ button:disabled { opacity: 0.6; cursor: not-allowed; }
   .notice-card, .info-card { padding: 14px; border-radius: 10px; }
   .form-actions { justify-content: center; }
 }
+
 
 
 
