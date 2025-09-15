@@ -118,6 +118,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const select = document.createElement("select");
       select.name = "userAnswer";
       select.className = "dropdown";
+      select.setAttribute("size", "10");  // shows 10 rows max with scrolling
 
       const defaultOption = document.createElement("option");
       defaultOption.value = "";
@@ -292,6 +293,7 @@ quizForm.addEventListener("submit", e => {
   // init
   renderStep(currentStepId);
 });
+
 
 
 
