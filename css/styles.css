@@ -334,22 +334,30 @@ button:disabled { opacity: 0.6; cursor: not-allowed; }
   border: 1px solid #eef2f6;
 }
 
+/* Default resource links (with arrow) */
 .resource-link {
   text-decoration: none;
   color: #00437a;
   font-weight: 700;
   line-height: 1.4;
   position: relative;
-  padding-left: 20px;
+  padding-left: 20px;       /* space for arrow */
   transition: color 0.2s;
 }
+
 .resource-link::before {
   content: "↗";
   position: absolute;
   left: 0; top: 0;
 }
 
+/* Remove arrow + extra padding inside login cards */
+.login-card .resource-link {
+  padding-left: 0 !important;   /* no offset since no arrow */
+}
+
 .login-card .resource-link::before {
+  display: none !important;     /* remove arrow completely */
   content: none !important;
 }
 
@@ -393,6 +401,7 @@ button:disabled { opacity: 0.6; cursor: not-allowed; }
   .notice-card, .info-card { padding: 14px; border-radius: 10px; }
   .form-actions { justify-content: center; }
 }
+
 
 
 
