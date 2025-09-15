@@ -36,7 +36,6 @@ const localQualifications = [
       { label: "Admission Requirements", url: "https://nus.edu.sg/oam/admissions/singapore-cambridge-gce-a-level" },
       { label: "Mother Tongue Language (MTL) requirements", url: "https://www.nus.edu.sg/oam/admissions/singapore-citizens-sprs-with-international-qualifications" }
     ],
-    mtlUrl: "https://www.nus.edu.sg/oam/admissions/singapore-citizens-sprs-with-international-qualifications"
   },
   {
     id: "polytechnic-diploma-singapore",
@@ -504,6 +503,7 @@ window.qualificationsData = qualificationsData;
 // Attach separate arrays globally for surveyFlow
 window.localQualifications = localQualifications;
 window.internationalQualifications = internationalQualifications;
+
 
 
 
