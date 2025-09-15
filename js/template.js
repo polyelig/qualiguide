@@ -152,7 +152,7 @@ function sgprLoginCard(qualification) {
     return `
       <div class="login-card info-card info-card--compact">
         <h4>🔎 Singapore Citizen / PR / FIN Holders</h4>
-        <p>Go to the <a href="${APPLICANT_PORTAL_URL}" target="_blank" rel="noopener noreferrer" class="resource-link">Applicant Portal</a> and log in with <a href="${SINGPASS_URL}" target="_blank" rel="noopener noreferrer" class="resource-link">Singpass</a> to apply using the <strong>Polytechnic Diploma from Singapore</strong> qualification.</p>
+        <p>Please log in to the <a href="${APPLICANT_PORTAL_URL}" target="_blank" rel="noopener noreferrer" class="resource-link">Applicant Portal</a> with your <a href="${SINGPASS_URL}" target="_blank" rel="noopener noreferrer" class="resource-link">Singpass</a> to apply using the <strong>Polytechnic Diploma from Singapore</strong> qualification.</p>
       </div>
     `;
   }
@@ -162,7 +162,7 @@ function sgprLoginCard(qualification) {
     return `
       <div class="login-card info-card info-card--compact">
         <h4>🔎 Singapore Citizen / PR / FIN Holders</h4>
-        <p>Go to the <a href="${APPLICANT_PORTAL_URL}" target="_blank" rel="noopener noreferrer" class="resource-link">Applicant Portal</a>, log in with <a href="${SINGPASS_URL}" target="_blank" rel="noopener noreferrer" class="resource-link">Singpass</a>, and apply under the <em>Singapore Citizens / PR</em> category using <strong>${qName}</strong>.</p>
+        <p>Please log in to the <a href="${APPLICANT_PORTAL_URL}" target="_blank" rel="noopener noreferrer" class="resource-link">Applicant Portal</a> with your <a href="${SINGPASS_URL}" target="_blank" rel="noopener noreferrer" class="resource-link">Singpass</a>, and apply under the <em>Singapore Citizens/ PR</em> category using <strong>${qName}</strong>.</p>
         <p>${mtlLine}</p>
       </div>
     `;
@@ -173,7 +173,7 @@ function sgprLoginCard(qualification) {
     return `
       <div class="login-card info-card info-card--compact">
         <h4>🔎 Singapore Citizen / PR / FIN Holders</h4>
-        <p>Go to the <a href="${APPLICANT_PORTAL_URL}" target="_blank" rel="noopener noreferrer" class="resource-link">Applicant Portal</a> and log in with <a href="${SINGPASS_URL}" target="_blank" rel="noopener noreferrer" class="resource-link">Singpass</a> to apply using <strong>${qName}</strong>.</p>
+        <p>Please log in to the <a href="${APPLICANT_PORTAL_URL}" target="_blank" rel="noopener noreferrer" class="resource-link">Applicant Portal</a> with your <a href="${SINGPASS_URL}" target="_blank" rel="noopener noreferrer" class="resource-link">Singpass</a> to apply using <strong>${qName}</strong>.</p>
         ${mtlHref ? `<p>${mtlLine}</p>` : ""}
       </div>
     `;
@@ -184,7 +184,7 @@ function sgprLoginCard(qualification) {
     return `
       <div class="login-card info-card info-card--compact">
         <h4>🔎 Singapore Citizen / PR / FIN Holders</h4>
-        <p>As a transfer applicant, go to the <a href="${APPLICANT_PORTAL_URL}" target="_blank" rel="noopener noreferrer" class="resource-link">Applicant Portal</a> and log in with <a href="${SINGPASS_URL}" target="_blank" rel="noopener noreferrer" class="resource-link">Singpass</a> to proceed.</p>
+        <p>As you have indicated that you are currently studying/ have enrolled in/ have graduated from a tertiary institution, please log in to the <a href="${APPLICANT_PORTAL_URL}" target="_blank" rel="noopener noreferrer" class="resource-link">Applicant Portal</a> with your <a href="${SINGPASS_URL}" target="_blank" rel="noopener noreferrer" class="resource-link">Singpass</a> to proceed with your application as a Transfer candidate.</p>
       </div>
     `;
   }
@@ -207,7 +207,7 @@ function foreignersLoginCard(qualification) {
     return `
       <div class="login-card info-card info-card--compact">
         <h4>🌏 Foreigners (without FIN)</h4>
-        <p><em>Information for foreign applicants will be provided soon.</em></p>
+        <p>Please log in to the Applicant Portal with your email address to proceed with your application as a Transfer candidate.</p>
       </div>
     `;
   }
