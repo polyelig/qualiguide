@@ -53,6 +53,14 @@ document.addEventListener("DOMContentLoaded", () => {
     `;
   }
 
+  function getAudience() {
+    // Prefer transfer nationality if present; otherwise fall back to non-transfer nationality
+    const raw = answers["nationality_transfer"] || answers["nationality"] || null;
+    if (raw === "Foreigner") return "foreigner";
+    if (raw === "Singapore Citizen/ Singapore Permanent Resident") return "sgpr";
+    return null; // unknown/edge case
+  }
+
   function formatToday() {
     try {
       return new Date().toLocaleDateString("en-SG", { day: "numeric", month: "long", year: "numeric" });
@@ -171,21 +179,21 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const headerHTML = setPageTitleHTML(qualification);
-
+    const audience = getAudience();
     let contentHTML = "";
     switch (qualification.type) {
       case "international":
-        contentHTML = window.templates.internationalQualificationTemplate(qualification);
+        contentHTML = window.templates.internationalQualificationTemplate(qualification, { audience });
         break;
       case "local":
-        contentHTML = window.templates.localQualificationTemplate(qualification);
+        contentHTML = window.templates.localQualificationTemplate(qualification, { audience });
         break;
       case "transfer":
-        contentHTML = window.templates.transferTemplate(qualification);
+        contentHTML = window.templates.transferTemplate(qualification, { audience });
         break;
       default:
         contentHTML = `<div class="info-card"><p>${qualification.name}</p></div>`;
-    }
+  }
 
     quizContainer.innerHTML = headerHTML + contentHTML;
 
@@ -262,6 +270,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // init
   renderStep(currentStepId);
 });
+
 
 
 
