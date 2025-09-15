@@ -228,13 +228,13 @@ select.dropdown[size]:not([size="1"]) {
   border-radius: 8px;
   background: #fff;
   box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-  padding: 6px;                 /* inner gutter around the list */
+  padding: 3px;                 /* inner gutter around the list */
   overflow-y: auto;             /* show scrollbar when needed */
 }
 
 /* Make each option roomy like before */
 select.dropdown[size]:not([size="1"]) option {
-  padding: 10px 11px;           /* ← restore comfy spacing */
+  padding: 4px 10px;           /* ← restore comfy spacing */
   line-height: 1.2;
   font-size: 16px;
 }
@@ -432,6 +432,7 @@ button:disabled { opacity: 0.6; cursor: not-allowed; }
   .notice-card, .info-card { padding: 14px; border-radius: 10px; }
   .form-actions { justify-content: center; }
 }
+
 
 
 
