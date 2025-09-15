@@ -30,7 +30,7 @@ const surveyFlow = [
     next: function(answer){ 
       switch (answer) {
         case "Local universities (NUS, NTU, SMU, SIT, SUTD, SUSS)":
-          return "local_transfer";
+          return "nationality_transfer";
         case "Overseas tertiary institutions":
           return "nationality_transfer";
         case "I have never enrolled in a university OR tertiary institution before":
@@ -100,5 +100,6 @@ const surveyFlow = [
 
 // Expose to global
 window.surveyFlow = surveyFlow;
+
 
 
