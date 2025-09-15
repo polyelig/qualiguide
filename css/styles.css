@@ -235,7 +235,7 @@ select.dropdown[size]:not([size="1"]) {
 /* Make each option roomy like before */
 select.dropdown[size]:not([size="1"]) option {
   padding: 10px 11px;           /* ← restore comfy spacing */
-  line-height: 1.5;
+  line-height: 1.2;
   font-size: 16px;
 }
 
@@ -432,6 +432,7 @@ button:disabled { opacity: 0.6; cursor: not-allowed; }
   .notice-card, .info-card { padding: 14px; border-radius: 10px; }
   .form-actions { justify-content: center; }
 }
+
 
 
 
