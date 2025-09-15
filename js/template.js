@@ -162,7 +162,7 @@ function sgprLoginCard(qualification) {
     return `
       <div class="login-card info-card info-card--compact">
         <h4>🔎 Singapore Citizen / PR / FIN Holders</h4>
-        <p>Please log in to the <a href="${APPLICANT_PORTAL_URL}" target="_blank" rel="noopener noreferrer" class="resource-link">Applicant Portal</a> with your <a href="${SINGPASS_URL}" target="_blank" rel="noopener noreferrer" class="resource-link">Singpass</a>, and apply under the <em>Singapore Citizens/ PR</em> category using <strong>${qName}</strong> qualification.</p>
+        <p>Please log in to the <a href="${APPLICANT_PORTAL_URL}" target="_blank" rel="noopener noreferrer" class="resource-link">Applicant Portal</a> with your <a href="${SINGPASS_URL}" target="_blank" rel="noopener noreferrer" class="resource-link">Singpass</a> to apply as a <em>Singapore Citizen/ Permanent Resident/ FIN holder with International Qualifications</em> category using the <strong>${qName}</strong> qualification.</p>
         <p>${mtlLine}</p>
       </div>
     `;
@@ -173,7 +173,7 @@ function sgprLoginCard(qualification) {
     return `
       <div class="login-card info-card info-card--compact">
         <h4>🔎 Singapore Citizen / PR / FIN Holders</h4>
-        <p>Please log in to the <a href="${APPLICANT_PORTAL_URL}" target="_blank" rel="noopener noreferrer" class="resource-link">Applicant Portal</a> with your <a href="${SINGPASS_URL}" target="_blank" rel="noopener noreferrer" class="resource-link">Singpass</a> to apply using <strong>${qName}</strong>.</p>
+        <p>Please log in to the <a href="${APPLICANT_PORTAL_URL}" target="_blank" rel="noopener noreferrer" class="resource-link">Applicant Portal</a> with your <a href="${SINGPASS_URL}" target="_blank" rel="noopener noreferrer" class="resource-link">Singpass</a> to apply using the <strong>${qName}</strong> qualification.</p>
         ${mtlHref ? `<p>${mtlLine}</p>` : ""}
       </div>
     `;
@@ -226,7 +226,7 @@ function foreignersLoginCard(qualification) {
   return `
     <div class="login-card info-card info-card--compact">
       <h4>🌏 Foreigners (without FIN)</h4>
-      <p>Please log in to the <a href="${APPLICANT_PORTAL_URL}" target="_blank" rel="noopener noreferrer" class="resource-link">Applicant Portal</a> with your <strong>email account</strong>, and apply under the <em>International Student</em> category using <strong>${qName}</strong>.</p>
+      <p>Please log in to the <a href="${APPLICANT_PORTAL_URL}" target="_blank" rel="noopener noreferrer" class="resource-link">Applicant Portal</a> with your <strong>email account</strong> to apply as an <em>International Student with International Qualifications</em> using the <strong>${qName}</strong> qualification.</p>
     </div>
   `;
 }
