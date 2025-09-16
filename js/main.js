@@ -1,5 +1,5 @@
 // -------------------------------
-// main.js (updated)
+// main.js (patched)
 // -------------------------------
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -30,8 +30,8 @@ document.addEventListener("DOMContentLoaded", () => {
   // ----- helpers
   function setQuestionScrollMode() {
     quizContainer.classList.remove("final-scroll", "final-mode");
-    quizContainer.style.overflowY = "hidden";
-    quizContainer.style.flex = "0 0 auto";
+    // IMPORTANT: keep visible so the expanded dropdown can overlay
+    quizContainer.style.overflowY = "visible";
     formActions.classList.remove("final-actions");
     const dateEl = document.getElementById("actionsDate");
     if (dateEl) dateEl.style.display = "none";
@@ -40,7 +40,6 @@ document.addEventListener("DOMContentLoaded", () => {
   function setFinalScrollMode() {
     quizContainer.classList.add("final-scroll", "final-mode");
     quizContainer.style.overflowY = "auto";
-    quizContainer.style.flex = "0 0 auto";
     formActions.classList.add("final-actions");
   }
 
@@ -77,10 +76,20 @@ document.addEventListener("DOMContentLoaded", () => {
       dateEl.className = "actions-date";
       const inner = formActions.querySelector(".actions-inner") || formActions;
       inner.prepend(dateEl); // <--- prepend inside actions-inner
+    }
+    dateEl.textContent = `Date: ${formatToday()}`;
+    dateEl.style.display = "block";
   }
-  dateEl.textContent = `Date: ${formatToday()}`;
-  dateEl.style.display = "block";
-}
+
+  // Collapse any other open dropdowns
+  function closeAllDropdowns(exceptEl = null) {
+    document.querySelectorAll("select.dropdown.dropdown-open").forEach(sel => {
+      if (sel !== exceptEl) {
+        sel.classList.remove("dropdown-open");
+        sel.removeAttribute("size");
+      }
+    });
+  }
 
   // ----- renderers
   function renderStep(stepId) {
@@ -100,12 +109,12 @@ document.addEventListener("DOMContentLoaded", () => {
     quizContainer.appendChild(questionLabel);
 
     // Subtitle (optional)
-      if (step.subtitle) {
-        const subtitleEl = document.createElement("div");
-        subtitleEl.className = "question-subtitle";
-        subtitleEl.textContent = step.subtitle;
-        quizContainer.appendChild(subtitleEl);
-      }
+    if (step.subtitle) {
+      const subtitleEl = document.createElement("div");
+      subtitleEl.className = "question-subtitle";
+      subtitleEl.textContent = step.subtitle;
+      quizContainer.appendChild(subtitleEl);
+    }
 
     if (!step.options || step.options.length === 0) {
       const nextStepId = typeof step.next === "function" ? step.next() : step.next;
@@ -114,56 +123,81 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-     if (stepId === "qualification") {
+    if (stepId === "qualification") {
       // wrapper to allow overlay expansion
       const wrap = document.createElement("div");
       wrap.className = "select-wrap";
-    
+
       const select = document.createElement("select");
       select.name = "userAnswer";
       select.className = "dropdown";
       select.setAttribute("aria-label", "Select your qualification");
-    
+
       const defaultOption = document.createElement("option");
       defaultOption.value = "";
       defaultOption.textContent = "-- Select your qualification --";
       select.appendChild(defaultOption);
-    
+
       step.options.forEach(opt => {
         const o = document.createElement("option");
         o.value = opt.value;
         o.textContent = opt.label;
         select.appendChild(o);
       });
-    
+
       // ==== Expand-on-focus behavior ====
+      // Rough row height used for sizing (matches your CSS comfortably)
+      const ROW_HEIGHT = 34; // px
+      const V_PADDING = 16;  // px (inner padding + breathing room)
+      
       const expand = () => {
-        // already open? skip
         if (select.classList.contains("dropdown-open")) return;
-        select.size = 10;                          // show ~10 rows
-        select.classList.add("dropdown-open");     // overlay styling
+      
+        closeAllDropdowns(select);
+      
+        // Desired dropdown height for up to 10 rows
+        const rows = Math.min(10, select.options.length || 10);
+        const desiredHeight = rows * ROW_HEIGHT + V_PADDING;
+      
+        // Measure space around the collapsed select
+        const rect = select.getBoundingClientRect();
+        const spaceBelow = window.innerHeight - rect.bottom;
+        const spaceAbove = rect.top;
+      
+        // Choose direction: open up if not enough space below but enough above
+        const openUp = spaceBelow < desiredHeight && spaceAbove > spaceBelow;
+      
+        // Apply size + direction classes
+        select.setAttribute("size", String(rows));
+        select.classList.add("dropdown-open");
+        if (openUp) {
+          select.classList.add("dropdown-open-up");
+        } else {
+          select.classList.remove("dropdown-open-up");
+        }
       };
+      
       const collapse = () => {
-        select.size = 1;
-        select.classList.remove("dropdown-open");
+        select.classList.remove("dropdown-open", "dropdown-open-up");
+        select.removeAttribute("size");
       };
-    
+
+
       // open when user clicks or focuses
       select.addEventListener("mousedown", (e) => {
-        // prevent immediate blur on some browsers
-        e.preventDefault();
+        e.preventDefault(); // avoid native toggle/blur race
         select.focus();
         expand();
       });
       select.addEventListener("focus", expand);
-    
+
       // close when user selects or blurs
       select.addEventListener("change", collapse);
       select.addEventListener("blur", () => {
         // tiny timeout helps when clicking an option
         setTimeout(collapse, 0);
       });
-    
+
       // allow ESC to close
       select.addEventListener("keydown", (e) => {
         if (e.key === "Escape") {
@@ -172,11 +206,14 @@ document.addEventListener("DOMContentLoaded", () => {
           select.blur();
         }
       });
-    
+
+      // click outside to close
+      document.addEventListener("mousedown", (evt) => {
+        if (!wrap.contains(evt.target)) collapse();
+      }, { capture: true });
+
       wrap.appendChild(select);
       quizContainer.appendChild(wrap);
-    }
-
     } else {
       const optionsDiv = document.createElement("div");
       optionsDiv.className = "options-list";
@@ -238,7 +275,7 @@ document.addEventListener("DOMContentLoaded", () => {
         break;
       default:
         contentHTML = `<div class="info-card"><p>${qualification.name}</p></div>`;
-  }
+    }
 
     quizContainer.innerHTML = headerHTML + contentHTML;
 
@@ -251,51 +288,47 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ----- events
-// ----- events
-quizForm.addEventListener("submit", e => {
-  e.preventDefault();
+  quizForm.addEventListener("submit", e => {
+    e.preventDefault();
 
-  const selectEl = quizContainer.querySelector('select[name="userAnswer"]');
-  let selected = null;
+    const selectEl = quizContainer.querySelector('select[name="userAnswer"]');
+    let selected = null;
 
-  if (selectEl) {
-    selected = selectEl.value;
-    if (!selected) return alert("Please select an option.");
-  } else {
-    const selectedInput = quizContainer.querySelector('input[name="userAnswer"]:checked');
-    if (!selectedInput) return alert("Please select an option.");
-    selected = selectedInput.value;
-  }
+    if (selectEl) {
+      selected = selectEl.value;
+      if (!selected) return alert("Please select an option.");
+    } else {
+      const selectedInput = quizContainer.querySelector('input[name="userAnswer"]:checked');
+      if (!selectedInput) return alert("Please select an option.");
+      selected = selectedInput.value;
+    }
 
-  // Save the answer for the current step
-  answers[currentStepId] = selected;
+    // Save the answer for the current step
+    answers[currentStepId] = selected;
 
-  // --- NEW: special routing for Overseas → Foreigner → Local quals => end_transfer
-  if (currentStepId === "qualification") {
-    const allQuals = (window.localQualifications || []).concat(window.internationalQualifications || []);
-    const qual = allQuals.find(q => q.id === selected);
-    if (qual) {
-      const natTransfer = answers["nationality_transfer"]; // "Singapore Citizen/ Singapore Permanent Resident" | "Foreigner" | undefined
-      if (natTransfer === "Foreigner" && qual.type === "local") {
-        // Route to Transfer end page (audience-aware login text handled by template)
-        renderEndPage("transfer");
-        return;
-      } else {
-        // Normal behavior: go to the selected qualification's end page
-        renderEndPage(selected);
-        return;
+    // Special routing: Overseas → Foreigner → Local quals => end_transfer
+    if (currentStepId === "qualification") {
+      const allQuals = (window.localQualifications || []).concat(window.internationalQualifications || []);
+      const qual = allQuals.find(q => q.id === selected);
+      if (qual) {
+        const natTransfer = answers["nationality_transfer"]; // "Singapore Citizen/ Singapore Permanent Resident" | "Foreigner" | undefined
+        if (natTransfer === "Foreigner" && qual.type === "local") {
+          renderEndPage("transfer");
+          return;
+        } else {
+          renderEndPage(selected);
+          return;
+        }
       }
     }
-  }
 
-  // Default next-step logic (unchanged)
-  const step = flowMap[currentStepId];
-  const nextStepId = typeof step.next === "function" ? step.next(selected) : step.next;
+    // Default next-step logic
+    const step = flowMap[currentStepId];
+    const nextStepId = typeof step.next === "function" ? step.next(selected) : step.next;
 
-  if (nextStepId?.startsWith?.("end_")) renderEndPage(nextStepId.replace("end_", ""));
-  else if (nextStepId) renderStep(nextStepId);
-});
-
+    if (nextStepId?.startsWith?.("end_")) renderEndPage(nextStepId.replace("end_", ""));
+    else if (nextStepId) renderStep(nextStepId);
+  });
 
   // PDF: capture only the scroll area (not the actions bar)
   downloadPdfBtn.addEventListener("click", () => {
@@ -337,11 +370,3 @@ quizForm.addEventListener("submit", e => {
   // init
   renderStep(currentStepId);
 });
-
-
-
-
-
-
-
-
