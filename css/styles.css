@@ -237,6 +237,14 @@ select.dropdown.dropdown-open {
   border-color: #00437a;
 }
 
+/* Flip upward if needed */
+select.dropdown.dropdown-open.dropdown-open-up {
+  top: auto;
+  bottom: calc(100% + 6px);
+  /* optional: tweak shadow to look natural when opening up */
+  box-shadow: 0 -10px 24px rgba(0,0,0,0.12);
+}
+
 /* Comfortable row spacing in expanded mode */
 select.dropdown.dropdown-open option {
   padding: 6px 10px;
@@ -425,6 +433,7 @@ button:disabled { opacity: 0.6; cursor: not-allowed; }
   .notice-card, .info-card { padding: 14px; border-radius: 10px; }
   .form-actions { justify-content: center; }
 }
+
 
 
 
