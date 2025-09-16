@@ -204,7 +204,9 @@ main {
 }
 
 /* Dropdown */
-select[name="userAnswer"] {
+
+/* Base look */
+select.dropdown {
   width: 100%;
   font-size: 16px;
   padding: 12px 14px;
@@ -214,41 +216,32 @@ select[name="userAnswer"] {
   background: #fff;
   box-shadow: 0 2px 6px rgba(0,0,0,0.08);
 }
-select[name="userAnswer"]:focus {
+select.dropdown:focus {
   border-color: #00437a;
   box-shadow: 0 0 6px rgba(33,150,243,0.25);
   outline: none;
 }
 
-/* Scrollable qualifications dropdown with comfortable row spacing */
-select.dropdown[size]:not([size="1"]) {
-  /* keep the same look as your old single-row select */
-  width: 100%;
-  border: 2px solid #bcc3c8;
-  border-radius: 8px;
-  background: #fff;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-  padding: 3px;                 /* inner gutter around the list */
-  overflow-y: auto;             /* show scrollbar when needed */
-}
+/* Wrapper that lets the expanded select overlay without shifting layout */
+.select-wrap { position: relative; }
 
-/* Make each option roomy like before */
-select.dropdown[size]:not([size="1"]) option {
-  padding: 4px 10px;           /* ← restore comfy spacing */
-  line-height: 1.2;
-  font-size: 16px;
-}
-
-/* Focus state to match your theme */
-select.dropdown[size]:not([size="1"]):focus {
+/* Expanded overlay (applied when JS adds .dropdown-open and size=10) */
+select.dropdown.dropdown-open {
+  position: absolute;
+  left: 0; right: 0;
+  top: calc(100% + 6px);
+  z-index: 30;
+  max-height: 340px;          /* ~10 items */
+  overflow: auto;
+  box-shadow: 0 10px 24px rgba(0,0,0,0.15);
   border-color: #00437a;
-  box-shadow: 0 0 6px rgba(33,150,243,0.25);
-  outline: none;
 }
 
-/* (Optional) slightly highlight the selected item’s background */
-select.dropdown[size]:not([size="1"]) option:checked {
-  background: #f6faff;
+/* Comfortable row spacing in expanded mode */
+select.dropdown.dropdown-open option {
+  padding: 6px 10px;
+  line-height: 1.25;
+  font-size: 0.95rem;
 }
 
 /* -------------------------------
@@ -432,6 +425,7 @@ button:disabled { opacity: 0.6; cursor: not-allowed; }
   .notice-card, .info-card { padding: 14px; border-radius: 10px; }
   .form-actions { justify-content: center; }
 }
+
 
 
 
