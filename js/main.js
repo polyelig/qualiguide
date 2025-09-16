@@ -127,47 +127,52 @@ document.addEventListener("DOMContentLoaded", () => {
       // wrapper to allow overlay expansion
       const wrap = document.createElement("div");
       wrap.className = "select-wrap";
-
+    
       const select = document.createElement("select");
       select.name = "userAnswer";
       select.className = "dropdown";
       select.setAttribute("aria-label", "Select your qualification");
-
+    
       const defaultOption = document.createElement("option");
       defaultOption.value = "";
       defaultOption.textContent = "-- Select your qualification --";
       select.appendChild(defaultOption);
-
+    
       step.options.forEach(opt => {
         const o = document.createElement("option");
         o.value = opt.value;
         o.textContent = opt.label;
         select.appendChild(o);
       });
-
-      // ==== Expand-on-focus behavior ====
-      // Rough row height used for sizing (matches your CSS comfortably)
-      const ROW_HEIGHT = 34; // px
-      const V_PADDING = 16;  // px (inner padding + breathing room)
-      
+    
+      // --- Helpers ---
+      const closeAllDropdowns = (except) => {
+        document.querySelectorAll("select.dropdown.dropdown-open").forEach(sel => {
+          if (sel === except) return;
+          sel.classList.remove("dropdown-open", "dropdown-open-up");
+          sel.removeAttribute("size");
+        });
+      };
+    
+      const ROW_HEIGHT = 34; // visual row height (for flip decision only)
+      const V_PADDING = 16;
+    
       const expand = () => {
         if (select.classList.contains("dropdown-open")) return;
-      
+    
         closeAllDropdowns(select);
-      
-        // Desired dropdown height for up to 10 rows
-        const rows = Math.min(10, select.options.length || 10);
+    
+        // desired rows (≤ 10, ≤ number of options)
+        const rows = Math.min(10, Math.max(1, select.options.length));
         const desiredHeight = rows * ROW_HEIGHT + V_PADDING;
-      
-        // Measure space around the collapsed select
+    
+        // measure available space
         const rect = select.getBoundingClientRect();
         const spaceBelow = window.innerHeight - rect.bottom;
         const spaceAbove = rect.top;
-      
-        // Choose direction: open up if not enough space below but enough above
+    
         const openUp = spaceBelow < desiredHeight && spaceAbove > spaceBelow;
-      
-        // Apply size + direction classes
+    
         select.setAttribute("size", String(rows));
         select.classList.add("dropdown-open");
         if (openUp) {
@@ -176,41 +181,47 @@ document.addEventListener("DOMContentLoaded", () => {
           select.classList.remove("dropdown-open-up");
         }
       };
-      
+    
       const collapse = () => {
         select.classList.remove("dropdown-open", "dropdown-open-up");
-        select.removeAttribute("size");
+        select.removeAttribute("size"); // restores native single-row
       };
-
-
-      // open when user clicks or focuses
-      select.addEventListener("mousedown", (e) => {
-        e.preventDefault(); // avoid native toggle/blur race
-        select.focus();
-        expand();
-      });
+    
+      // --- Events (do NOT preventDefault on mousedown) ---
+      // Click/focus open
       select.addEventListener("focus", expand);
-
-      // close when user selects or blurs
-      select.addEventListener("change", collapse);
-      select.addEventListener("blur", () => {
-        // tiny timeout helps when clicking an option
-        setTimeout(collapse, 0);
+      select.addEventListener("click", () => {
+        if (!select.classList.contains("dropdown-open")) expand();
       });
-
-      // allow ESC to close
+    
+      // Select option -> collapse after browser sets the value
+      select.addEventListener("change", () => {
+        collapse();
+      });
+    
+      // Blur -> collapse (timeout helps when clicking an option)
+      select.addEventListener("blur", () => {
+        setTimeout(() => collapse(), 0);
+      });
+    
+      // Keyboard support
       select.addEventListener("keydown", (e) => {
         if (e.key === "Escape") {
-          e.preventDefault();
           collapse();
           select.blur();
+        } else if (e.key === "Enter") {
+          collapse();
         }
       });
-
-      // click outside to close
-      document.addEventListener("mousedown", (evt) => {
-        if (!wrap.contains(evt.target)) collapse();
-      }, { capture: true });
+    
+      // Click outside -> close
+      const onDocPointerDown = (e) => {
+        if (!wrap.contains(e.target)) collapse();
+      };
+      // attach once per render
+      setTimeout(() => {
+        document.addEventListener("pointerdown", onDocPointerDown, { passive: true, once: true });
+      }, 0);
 
       wrap.appendChild(select);
       quizContainer.appendChild(wrap);
