@@ -114,25 +114,69 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    if (stepId === "qualification") {
+     if (stepId === "qualification") {
+      // wrapper to allow overlay expansion
+      const wrap = document.createElement("div");
+      wrap.className = "select-wrap";
+    
       const select = document.createElement("select");
       select.name = "userAnswer";
       select.className = "dropdown";
-      select.setAttribute("size", "10");  // shows 10 rows max with scrolling
-
+      select.setAttribute("aria-label", "Select your qualification");
+    
       const defaultOption = document.createElement("option");
       defaultOption.value = "";
       defaultOption.textContent = "-- Select your qualification --";
       select.appendChild(defaultOption);
-
+    
       step.options.forEach(opt => {
         const o = document.createElement("option");
         o.value = opt.value;
         o.textContent = opt.label;
         select.appendChild(o);
       });
+    
+      // ==== Expand-on-focus behavior ====
+      const expand = () => {
+        // already open? skip
+        if (select.classList.contains("dropdown-open")) return;
+        select.size = 10;                          // show ~10 rows
+        select.classList.add("dropdown-open");     // overlay styling
+      };
+      const collapse = () => {
+        select.size = 1;
+        select.classList.remove("dropdown-open");
+      };
+    
+      // open when user clicks or focuses
+      select.addEventListener("mousedown", (e) => {
+        // prevent immediate blur on some browsers
+        e.preventDefault();
+        select.focus();
+        expand();
+      });
+      select.addEventListener("focus", expand);
+    
+      // close when user selects or blurs
+      select.addEventListener("change", collapse);
+      select.addEventListener("blur", () => {
+        // tiny timeout helps when clicking an option
+        setTimeout(collapse, 0);
+      });
+    
+      // allow ESC to close
+      select.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+          e.preventDefault();
+          collapse();
+          select.blur();
+        }
+      });
+    
+      wrap.appendChild(select);
+      quizContainer.appendChild(wrap);
+    }
 
-      quizContainer.appendChild(select);
     } else {
       const optionsDiv = document.createElement("div");
       optionsDiv.className = "options-list";
@@ -293,6 +337,7 @@ quizForm.addEventListener("submit", e => {
   // init
   renderStep(currentStepId);
 });
+
 
 
 
