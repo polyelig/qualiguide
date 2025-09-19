@@ -1,5 +1,5 @@
 // -------------------------------
-// main.js (patched)
+// main.js (updated: desktop-only overlay select, cleanup)
 // -------------------------------
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -9,6 +9,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const downloadPdfBtn = document.getElementById("downloadPdfBtn");
   const pageTitle = document.getElementById("pageTitle"); // unused for end pages
   const formActions = document.querySelector(".form-actions");
+
+  // Detect coarse (touch) pointers (mobile/tablet)
+  const isTouch = window.matchMedia('(pointer: coarse)').matches;
 
   // feature detect :has()
   try {
@@ -30,7 +33,8 @@ document.addEventListener("DOMContentLoaded", () => {
   // ----- helpers
   function setQuestionScrollMode() {
     quizContainer.classList.remove("final-scroll", "final-mode");
-    // IMPORTANT: keep visible so the expanded dropdown can overlay
+    // keep visible so the expanded dropdown can overlay (desktop),
+    // and allow the container to scroll on mobile via CSS media rules
     quizContainer.style.overflowY = "visible";
     formActions.classList.remove("final-actions");
     const dateEl = document.getElementById("actionsDate");
@@ -81,11 +85,11 @@ document.addEventListener("DOMContentLoaded", () => {
     dateEl.style.display = "block";
   }
 
-  // Collapse any other open dropdowns
+  // Collapse any other open dropdowns (desktop overlay select)
   function closeAllDropdowns(exceptEl = null) {
     document.querySelectorAll("select.dropdown.dropdown-open").forEach(sel => {
       if (sel !== exceptEl) {
-        sel.classList.remove("dropdown-open");
+        sel.classList.remove("dropdown-open", "dropdown-open-up");
         sel.removeAttribute("size");
       }
     });
@@ -124,104 +128,87 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if (stepId === "qualification") {
-      // wrapper to allow overlay expansion
+      // wrapper to allow overlay expansion (desktop)
       const wrap = document.createElement("div");
       wrap.className = "select-wrap";
-    
+
       const select = document.createElement("select");
       select.name = "userAnswer";
       select.className = "dropdown";
       select.setAttribute("aria-label", "Select your qualification");
-    
+
       const defaultOption = document.createElement("option");
       defaultOption.value = "";
       defaultOption.textContent = "-- Select your qualification --";
       select.appendChild(defaultOption);
-    
+
       step.options.forEach(opt => {
         const o = document.createElement("option");
         o.value = opt.value;
         o.textContent = opt.label;
         select.appendChild(o);
       });
-    
-      // --- Helpers ---
-      const closeAllDropdowns = (except) => {
-        document.querySelectorAll("select.dropdown.dropdown-open").forEach(sel => {
-          if (sel === except) return;
-          sel.classList.remove("dropdown-open", "dropdown-open-up");
-          sel.removeAttribute("size");
+
+      // ==== Expand-on-focus behavior (DESKTOP ONLY) ====
+      if (!isTouch) {
+        const ROW_HEIGHT = 34; // for flip decision only
+        const V_PADDING = 16;
+
+        const expand = () => {
+          if (select.classList.contains("dropdown-open")) return;
+
+          closeAllDropdowns(select);
+
+          const rows = Math.min(10, Math.max(1, select.options.length));
+          const desiredHeight = rows * ROW_HEIGHT + V_PADDING;
+
+          const rect = select.getBoundingClientRect();
+          const spaceBelow = window.innerHeight - rect.bottom;
+          const spaceAbove = rect.top;
+
+          const openUp = spaceBelow < desiredHeight && spaceAbove > spaceBelow;
+
+          select.setAttribute("size", String(rows));
+          select.classList.add("dropdown-open");
+          if (openUp) select.classList.add("dropdown-open-up");
+          else select.classList.remove("dropdown-open-up");
+        };
+
+        const collapse = () => {
+          select.classList.remove("dropdown-open", "dropdown-open-up");
+          select.removeAttribute("size"); // restore native single-row
+        };
+
+        // Open on focus/click
+        select.addEventListener("focus", expand);
+        select.addEventListener("click", () => {
+          if (!select.classList.contains("dropdown-open")) expand();
         });
-      };
-    
-      const ROW_HEIGHT = 34; // visual row height (for flip decision only)
-      const V_PADDING = 16;
-    
-      const expand = () => {
-        if (select.classList.contains("dropdown-open")) return;
-    
-        closeAllDropdowns(select);
-    
-        // desired rows (≤ 10, ≤ number of options)
-        const rows = Math.min(10, Math.max(1, select.options.length));
-        const desiredHeight = rows * ROW_HEIGHT + V_PADDING;
-    
-        // measure available space
-        const rect = select.getBoundingClientRect();
-        const spaceBelow = window.innerHeight - rect.bottom;
-        const spaceAbove = rect.top;
-    
-        const openUp = spaceBelow < desiredHeight && spaceAbove > spaceBelow;
-    
-        select.setAttribute("size", String(rows));
-        select.classList.add("dropdown-open");
-        if (openUp) {
-          select.classList.add("dropdown-open-up");
-        } else {
-          select.classList.remove("dropdown-open-up");
-        }
-      };
-    
-      const collapse = () => {
-        select.classList.remove("dropdown-open", "dropdown-open-up");
-        select.removeAttribute("size"); // restores native single-row
-      };
-    
-      // --- Events (do NOT preventDefault on mousedown) ---
-      // Click/focus open
-      select.addEventListener("focus", expand);
-      select.addEventListener("click", () => {
-        if (!select.classList.contains("dropdown-open")) expand();
-      });
-    
-      // Select option -> collapse after browser sets the value
-      select.addEventListener("change", () => {
-        collapse();
-      });
-    
-      // Blur -> collapse (timeout helps when clicking an option)
-      select.addEventListener("blur", () => {
-        setTimeout(() => collapse(), 0);
-      });
-    
-      // Keyboard support
-      select.addEventListener("keydown", (e) => {
-        if (e.key === "Escape") {
-          collapse();
-          select.blur();
-        } else if (e.key === "Enter") {
-          collapse();
-        }
-      });
-    
-      // Click outside -> close
-      const onDocPointerDown = (e) => {
-        if (!wrap.contains(e.target)) collapse();
-      };
-      // attach once per render
-      setTimeout(() => {
-        document.addEventListener("pointerdown", onDocPointerDown, { passive: true, once: true });
-      }, 0);
+
+        // Collapse on change/blur
+        select.addEventListener("change", collapse);
+        select.addEventListener("blur", () => setTimeout(collapse, 0));
+
+        // Keyboard support
+        select.addEventListener("keydown", (e) => {
+          if (e.key === "Escape") {
+            e.preventDefault();
+            collapse();
+            select.blur();
+          } else if (e.key === "Enter") {
+            collapse();
+          }
+        });
+
+        // Close when clicking outside (desktop only)
+        const onDocPointerDown = (e) => {
+          if (!wrap.contains(e.target)) collapse();
+        };
+        setTimeout(() => {
+          document.addEventListener("pointerdown", onDocPointerDown, { passive: true, once: true });
+        }, 0);
+      }
+      // (On touch, we rely on the native picker—no custom listeners)
 
       wrap.appendChild(select);
       quizContainer.appendChild(wrap);
