@@ -434,6 +434,107 @@ button:disabled { opacity: 0.6; cursor: not-allowed; }
   .form-actions { justify-content: center; }
 }
 
+/* ---------------------------------
+   Mobile-first sanity tweaks
+----------------------------------*/
+:root {
+  /* give us slightly smaller header on small screens */
+  --header-h: 56px;
+}
+
+/* Make header title scale with screen width */
+.site-title,
+.site-header h1 {
+  font-size: clamp(1rem, 4vw, 1.25rem);
+}
+
+/* Keep the container breathable but tighter on phones */
+@media (max-width: 600px) {
+  main {
+    padding: 8px 10px;
+  }
+
+  .container {
+    padding: 12px;
+    border-radius: 10px;
+  }
+
+  /* Let the question area scroll on small screens so the actions stay visible */
+  #quizContainer {
+    flex: 1 1 auto;
+    overflow-y: auto;          /* override "no scroll" on phones */
+    padding-bottom: 72px;      /* reserve space for the sticky actions bar */
+  }
+
+  /* Question typography & spacing */
+  .question-label {
+    font-size: clamp(1rem, 4.2vw, 1.15rem);
+    margin-bottom: 8px;
+  }
+  .question-subtitle {
+    font-size: clamp(0.9rem, 3.6vw, 1rem);
+    margin: -4px 0 10px 0;
+  }
+
+  /* Option cards a bit tighter on phones */
+  .options-list {
+    gap: 10px;
+    margin-top: 12px;
+  }
+  .option {
+    font-size: 16px;
+    padding: 10px 12px;
+    border-radius: 10px;
+  }
+  .option input[type="radio"] {
+    width: 16px; height: 16px;
+    margin-right: 10px;
+  }
+
+  /* Actions: stick to bottom and stay above content */
+  .form-actions {
+    position: sticky;
+    bottom: 0;
+    z-index: 20;
+    margin-top: 8px;
+    background: transparent;
+  }
+  .actions-inner {
+    width: 100%;
+    justify-content: flex-end;
+    background: linear-gradient(to top, #fff 85%, rgba(255,255,255,0));
+    padding: 8px 8px 0 8px;
+    gap: 8px;
+  }
+  #continueBtn, #downloadPdfBtn {
+    padding: 10px 14px;
+    font-size: 14px;
+  }
+
+  /* Final pages: ensure internal scroll and visible scrollbar inside container */
+  .final-mode.final-scroll {
+    overflow-y: auto !important;
+  }
+
+  /* Normalize notice/login/resources text sizes on phones */
+  .notice-card h2 { font-size: clamp(1rem, 4.2vw, 1.15rem); }
+  .notice-card p  { font-size: clamp(0.95rem, 3.8vw, 1rem); }
+
+  .info-card h3   { font-size: clamp(1rem, 4.2vw, 1.15rem); }
+  .login-card h4  { font-size: clamp(0.95rem, 3.8vw, 1.05rem); }
+  .info-card p,
+  .login-card p,
+  .resource-desc  { font-size: clamp(0.9rem, 3.6vw, 1rem); line-height: 1.55; }
+}
+
+/* Prevent oversized fonts when a mobile browser is put into "desktop site" mode */
+@media (max-width: 900px) {
+  .info-card, .login-card, .notice-card {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+}
+
 
 
 
