@@ -57,8 +57,13 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function getAudience() {
-    // Prefer transfer nationality if present; otherwise fall back to non-transfer nationality
-    const raw = answers["nationality_transfer"] || answers["nationality"] || null;
+    // UPDATED: read the new local-universities nationality answer first
+    const raw =
+      answers["nationality_local_transfer"] ||
+      answers["nationality_transfer"] ||
+      answers["nationality"] ||
+      null;
+
     if (raw === "Foreigner") return "foreigner";
     if (raw === "Singapore Citizen/ Singapore Permanent Resident") return "sgpr";
     return null; // unknown/edge case
