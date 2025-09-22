@@ -1,5 +1,5 @@
 // -------------------------------
-// surveyFlow.js (patched)
+// surveyFlow.js (updated)
 // -------------------------------
 
 // Build the full list of qualifications (excluding Transfer)
@@ -30,8 +30,10 @@ const surveyFlow = [
     next: function(answer){ 
       switch (answer) {
         case "Local universities (NUS, NTU, SMU, SIT, SUTD, SUSS)":
-          return "nationality_transfer";
+          // NEW: branch to a dedicated nationality step that always lands on Transfer
+          return "nationality_local_transfer";
         case "Overseas tertiary institutions":
+          // Existing overseas branch
           return "nationality_transfer";
         case "I have never enrolled in a university OR tertiary institution before":
           return "nationality";
@@ -41,12 +43,19 @@ const surveyFlow = [
     }
   },
 
-  // Local Transfer → direct end
+  // NEW: Local-universities branch → ask nationality → always go to Transfer end page
   {
-    id: "local_transfer",
-    question: "As you are currently studying in or have graduated from a local university, you will be considered a Transfer applicant.",
-    options: [],
-    next: function(){ return "end_transfer"; }
+    id: "nationality_local_transfer",
+    question: "What is your nationality?",
+    options: [
+      "Singapore Citizen/ Singapore Permanent Resident", 
+      "Foreigner"
+    ],
+    next: function(/* answer */){
+      // Both answers lead to Transfer end page;
+      // audience-aware login text will use this answer.
+      return "end_transfer";
+    }
   },
 
   // Overseas Transfer → nationality check
@@ -100,6 +109,3 @@ const surveyFlow = [
 
 // Expose to global
 window.surveyFlow = surveyFlow;
-
-
-
