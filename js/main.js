@@ -1,5 +1,5 @@
 // -------------------------------
-// main.js (updated: desktop-only overlay select, cleanup)
+// main.js (final patched)
 // -------------------------------
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -12,12 +12,14 @@ document.addEventListener("DOMContentLoaded", () => {
   const restartBtn = document.getElementById("restartBtn");
 
   // Detect coarse (touch) pointers (mobile/tablet)
-  const isTouch = window.matchMedia('(pointer: coarse)').matches;
+  const isTouch = window.matchMedia("(pointer: coarse)").matches;
 
   // feature detect :has()
   try {
     if (!CSS.supports("selector(:has(*))")) document.documentElement.classList.add("no-has");
-  } catch { document.documentElement.classList.add("no-has"); }
+  } catch {
+    document.documentElement.classList.add("no-has");
+  }
 
   if (!Array.isArray(window.surveyFlow) || window.surveyFlow.length === 0) {
     quizContainer.innerHTML = "<p>We’re sorry, something went wrong loading the survey. Please refresh.</p>";
@@ -58,7 +60,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function getAudience() {
-    // UPDATED: read the new local-universities nationality answer first
+    // Prefer new local-universities nationality answer; then transfer; then general
     const raw =
       answers["nationality_local_transfer"] ||
       answers["nationality_transfer"] ||
@@ -114,10 +116,12 @@ document.addEventListener("DOMContentLoaded", () => {
     quizContainer.innerHTML = "";
 
     // --- Show/hide restart ---
-    if (stepId === window.surveyFlow[0].id) {
-      restartBtn.style.display = "none";   // hide on very first page
-    } else {
-      restartBtn.style.display = "inline-block"; // show afterwards
+    if (restartBtn) {
+      if (stepId === window.surveyFlow[0].id) {
+        restartBtn.style.display = "none"; // hide on very first page
+      } else {
+        restartBtn.style.display = "inline-block"; // show afterwards
+      }
     }
 
     const questionLabel = document.createElement("div");
@@ -272,7 +276,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // --- Show restart button ---
-    restartBtn.style.display = "inline-block";
+    if (restartBtn) restartBtn.style.display = "inline-block";
 
     const headerHTML = setPageTitleHTML(qualification);
     const audience = getAudience();
@@ -320,12 +324,24 @@ document.addEventListener("DOMContentLoaded", () => {
     // Save the answer for the current step
     answers[currentStepId] = selected;
 
+    // 🔹 Intercept: Local universities → Foreigner => go straight to Transfer end page
+    if (currentStepId === "nationality_transfer") {
+      const q1 = answers["transfer"]; // the first question's answer
+      if (
+        q1 === "Local universities (NUS, NTU, SMU, SIT, SUTD, SUSS)" &&
+        selected === "Foreigner"
+      ) {
+        renderEndPage("transfer");
+        return;
+      }
+    }
+
     // Special routing: Overseas → Foreigner → Local quals => end_transfer
     if (currentStepId === "qualification") {
       const allQuals = (window.localQualifications || []).concat(window.internationalQualifications || []);
       const qual = allQuals.find(q => q.id === selected);
       if (qual) {
-        const natTransfer = answers["nationality_transfer"]; // "Singapore Citizen/ Singapore Permanent Resident" | "Foreigner" | undefined
+        const natTransfer = answers["nationality_transfer"]; // "Singapore Citizen/ Singapore Permanent Resident" | "Foreigner"
         if (natTransfer === "Foreigner" && qual.type === "local") {
           renderEndPage("transfer");
           return;
@@ -350,8 +366,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const prevOverflow = quizContainer.style.overflow;
     const prevOverflowY = quizContainer.style.overflowY;
-    const prevHeight   = quizContainer.style.height;
-    const prevMaxH     = quizContainer.style.maxHeight;
+    const prevHeight = quizContainer.style.height;
+    const prevMaxH = quizContainer.style.maxHeight;
 
     quizContainer.style.overflow = "visible";
     quizContainer.style.overflowY = "visible";
@@ -366,30 +382,36 @@ document.addEventListener("DOMContentLoaded", () => {
       pagebreak: { mode: ["css", "legacy"] }
     };
 
-    html2pdf().set(opt).from(quizContainer).save().then(() => {
-      quizContainer.style.overflow = prevOverflow;
-      quizContainer.style.overflowY = prevOverflowY;
-      quizContainer.style.height = prevHeight;
-      quizContainer.style.maxHeight = prevMaxH;
-      setFinalScrollMode();
-    }).catch(() => {
-      quizContainer.style.overflow = prevOverflow;
-      quizContainer.style.overflowY = prevOverflowY;
-      quizContainer.style.height = prevHeight;
-      quizContainer.style.maxHeight = prevMaxH;
-      setFinalScrollMode();
-    });
+    html2pdf()
+      .set(opt)
+      .from(quizContainer)
+      .save()
+      .then(() => {
+        quizContainer.style.overflow = prevOverflow;
+        quizContainer.style.overflowY = prevOverflowY;
+        quizContainer.style.height = prevHeight;
+        quizContainer.style.maxHeight = prevMaxH;
+        setFinalScrollMode();
+      })
+      .catch(() => {
+        quizContainer.style.overflow = prevOverflow;
+        quizContainer.style.overflowY = prevOverflowY;
+        quizContainer.style.height = prevHeight;
+        quizContainer.style.maxHeight = prevMaxH;
+        setFinalScrollMode();
+      });
   });
 
   // init
   renderStep(currentStepId);
-  
-  restartBtn.addEventListener("click", () => {
-  // reset answers and flow
-  for (const k in answers) delete answers[k];
-  currentStepId = window.surveyFlow[0].id;
-  renderStep(currentStepId);
+
+  // Restart survey
+  if (restartBtn) {
+    restartBtn.addEventListener("click", () => {
+      // reset answers and flow
+      for (const k in answers) delete answers[k];
+      currentStepId = window.surveyFlow[0].id;
+      renderStep(currentStepId);
+    });
+  }
 });
-
-
-
