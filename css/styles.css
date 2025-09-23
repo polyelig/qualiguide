@@ -23,7 +23,7 @@ html, body {
 /* -------------------------------
    Fixed Header & Footer
 ---------------------------------*/
-.site-header {
+.site-header, .site-footer {
   position: fixed;
   left: 0; right: 0;
   display: flex;
@@ -564,6 +564,7 @@ button:disabled { opacity: 0.6; cursor: not-allowed; }
     text-size-adjust: 100%;
   }
 }
+
 
 
 
