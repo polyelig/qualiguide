@@ -511,6 +511,12 @@ button:disabled { opacity: 0.6; cursor: not-allowed; }
     font-size: 14px;
   }
 
+  #restartBtn {
+   display: flex;
+  justify-content: flex-end; /* Aligns items to the end (right) of the main axis */
+  align-items: center;
+  }
+
   /* Final pages: ensure internal scroll and visible scrollbar inside container */
   .final-mode.final-scroll {
     overflow-y: auto !important;
@@ -534,6 +540,7 @@ button:disabled { opacity: 0.6; cursor: not-allowed; }
     text-size-adjust: 100%;
   }
 }
+
 
 
 
