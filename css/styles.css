@@ -506,16 +506,34 @@ button:disabled { opacity: 0.6; cursor: not-allowed; }
     padding: 8px 8px 0 8px;
     gap: 8px;
   }
+   
   #continueBtn, #downloadPdfBtn {
     padding: 10px 14px;
     font-size: 14px;
   }
 
-  #restartBtn {
-   display: flex;
-  justify-content: flex-end; /* Aligns items to the end (right) of the main axis */
-  align-items: center;
-  }
+   /* Restart button aligned bottom right */
+   #restartBtn {
+     position: absolute;
+     right: 1rem;
+     bottom: 1rem;
+     margin: 0;
+   }
+   
+   /* Optional: adjust size and spacing to match other buttons */
+   #restartBtn {
+     padding: 0.5rem 1rem;
+     font-size: 0.9rem;
+     border-radius: var(--radius);
+     background: var(--brand);
+     color: #fff;
+     border: none;
+     cursor: pointer;
+   }
+   
+   #restartBtn:hover {
+     background: #00325c; /* darker shade for hover */
+   }
 
   /* Final pages: ensure internal scroll and visible scrollbar inside container */
   .final-mode.final-scroll {
@@ -540,6 +558,7 @@ button:disabled { opacity: 0.6; cursor: not-allowed; }
     text-size-adjust: 100%;
   }
 }
+
 
 
 
