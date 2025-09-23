@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const downloadPdfBtn = document.getElementById("downloadPdfBtn");
   const pageTitle = document.getElementById("pageTitle"); // unused for end pages
   const formActions = document.querySelector(".form-actions");
+  const restartBtn = document.getElementById("restartBtn");
 
   // Detect coarse (touch) pointers (mobile/tablet)
   const isTouch = window.matchMedia('(pointer: coarse)').matches;
@@ -373,3 +374,4 @@ document.addEventListener("DOMContentLoaded", () => {
   // init
   renderStep(currentStepId);
 });
+
