@@ -23,7 +23,7 @@ html, body {
 /* -------------------------------
    Fixed Header & Footer
 ---------------------------------*/
-.site-header, .site-footer {
+.site-header, 
   position: fixed;
   left: 0; right: 0;
   display: flex;
@@ -59,9 +59,19 @@ html, body {
   font-weight: 700;
 }
    
+/* Footer keeps centered text; we reserve space on the right for the restart btn */
 .site-footer {
-  bottom: 0;
+  position: fixed;          /* already set */
+  left: 0; right: 0; bottom: 0;
   height: var(--footer-h);
+  display: flex;
+  align-items: center;
+  justify-content: center;  /* center the © text */
+  background-color: #003366;
+  color: #fff;
+  z-index: 10;
+  padding: 0 16px;
+  padding-right: 96px;      /* <-- reserve space so the button doesn't overlap the text */
 }
 
 .site-header h1 { margin: 0; font-size: 1.6rem; }
@@ -302,6 +312,25 @@ button {
   cursor: pointer;
   transition: background 0.2s;
 }
+
+/* Restart button pinned to bottom-right of the footer */
+#restartBtn {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);  /* vertically center within footer */
+  margin: 0;
+  padding: 8px 14px;
+  font-size: 14px;
+  border-radius: 6px;
+  background: #00437a;          /* consistent with other buttons */
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
+
+#restartBtn:hover { background: #00325c; }
+
 button:disabled { opacity: 0.6; cursor: not-allowed; }
 #continueBtn { background-color: #2196F3; }
 #downloadPdfBtn { display: none; background-color: #4CAF50; }
@@ -512,29 +541,6 @@ button:disabled { opacity: 0.6; cursor: not-allowed; }
     font-size: 14px;
   }
 
-   /* Restart button aligned bottom right */
-   #restartBtn {
-     position: absolute;
-     right: 1rem;
-     bottom: 1rem;
-     margin: 0;
-   }
-   
-   /* Optional: adjust size and spacing to match other buttons */
-   #restartBtn {
-     padding: 0.5rem 1rem;
-     font-size: 0.9rem;
-     border-radius: var(--radius);
-     background: var(--brand);
-     color: #fff;
-     border: none;
-     cursor: pointer;
-   }
-   
-   #restartBtn:hover {
-     background: #00325c; /* darker shade for hover */
-   }
-
   /* Final pages: ensure internal scroll and visible scrollbar inside container */
   .final-mode.final-scroll {
     overflow-y: auto !important;
@@ -558,6 +564,7 @@ button:disabled { opacity: 0.6; cursor: not-allowed; }
     text-size-adjust: 100%;
   }
 }
+
 
 
 
