@@ -113,6 +113,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     quizContainer.innerHTML = "";
 
+    // --- Show/hide restart ---
+    if (stepId === window.surveyFlow[0].id) {
+      restartBtn.style.display = "none";   // hide on very first page
+    } else {
+      restartBtn.style.display = "inline-block"; // show afterwards
+    }
+
     const questionLabel = document.createElement("div");
     questionLabel.className = "question-label";
     questionLabel.textContent = step.question;
@@ -264,6 +271,9 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
+    // --- Show restart button ---
+    restartBtn.style.display = "inline-block";
+
     const headerHTML = setPageTitleHTML(qualification);
     const audience = getAudience();
     let contentHTML = "";
@@ -373,5 +383,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // init
   renderStep(currentStepId);
+  
+  restartBtn.addEventListener("click", () => {
+  // reset answers and flow
+  for (const k in answers) delete answers[k];
+  currentStepId = window.surveyFlow[0].id;
+  renderStep(currentStepId);
 });
+
+
 
