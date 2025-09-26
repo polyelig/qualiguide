@@ -32,7 +32,7 @@ const surveyFlow = [
         case "Local universities (NUS, NTU, SMU, SIT, SUTD, SUSS)":
           // NEW: branch to a dedicated nationality step that always lands on Transfer
           return "nationality_local_transfer";
-        case "Overseas tertiary institutions":
+        case "Overseas universities OR tertiary institutions":
           // Existing overseas branch
           return "nationality_transfer";
         case "I have never enrolled in a university OR tertiary institution before":
@@ -109,3 +109,4 @@ const surveyFlow = [
 
 // Expose to global
 window.surveyFlow = surveyFlow;
+
